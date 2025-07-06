@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,48 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Modern Elegance theme colors
+				'forest': {
+					50: '#f0f4f1',
+					100: '#d9e5dc',
+					200: '#b3ccb7',
+					300: '#8db292',
+					400: '#67986d',
+					500: '#2d5a3d',
+					600: '#254b33',
+					700: '#1d3c29',
+					800: '#152d1f',
+					900: '#0d1e15'
+				},
+				'copper': {
+					50: '#fdf7f4',
+					100: '#f9ebe2',
+					200: '#f2d6c5',
+					300: '#eac1a8',
+					400: '#e3ac8b',
+					500: '#b87333',
+					600: '#a6652e',
+					700: '#945729',
+					800: '#824924',
+					900: '#703b1f'
+				},
+				'sage': {
+					50: '#f8faf9',
+					100: '#f0f5f2',
+					200: '#e1ebe5',
+					300: '#d2e1d8',
+					400: '#c3d7cb',
+					500: '#9cb5a0',
+					600: '#8ca390',
+					700: '#7c9180',
+					800: '#6c7f70',
+					900: '#5c6d60'
 				}
+			},
+			fontFamily: {
+				'playfair': ['Playfair Display', 'serif'],
+				'inter': ['Inter', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
