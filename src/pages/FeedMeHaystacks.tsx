@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -268,7 +269,10 @@ const FeedMeHaystacks = () => {
           </TabsContent>
 
           <TabsContent value="listings" className="mt-6">
-            {console.log('Rendering listings tab with:', listings.length, 'listings')}
+            {(() => {
+              console.log('Rendering listings tab with:', listings.length, 'listings');
+              return null;
+            })()}
             {listings.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
@@ -284,7 +288,10 @@ const FeedMeHaystacks = () => {
               </Card>
             ) : (
               <div>
-                {console.log('About to render ListingsDashboard with listings:', listings)}
+                {(() => {
+                  console.log('About to render ListingsDashboard with listings:', listings);
+                  return null;
+                })()}
                 <ListingsDashboard
                   listings={listings}
                   onIgnoreListing={handleIgnoreListing}

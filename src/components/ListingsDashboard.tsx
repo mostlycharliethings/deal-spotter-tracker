@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -111,10 +112,11 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
 
   const uniqueSources = [...new Set(listings.map(l => l.source_name))];
 
+  // Debug logging for render
+  console.log('ListingsDashboard rendering with', filteredListings.length, 'filtered listings');
+
   return (
     <div className="space-y-6">
-      {console.log('ListingsDashboard rendering with', filteredListings.length, 'filtered listings')}
-      
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
