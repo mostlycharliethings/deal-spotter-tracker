@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,8 +29,11 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Generate a proper UUID for the user_id
+    const tempUserId = crypto.randomUUID();
+    
     const searchConfig = {
-      user_id: 'default-user',
+      user_id: tempUserId,
       ...formData,
       max_price_allowed: maxPrice,
       is_active: true
