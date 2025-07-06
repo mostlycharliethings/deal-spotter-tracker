@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,7 +49,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       item_name: '',
       manufacturer: '',
       year_start: 2000,
-      year_end: 2024,
+      year_end: currentYear,
       qualifier: '',
       sub_qualifier: '',
       price_threshold: 50000,
@@ -59,12 +60,18 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
 
   const generateSearchMatrix = () => {
     const combinations = [];
+    // Priority: Start Year > End Year > Manufacturer > Item Name > Qualifier > Sub-Qualifier
     for (let year = formData.year_start; year <= formData.year_end; year++) {
-      combinations.push(`${year} ${formData.manufacturer}`);
+      // Base search: Year + Manufacturer + Item Name
+      combinations.push(`${year} ${formData.manufacturer} ${formData.item_name}`);
+      
       if (formData.qualifier) {
-        combinations.push(`${year} ${formData.manufacturer} ${formData.qualifier}`);
+        // Add qualifier
+        combinations.push(`${year} ${formData.manufacturer} ${formData.item_name} ${formData.qualifier}`);
+        
         if (formData.sub_qualifier) {
-          combinations.push(`${year} ${formData.manufacturer} ${formData.qualifier} ${formData.sub_qualifier}`);
+          // Add sub-qualifier
+          combinations.push(`${year} ${formData.manufacturer} ${formData.item_name} ${formData.qualifier} ${formData.sub_qualifier}`);
         }
       }
     }
@@ -78,27 +85,26 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="item_name">Item Name</Label>
-              <Input
-                id="item_name"
-                value={formData.item_name}
-                onChange={(e) => setFormData({...formData, item_name: e.target.value})}
-                placeholder="e.g., 911"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="manufacturer">Manufacturer</Label>
-              <Input
-                id="manufacturer"
-                value={formData.manufacturer}
-                onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
-                placeholder="e.g., Porsche"
-                required
-              />
-            </div>
+          <div>
+            <Label htmlFor="manufacturer">Manufacturer</Label>
+            <Input
+              id="manufacturer"
+              value={formData.manufacturer}
+              onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
+              placeholder="e.g., Porsche"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="item_name">Item Name</Label>
+            <Input
+              id="item_name"
+              value={formData.item_name}
+              onChange={(e) => setFormData({...formData, item_name: e.target.value})}
+              placeholder="e.g., 911"
+              required
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
