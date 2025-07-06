@@ -25,7 +25,8 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
     price_threshold: 500,
     slider_percent: 50,
     email_address: '',
-    include_years: false
+    include_years: false,
+    any_year: false
   });
 
   const maxPrice = formData.price_threshold * (1 + formData.slider_percent / 100);
@@ -40,9 +41,9 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       user_id: tempUserId,
       item_name: formData.item_name,
       manufacturer: formData.manufacturer,
-      // Only include years if the checkbox is checked
-      year_start: formData.include_years ? formData.year_start : 1900,
-      year_end: formData.include_years ? formData.year_end : currentYear,
+      // If any_year is checked, use default wide range. If include_years is checked, use specified range. Otherwise, use defaults.
+      year_start: formData.any_year ? 1900 : (formData.include_years ? formData.year_start : 1900),
+      year_end: formData.any_year ? currentYear : (formData.include_years ? formData.year_end : currentYear),
       qualifier: formData.qualifier,
       sub_qualifier: formData.sub_qualifier,
       price_threshold: formData.price_threshold,
@@ -66,14 +67,15 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       price_threshold: 500,
       slider_percent: 50,
       email_address: '',
-      include_years: false
+      include_years: false,
+      any_year: false
     });
   };
 
   const generateSearchMatrix = () => {
     const combinations = [];
     
-    if (formData.include_years) {
+    if (formData.include_years && !formData.any_year) {
       // Year-based searches (vehicles, vintage items, etc.)
       for (let year = formData.year_start; year <= formData.year_end; year++) {
         combinations.push(`${year} ${formData.manufacturer} ${formData.item_name}`);
@@ -87,7 +89,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
         }
       }
     } else {
-      // General item searches
+      // General item searches (no specific years)
       combinations.push(`${formData.manufacturer} ${formData.item_name}`);
       
       if (formData.qualifier) {
@@ -135,18 +137,37 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="include_years"
-              checked={formData.include_years}
-              onCheckedChange={(checked) => setFormData({...formData, include_years: !!checked})}
-            />
-            <Label htmlFor="include_years" className="text-sm">
-              Include specific years in search (useful for vehicles, vintage items)
-            </Label>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="any_year"
+                checked={formData.any_year}
+                onCheckedChange={(checked) => setFormData({
+                  ...formData, 
+                  any_year: !!checked,
+                  include_years: checked ? false : formData.include_years
+                })}
+              />
+              <Label htmlFor="any_year" className="text-sm">
+                Any year (search without specific years)
+              </Label>
+            </div>
+
+            {!formData.any_year && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="include_years"
+                  checked={formData.include_years}
+                  onCheckedChange={(checked) => setFormData({...formData, include_years: !!checked})}
+                />
+                <Label htmlFor="include_years" className="text-sm">
+                  Include specific years in search (useful for vehicles, vintage items)
+                </Label>
+              </div>
+            )}
           </div>
 
-          {formData.include_years && (
+          {formData.include_years && !formData.any_year && (
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="year_start">Start Year</Label>
