@@ -26,40 +26,52 @@ const Index = () => {
             <h2 className="text-5xl font-bold">About Me</h2>
           </div>
 
-          <div className="prose prose-lg max-w-none space-y-6 text-foreground">
-            <p className="text-xl leading-relaxed">
-              I'm a systems thinker, builder, and problem solver with a track record of turning complexity into clarity.
-            </p>
-
-            <p className="leading-relaxed">
-              I specialize in transforming legacy operations, reengineering flawed systems, and aligning technical execution with business outcomes. Over the last decade, I've helped companies—from growth-stage startups to enterprise giants—scale more intelligently, operate more efficiently, and retain more customers.
-            </p>
-
-            <p className="leading-relaxed">
-              While leading Production Support for Shell Energy, I redesigned their CI/CD pipeline, rebuilt their incident intake workflows, and overhauled component tracking—saving them an estimated $2.88 million and positioning their Salesforce platform to support 350,000 new customers. At CG Infinity and Lightbox RE, I built customer success operations from the ground up, cut attrition rates from 15% to under 2%, and turned at-risk teams into enterprise-grade operations.
-            </p>
-
-            <p className="leading-relaxed">
-              I'm the founder of two companies:
-            </p>
-
-            <div className="pl-6 space-y-4">
-              <p className="leading-relaxed">
-                <strong>Foxton Solutions Group</strong> — a Woman-Owned, HUBZone-certified government contractor delivering IT professional services to the federal sector.
-              </p>
-
-              <p className="leading-relaxed">
-                <strong>Foxton Group</strong> — a private consulting firm focused on business process reengineering for small and mid-sized companies. There, I developed the IPE Methodology ("Idiot Proof Everything") and the proprietary C.L.A.R.I.T.Y.™ Framework, a 7-step system designed to uncover blind spots, eliminate waste, and streamline performance at every level of the organization.
-              </p>
+          {/* Bio Section with Profile Image */}
+          <div className="relative">
+            {/* Profile Image - Top Left */}
+            <div className="float-left mr-6 mb-4">
+              <img 
+                src="/lovable-uploads/86ce0932-53b3-412c-af43-ddf4fbfcf6cd.png" 
+                alt="Charlie Scheid" 
+                className="w-32 h-32 rounded-lg object-cover opacity-80 shadow-lg"
+              />
             </div>
 
-            <p className="leading-relaxed">
-              Neurodivergent myself (ADHD/AuDHD), I approach problem-solving with a unique mix of empathy, precision, and obsession with simplification. Whether I'm working with SaaS execs, government procurement officers, or mom-and-pop operators, my goal is always the same: make smart people's lives easier by making systems smarter.
-            </p>
+            <div className="prose prose-lg max-w-none space-y-6 text-foreground">
+              <p className="text-xl leading-relaxed">
+                I'm a systems thinker, builder, and problem solver with a track record of turning complexity into clarity.
+              </p>
+
+              <p className="leading-relaxed">
+                I specialize in transforming legacy operations, reengineering flawed systems, and aligning technical execution with business outcomes. Over the last decade, I've helped companies—from growth-stage startups to enterprise giants—scale more intelligently, operate more efficiently, and retain more customers.
+              </p>
+
+              <p className="leading-relaxed">
+                While leading Production Support for Shell Energy, I redesigned their CI/CD pipeline, rebuilt their incident intake workflows, and overhauled component tracking—saving them an estimated $2.88 million and positioning their Salesforce platform to support 350,000 new customers. At CG Infinity and Lightbox RE, I built customer success operations from the ground up, cut attrition rates from 15% to under 2%, and turned at-risk teams into enterprise-grade operations.
+              </p>
+
+              <p className="leading-relaxed">
+                I'm the founder of two companies:
+              </p>
+
+              <div className="pl-6 space-y-4">
+                <p className="leading-relaxed">
+                  <strong>Foxton Solutions Group</strong> — a Woman-Owned, HUBZone-certified government contractor delivering IT professional services to the federal sector.
+                </p>
+
+                <p className="leading-relaxed">
+                  <strong>Foxton Group</strong> — a private consulting firm focused on business process reengineering for small and mid-sized companies. There, I developed the IPE Methodology ("Idiot Proof Everything") and the proprietary C.L.A.R.I.T.Y.™ Framework, a 7-step system designed to uncover blind spots, eliminate waste, and streamline performance at every level of the organization.
+                </p>
+              </div>
+
+              <p className="leading-relaxed">
+                Neurodivergent myself (ADHD/AuDHD), I approach problem-solving with a unique mix of empathy, precision, and obsession with simplification. Whether I'm working with SaaS execs, government procurement officers, or mom-and-pop operators, my goal is always the same: make smart people's lives easier by making systems smarter.
+              </p>
+            </div>
           </div>
 
           {/* Tools Button */}
-          <div className="flex justify-center pt-8">
+          <div className="flex justify-center pt-8 clear-both">
             <Card className="w-full max-w-md hover:shadow-lg transition-shadow">
               <CardHeader className="text-center">
                 <CardTitle className="flex items-center justify-center gap-2">
