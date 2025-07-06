@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,53 +7,49 @@ import { Search, List, Settings, Activity } from 'lucide-react';
 import SearchConfigForm from '@/components/SearchConfigForm';
 import ListingsDashboard from '@/components/ListingsDashboard';
 import ScrapingStatus from '@/components/ScrapingStatus';
-import { SearchConfig, Listing } from '@/types/database';
+import { SearchConfig } from '@/types/database';
 import { MockScraper, scrapingSources } from '@/services/mockScraper';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchConfigs, useCreateSearchConfig } from '@/hooks/useSearchConfigs';
+import { useListings, useCreateListings, useIgnoreListing, useUnignoreListing } from '@/hooks/useListings';
 
 const Index = () => {
   const { toast } = useToast();
-  const [searches, setSearches] = useState<SearchConfig[]>([]);
-  const [listings, setListings] = useState<Listing[]>([]);
   const [lastRunTimes, setLastRunTimes] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load saved data on component mount
-  useEffect(() => {
-    const savedSearches = localStorage.getItem('price-tracker-searches');
-    const savedListings = localStorage.getItem('price-tracker-listings');
+  // Use Supabase hooks
+  const { data: searches = [], isLoading: searchesLoading } = useSearchConfigs();
+  const { data: listings = [], isLoading: listingsLoading } = useListings();
+  const createSearchConfig = useCreateSearchConfig();
+  const createListings = useCreateListings();
+  const ignoreListing = useIgnoreListing();
+  const unignoreListing = useUnignoreListing();
+
+  const handleSearchCreated = async (searchConfigData: Omit<SearchConfig, 'id' | 'created_at'>) => {
+    console.log('Creating search configuration:', searchConfigData);
     
-    if (savedSearches) {
-      setSearches(JSON.parse(savedSearches));
-    }
-    
-    if (savedListings) {
-      setListings(JSON.parse(savedListings));
-    }
-  }, []);
-
-  // Save data to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('price-tracker-searches', JSON.stringify(searches));
-  }, [searches]);
-
-  useEffect(() => {
-    localStorage.setItem('price-tracker-listings', JSON.stringify(listings));
-  }, [listings]);
-
-  const handleSearchCreated = async (searchConfig: SearchConfig) => {
-    setSearches(prev => [...prev, searchConfig]);
+    // Create the search config in Supabase
+    const searchConfig = await createSearchConfig.mutateAsync(searchConfigData);
     
     // Immediately run a scrape for the new search
     setIsLoading(true);
     try {
       const newListings = await MockScraper.scrapeSearch(searchConfig);
-      setListings(prev => [...prev, ...newListings]);
+      console.log('Generated mock listings:', newListings);
       
-      toast({
-        title: "Search Active",
-        description: `Found ${newListings.length} initial listings. Monitoring will continue automatically.`
-      });
+      if (newListings.length > 0) {
+        await createListings.mutateAsync(newListings);
+        toast({
+          title: "Search Active",
+          description: `Found ${newListings.length} initial listings. Monitoring will continue automatically.`
+        });
+      } else {
+        toast({
+          title: "Search Active",
+          description: "No listings found initially. Monitoring will continue automatically."
+        });
+      }
     } catch (error) {
       console.error('Error running initial scrape:', error);
       toast({
@@ -66,30 +62,35 @@ const Index = () => {
     }
   };
 
-  const handleIgnoreListing = (listingId: string, reason?: string) => {
-    setListings(prev => prev.map(listing => 
-      listing.id === listingId 
-        ? { 
-            ...listing, 
-            is_ignored: true, 
-            ignored_at: new Date().toISOString(),
-            ignore_reason: reason 
-          }
-        : listing
-    ));
+  const handleIgnoreListing = async (listingId: string, reason?: string) => {
+    try {
+      await ignoreListing.mutateAsync({ listingId, reason });
+      const listing = listings.find(l => l.id === listingId);
+      toast({
+        title: "Listing Ignored",
+        description: `"${listing?.title}" has been ignored and will not appear in future alerts.`
+      });
+    } catch (error) {
+      console.error('Error ignoring listing:', error);
+      toast({
+        title: "Error",
+        description: "Failed to ignore listing. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleUnignoreListing = (listingId: string) => {
-    setListings(prev => prev.map(listing => 
-      listing.id === listingId 
-        ? { 
-            ...listing, 
-            is_ignored: false, 
-            ignored_at: undefined,
-            ignore_reason: undefined 
-          }
-        : listing
-    ));
+  const handleUnignoreListing = async (listingId: string) => {
+    try {
+      await unignoreListing.mutateAsync(listingId);
+    } catch (error) {
+      console.error('Error unignoring listing:', error);
+      toast({
+        title: "Error",
+        description: "Failed to unignore listing. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleManualScrape = async (sourceName: string) => {
@@ -107,7 +108,7 @@ const Index = () => {
 
     try {
       // Run scrape for all active searches
-      const allNewListings: Listing[] = [];
+      const allNewListings = [];
       
       for (const search of searches) {
         if (search.is_active) {
@@ -118,12 +119,9 @@ const Index = () => {
         }
       }
 
-      // Add new listings, avoiding duplicates
-      setListings(prev => {
-        const existingIds = new Set(prev.map(l => l.source_listing_id));
-        const uniqueNewListings = allNewListings.filter(l => !existingIds.has(l.source_listing_id));
-        return [...prev, ...uniqueNewListings];
-      });
+      if (allNewListings.length > 0) {
+        await createListings.mutateAsync(allNewListings);
+      }
 
       toast({
         title: "Scrape Complete",
@@ -151,6 +149,19 @@ const Index = () => {
   };
 
   const stats = getListingStats();
+
+  if (searchesLoading || listingsLoading) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-bold">Price Tracker Dashboard</h1>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">

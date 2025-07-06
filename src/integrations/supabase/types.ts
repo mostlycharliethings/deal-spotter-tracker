@@ -9,7 +9,143 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      listings: {
+        Row: {
+          contact_info: string | null
+          date_scraped: string
+          description: string | null
+          id: string
+          ignore_reason: string | null
+          ignored_at: string | null
+          is_above_slider: boolean
+          is_description_changed: boolean
+          is_ignored: boolean
+          is_price_changed: boolean
+          is_within_slider_range: boolean
+          is_within_threshold: boolean
+          last_seen_at: string
+          listing_age: string | null
+          location: string | null
+          max_price_allowed: number
+          price: number
+          price_threshold: number
+          search_id: string
+          source_listing_id: string
+          source_name: string
+          source_url: string
+          title: string
+        }
+        Insert: {
+          contact_info?: string | null
+          date_scraped?: string
+          description?: string | null
+          id?: string
+          ignore_reason?: string | null
+          ignored_at?: string | null
+          is_above_slider?: boolean
+          is_description_changed?: boolean
+          is_ignored?: boolean
+          is_price_changed?: boolean
+          is_within_slider_range?: boolean
+          is_within_threshold?: boolean
+          last_seen_at?: string
+          listing_age?: string | null
+          location?: string | null
+          max_price_allowed: number
+          price: number
+          price_threshold: number
+          search_id: string
+          source_listing_id: string
+          source_name: string
+          source_url: string
+          title: string
+        }
+        Update: {
+          contact_info?: string | null
+          date_scraped?: string
+          description?: string | null
+          id?: string
+          ignore_reason?: string | null
+          ignored_at?: string | null
+          is_above_slider?: boolean
+          is_description_changed?: boolean
+          is_ignored?: boolean
+          is_price_changed?: boolean
+          is_within_slider_range?: boolean
+          is_within_threshold?: boolean
+          last_seen_at?: string
+          listing_age?: string | null
+          location?: string | null
+          max_price_allowed?: number
+          price?: number
+          price_threshold?: number
+          search_id?: string
+          source_listing_id?: string
+          source_name?: string
+          source_url?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_search_id_fkey"
+            columns: ["search_id"]
+            isOneToOne: false
+            referencedRelation: "search_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      search_configs: {
+        Row: {
+          created_at: string
+          email_address: string
+          id: string
+          is_active: boolean
+          item_name: string
+          manufacturer: string
+          max_price_allowed: number
+          price_threshold: number
+          qualifier: string | null
+          slider_percent: number
+          sub_qualifier: string | null
+          user_id: string
+          year_end: number
+          year_start: number
+        }
+        Insert: {
+          created_at?: string
+          email_address: string
+          id?: string
+          is_active?: boolean
+          item_name: string
+          manufacturer: string
+          max_price_allowed: number
+          price_threshold: number
+          qualifier?: string | null
+          slider_percent?: number
+          sub_qualifier?: string | null
+          user_id?: string
+          year_end: number
+          year_start: number
+        }
+        Update: {
+          created_at?: string
+          email_address?: string
+          id?: string
+          is_active?: boolean
+          item_name?: string
+          manufacturer?: string
+          max_price_allowed?: number
+          price_threshold?: number
+          qualifier?: string | null
+          slider_percent?: number
+          sub_qualifier?: string | null
+          user_id?: string
+          year_end?: number
+          year_start?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

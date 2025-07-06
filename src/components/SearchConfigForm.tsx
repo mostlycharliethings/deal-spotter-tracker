@@ -1,19 +1,16 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { useToast } from '@/hooks/use-toast';
 import { SearchConfig } from '@/types/database';
 
 interface SearchConfigFormProps {
-  onSearchCreated: (search: SearchConfig) => void;
+  onSearchCreated: (search: Omit<SearchConfig, 'id' | 'created_at'>) => void;
 }
 
 const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) => {
-  const { toast } = useToast();
   const [formData, setFormData] = useState({
     item_name: '',
     manufacturer: '',
@@ -31,22 +28,27 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const searchConfig: SearchConfig = {
-      id: crypto.randomUUID(),
+    const searchConfig = {
       user_id: 'default-user',
       ...formData,
       max_price_allowed: maxPrice,
-      created_at: new Date().toISOString(),
       is_active: true
     };
 
-    // Here you would normally save to Supabase
-    console.log('Creating search config:', searchConfig);
+    console.log('Submitting search config:', searchConfig);
     onSearchCreated(searchConfig);
     
-    toast({
-      title: "Search Created",
-      description: "Your price tracking search has been configured successfully."
+    // Reset form
+    setFormData({
+      item_name: '',
+      manufacturer: '',
+      year_start: 2000,
+      year_end: 2024,
+      qualifier: '',
+      sub_qualifier: '',
+      price_threshold: 50000,
+      slider_percent: 50,
+      email_address: ''
     });
   };
 
