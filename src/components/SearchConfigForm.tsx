@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { Checkbox } from '@/components/ui/checkbox';
 import { SearchConfig } from '@/types/database';
 
 interface SearchConfigFormProps {
@@ -20,9 +22,10 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
     year_end: currentYear,
     qualifier: '',
     sub_qualifier: '',
-    price_threshold: 50000,
+    price_threshold: 500,
     slider_percent: 50,
-    email_address: ''
+    email_address: '',
+    include_years: false
   });
 
   const maxPrice = formData.price_threshold * (1 + formData.slider_percent / 100);
@@ -35,8 +38,17 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
     
     const searchConfig = {
       user_id: tempUserId,
-      ...formData,
+      item_name: formData.item_name,
+      manufacturer: formData.manufacturer,
+      // Only include years if the checkbox is checked
+      year_start: formData.include_years ? formData.year_start : 1900,
+      year_end: formData.include_years ? formData.year_end : currentYear,
+      qualifier: formData.qualifier,
+      sub_qualifier: formData.sub_qualifier,
+      price_threshold: formData.price_threshold,
+      slider_percent: formData.slider_percent,
       max_price_allowed: maxPrice,
+      email_address: formData.email_address,
       is_active: true
     };
 
@@ -51,88 +63,117 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       year_end: currentYear,
       qualifier: '',
       sub_qualifier: '',
-      price_threshold: 50000,
+      price_threshold: 500,
       slider_percent: 50,
-      email_address: ''
+      email_address: '',
+      include_years: false
     });
   };
 
   const generateSearchMatrix = () => {
     const combinations = [];
-    // Priority: Start Year > End Year > Manufacturer > Item Name > Qualifier > Sub-Qualifier
-    for (let year = formData.year_start; year <= formData.year_end; year++) {
-      // Base search: Year + Manufacturer + Item Name
-      combinations.push(`${year} ${formData.manufacturer} ${formData.item_name}`);
+    
+    if (formData.include_years) {
+      // Year-based searches (vehicles, vintage items, etc.)
+      for (let year = formData.year_start; year <= formData.year_end; year++) {
+        combinations.push(`${year} ${formData.manufacturer} ${formData.item_name}`);
+        
+        if (formData.qualifier) {
+          combinations.push(`${year} ${formData.manufacturer} ${formData.item_name} ${formData.qualifier}`);
+          
+          if (formData.sub_qualifier) {
+            combinations.push(`${year} ${formData.manufacturer} ${formData.item_name} ${formData.qualifier} ${formData.sub_qualifier}`);
+          }
+        }
+      }
+    } else {
+      // General item searches
+      combinations.push(`${formData.manufacturer} ${formData.item_name}`);
       
       if (formData.qualifier) {
-        // Add qualifier
-        combinations.push(`${year} ${formData.manufacturer} ${formData.item_name} ${formData.qualifier}`);
+        combinations.push(`${formData.manufacturer} ${formData.item_name} ${formData.qualifier}`);
         
         if (formData.sub_qualifier) {
-          // Add sub-qualifier
-          combinations.push(`${year} ${formData.manufacturer} ${formData.item_name} ${formData.qualifier} ${formData.sub_qualifier}`);
+          combinations.push(`${formData.manufacturer} ${formData.item_name} ${formData.qualifier} ${formData.sub_qualifier}`);
         }
       }
     }
-    return combinations;
+    
+    return combinations.filter(combo => combo.trim().length > 0);
   };
 
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Configure Price Tracking Search</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Search for any item across multiple marketplaces and get notified when deals appear
+        </p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="manufacturer">Manufacturer</Label>
+              <Label htmlFor="manufacturer">Brand/Manufacturer</Label>
               <Input
                 id="manufacturer"
                 value={formData.manufacturer}
                 onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
-                placeholder="e.g., Porsche"
+                placeholder="e.g., Apple, Gibson, Rolex"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="item_name">Item Name</Label>
+              <Label htmlFor="item_name">Item/Model</Label>
               <Input
                 id="item_name"
                 value={formData.item_name}
                 onChange={(e) => setFormData({...formData, item_name: e.target.value})}
-                placeholder="e.g., 911"
+                placeholder="e.g., MacBook Pro, Les Paul, Submariner"
                 required
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="year_start">Start Year</Label>
-              <Input
-                id="year_start"
-                type="number"
-                value={formData.year_start}
-                onChange={(e) => setFormData({...formData, year_start: parseInt(e.target.value)})}
-                min="1900"
-                max={currentYear}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="year_end">End Year</Label>
-              <Input
-                id="year_end"
-                type="number"
-                value={formData.year_end}
-                onChange={(e) => setFormData({...formData, year_end: parseInt(e.target.value)})}
-                min="1900"
-                max={currentYear}
-                required
-              />
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="include_years"
+              checked={formData.include_years}
+              onCheckedChange={(checked) => setFormData({...formData, include_years: !!checked})}
+            />
+            <Label htmlFor="include_years" className="text-sm">
+              Include specific years in search (useful for vehicles, vintage items)
+            </Label>
           </div>
+
+          {formData.include_years && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="year_start">Start Year</Label>
+                <Input
+                  id="year_start"
+                  type="number"
+                  value={formData.year_start}
+                  onChange={(e) => setFormData({...formData, year_start: parseInt(e.target.value)})}
+                  min="1900"
+                  max={currentYear}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="year_end">End Year</Label>
+                <Input
+                  id="year_end"
+                  type="number"
+                  value={formData.year_end}
+                  onChange={(e) => setFormData({...formData, year_end: parseInt(e.target.value)})}
+                  min="1900"
+                  max={currentYear}
+                  required
+                />
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -141,7 +182,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
                 id="qualifier"
                 value={formData.qualifier}
                 onChange={(e) => setFormData({...formData, qualifier: e.target.value})}
-                placeholder="e.g., 993"
+                placeholder="e.g., 16-inch, Standard, Black"
               />
             </div>
             <div>
@@ -150,7 +191,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
                 id="sub_qualifier"
                 value={formData.sub_qualifier}
                 onChange={(e) => setFormData({...formData, sub_qualifier: e.target.value})}
-                placeholder="e.g., Targa"
+                placeholder="e.g., M1 Max, Mint Condition"
               />
             </div>
           </div>
@@ -165,6 +206,9 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
               min="0"
               required
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              You'll get immediate alerts for items at or below this price
+            </p>
           </div>
 
           <div>
@@ -179,8 +223,9 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
               />
             </div>
             <div className="text-sm text-muted-foreground">
-              <p>Threshold: ${formData.price_threshold.toLocaleString()}</p>
-              <p>Max Price: ${Math.round(maxPrice).toLocaleString()}</p>
+              <p>Immediate Alert: ${formData.price_threshold.toLocaleString()}</p>
+              <p>Monitor Up To: ${Math.round(maxPrice).toLocaleString()}</p>
+              <p className="text-xs mt-1">Items above your threshold but below the max will be tracked for reference</p>
             </div>
           </div>
 
@@ -196,17 +241,19 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
             />
           </div>
 
-          <div className="bg-muted p-4 rounded-md">
-            <h4 className="font-medium mb-2">Search Matrix Preview:</h4>
-            <div className="text-sm space-y-1 max-h-32 overflow-y-auto">
-              {generateSearchMatrix().slice(0, 10).map((term, index) => (
-                <div key={index} className="text-muted-foreground">"{term}"</div>
-              ))}
-              {generateSearchMatrix().length > 10 && (
-                <div className="text-muted-foreground">...and {generateSearchMatrix().length - 10} more combinations</div>
-              )}
+          {(formData.manufacturer || formData.item_name) && (
+            <div className="bg-muted p-4 rounded-md">
+              <h4 className="font-medium mb-2">Search Matrix Preview:</h4>
+              <div className="text-sm space-y-1 max-h-32 overflow-y-auto">
+                {generateSearchMatrix().slice(0, 10).map((term, index) => (
+                  <div key={index} className="text-muted-foreground">"{term}"</div>
+                ))}
+                {generateSearchMatrix().length > 10 && (
+                  <div className="text-muted-foreground">...and {generateSearchMatrix().length - 10} more combinations</div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <Button type="submit" className="w-full">
             Create Search Configuration

@@ -1,57 +1,57 @@
 
 import { Listing, SearchConfig } from '@/types/database';
 
-// Mock data for demonstration - replace with actual scraping logic
+// Mock data for demonstration - covers various item types
 const mockListings: Partial<Listing>[] = [
   {
     source_name: 'Facebook Marketplace',
-    title: '1995 Porsche 911 Carrera - Clean Title',
-    description: 'Well maintained 911 with service records. Minor cosmetic issues but runs great.',
-    price: 42000,
+    title: 'Vintage Gibson Les Paul Guitar - Excellent Condition',
+    description: 'Beautiful 1995 Gibson Les Paul with original case. Well maintained, sounds amazing.',
+    price: 2800,
     location: 'Los Angeles, CA',
     listing_age: '2 hours ago',
     contact_info: 'Message through Facebook',
-    source_url: 'https://facebook.com/marketplace/item/123456'
+    source_url: 'https://facebook.com/marketplace/item/vintage-gibson'
   },
   {
     source_name: 'Craigslist',
-    title: '1993 Porsche 911 Turbo - Project Car',
-    description: 'Needs some work but great bones. Engine runs strong.',
-    price: 65000,
+    title: 'MacBook Pro 16" M1 Max - Like New',
+    description: 'Barely used MacBook Pro with all original packaging. Perfect for creative work.',
+    price: 3200,
     location: 'San Francisco, CA',
     listing_age: '1 day ago',
     contact_info: '(555) 123-4567',
-    source_url: 'https://craigslist.org/cto/123456.html'
+    source_url: 'https://craigslist.org/ele/macbook-pro.html'
   },
   {
-    source_name: 'eBay Motors',
-    title: '1994 Porsche 911 Speedster - Rare Find',
-    description: 'Original owner, garage kept, all service records available.',
-    price: 85000,
+    source_name: 'eBay',
+    title: 'Rolex Submariner Date - Authentic with Papers',
+    description: 'Genuine Rolex with certificate of authenticity. Serviced recently.',
+    price: 12500,
     location: 'Miami, FL',
     listing_age: '3 days ago',
     contact_info: 'eBay messaging',
-    source_url: 'https://ebay.com/itm/123456'
+    source_url: 'https://ebay.com/itm/rolex-submariner'
   },
   {
-    source_name: 'Rennlist Forums',
-    title: 'FS: 1996 911 Targa - Track Ready',
-    description: 'Roll cage, racing seats, upgraded suspension. Street legal.',
-    price: 38000,
+    source_name: 'OfferUp',
+    title: 'Herman Miller Aeron Chair - Size B',
+    description: 'Ergonomic office chair in excellent condition. All adjustments work perfectly.',
+    price: 450,
     location: 'Austin, TX',
     listing_age: '5 hours ago',
-    contact_info: 'PM on Rennlist',
-    source_url: 'https://rennlist.com/forums/marketplace/123456'
+    contact_info: 'OfferUp messaging',
+    source_url: 'https://offerup.com/item/herman-miller-aeron'
   },
   {
-    source_name: 'Cars & Coffee Discord',
-    title: '1992 911 Turbo - Numbers Matching',
-    description: 'Completely stock, original paint, documented history.',
-    price: 95000,
+    source_name: 'Facebook Marketplace',
+    title: 'Vintage Omega Speedmaster Professional',
+    description: 'Classic moonwatch in original condition. Collector maintained with service history.',
+    price: 4200,
     location: 'Seattle, WA',
     listing_age: '12 hours ago',
-    contact_info: 'Discord: PorscheGuy#1234',
-    source_url: 'https://discord.com/channels/123456/789012'
+    contact_info: 'Facebook Messenger',
+    source_url: 'https://facebook.com/marketplace/item/omega-speedmaster'
   }
 ];
 
@@ -67,11 +67,12 @@ export class MockScraper {
     
     // Mock finding listings that match search terms
     mockListings.forEach((mockListing, index) => {
-      // Simple matching logic - in reality this would be much more sophisticated
+      // Simple matching logic - check if any search term matches the title
       const titleLower = mockListing.title?.toLowerCase() || '';
       const matchesSearch = searchTerms.some(term => 
         titleLower.includes(term.toLowerCase()) ||
-        titleLower.includes(searchConfig.manufacturer.toLowerCase())
+        titleLower.includes(searchConfig.manufacturer.toLowerCase()) ||
+        titleLower.includes(searchConfig.item_name.toLowerCase())
       );
       
       if (matchesSearch) {
@@ -110,14 +111,28 @@ export class MockScraper {
   private static generateSearchMatrix(searchConfig: SearchConfig): string[] {
     const combinations = [];
     
-    for (let year = searchConfig.year_start; year <= searchConfig.year_end; year++) {
-      combinations.push(`${year} ${searchConfig.manufacturer}`);
+    // Handle year-based searches (like vehicles, vintage items)
+    if (searchConfig.year_start && searchConfig.year_end) {
+      for (let year = searchConfig.year_start; year <= searchConfig.year_end; year++) {
+        combinations.push(`${year} ${searchConfig.manufacturer} ${searchConfig.item_name}`);
+        
+        if (searchConfig.qualifier) {
+          combinations.push(`${year} ${searchConfig.manufacturer} ${searchConfig.item_name} ${searchConfig.qualifier}`);
+          
+          if (searchConfig.sub_qualifier) {
+            combinations.push(`${year} ${searchConfig.manufacturer} ${searchConfig.item_name} ${searchConfig.qualifier} ${searchConfig.sub_qualifier}`);
+          }
+        }
+      }
+    } else {
+      // Handle non-year-based searches (general items)
+      combinations.push(`${searchConfig.manufacturer} ${searchConfig.item_name}`);
       
       if (searchConfig.qualifier) {
-        combinations.push(`${year} ${searchConfig.manufacturer} ${searchConfig.qualifier}`);
+        combinations.push(`${searchConfig.manufacturer} ${searchConfig.item_name} ${searchConfig.qualifier}`);
         
         if (searchConfig.sub_qualifier) {
-          combinations.push(`${year} ${searchConfig.manufacturer} ${searchConfig.qualifier} ${searchConfig.sub_qualifier}`);
+          combinations.push(`${searchConfig.manufacturer} ${searchConfig.item_name} ${searchConfig.qualifier} ${searchConfig.sub_qualifier}`);
         }
       }
     }
@@ -129,12 +144,12 @@ export class MockScraper {
 export const scrapingSources = [
   { name: 'Facebook Marketplace', tier: 1 as const, baseUrl: 'https://facebook.com/marketplace', scrapeFrequency: 5, isActive: true },
   { name: 'Craigslist', tier: 1 as const, baseUrl: 'https://craigslist.org', scrapeFrequency: 5, isActive: true },
-  { name: 'eBay Motors', tier: 1 as const, baseUrl: 'https://ebay.com/motors', scrapeFrequency: 5, isActive: true },
-  { name: 'OfferUp', tier: 1 as const, baseUrl: 'https://offerup.com', scrapeFrequency: 5, isActive: false },
-  { name: 'Kijiji', tier: 1 as const, baseUrl: 'https://kijiji.ca', scrapeFrequency: 5, isActive: false },
+  { name: 'eBay', tier: 1 as const, baseUrl: 'https://ebay.com', scrapeFrequency: 5, isActive: true },
+  { name: 'OfferUp', tier: 1 as const, baseUrl: 'https://offerup.com', scrapeFrequency: 5, isActive: true },
+  { name: 'Mercari', tier: 2 as const, baseUrl: 'https://mercari.com', scrapeFrequency: 3, isActive: false },
   { name: 'Gumtree', tier: 1 as const, baseUrl: 'https://gumtree.com', scrapeFrequency: 5, isActive: false },
-  { name: 'Rennlist Forums', tier: 2 as const, baseUrl: 'https://rennlist.com', scrapeFrequency: 2, isActive: false },
-  { name: 'Cars & Coffee Discord', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: false },
-  { name: 'Reddit r/Porsche', tier: 2 as const, baseUrl: 'https://reddit.com/r/porsche', scrapeFrequency: 2, isActive: false },
-  { name: 'PCA Forums', tier: 2 as const, baseUrl: 'https://forums.pelicanparts.com', scrapeFrequency: 2, isActive: false }
+  { name: 'Reddit r/ForSale', tier: 2 as const, baseUrl: 'https://reddit.com/r/forsale', scrapeFrequency: 2, isActive: false },
+  { name: 'Discord Communities', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: false },
+  { name: 'Specialized Forums', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 2, isActive: false },
+  { name: 'Local Classifieds', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 1, isActive: false }
 ];
