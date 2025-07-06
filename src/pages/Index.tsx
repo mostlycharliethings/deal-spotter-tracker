@@ -150,13 +150,14 @@ const Index = () => {
 
   const stats = getListingStats();
 
-  if (searchesLoading || listingsLoading) {
+  // Show loading state only for a brief moment
+  if (searchesLoading && listingsLoading) {
     return (
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold">Price Tracker Dashboard</h1>
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">Loading your dashboard...</p>
           </div>
         </div>
       </div>
@@ -224,15 +225,15 @@ const Index = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="listings" className="w-full">
+        <Tabs defaultValue="search" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="listings" className="flex items-center gap-2">
-              <List className="h-4 w-4" />
-              Listings
-            </TabsTrigger>
             <TabsTrigger value="search" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               New Search
+            </TabsTrigger>
+            <TabsTrigger value="listings" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              Listings ({listings.length})
             </TabsTrigger>
             <TabsTrigger value="status" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
@@ -240,18 +241,33 @@ const Index = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="listings" className="mt-6">
-            <ListingsDashboard
-              listings={listings}
-              onIgnoreListing={handleIgnoreListing}
-              onUnignoreListing={handleUnignoreListing}
-            />
-          </TabsContent>
-
           <TabsContent value="search" className="mt-6">
             <div className="flex justify-center">
               <SearchConfigForm onSearchCreated={handleSearchCreated} />
             </div>
+          </TabsContent>
+
+          <TabsContent value="listings" className="mt-6">
+            {listings.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <List className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Listings Yet</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Create your first search configuration to start finding deals!
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Once you create a search, listings will appear here automatically.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <ListingsDashboard
+                listings={listings}
+                onIgnoreListing={handleIgnoreListing}
+                onUnignoreListing={handleUnignoreListing}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="status" className="mt-6">
