@@ -1,32 +1,31 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from '@/components/ui/toaster';
+import { QueryClient } from '@tanstack/react-query';
+import Index from './pages';
+import Tools from './pages/Tools';
+import NotFound from './pages/NotFound';
+import FeedMeHaystacks from './pages/FeedMeHaystacks';
+import EmailPreviewPage from './pages/EmailPreviewPage';
+import { Mail } from 'lucide-react';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import Tools from "./pages/Tools";
-import FeedMeHaystacks from "./pages/FeedMeHaystacks";
-import NotFound from "./pages/NotFound";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
+function App() {
+  return (
+    <QueryClient>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/tools" element={<Tools />} />
-          <Route path="/tools/feedmehaystacks" element={<FeedMeHaystacks />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="min-h-screen bg-background">
+          <Toaster />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/tools" element={<Tools />} />
+            <Route path="/tools/feedmehaystacks" element={<FeedMeHaystacks />} />
+            <Route path="/email-preview" element={<EmailPreviewPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
       </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </QueryClient>
+  );
+}
 
 export default App;
