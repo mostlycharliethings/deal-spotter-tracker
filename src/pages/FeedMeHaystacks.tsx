@@ -1,11 +1,8 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Mail } from 'lucide-react';
-import SearchConfigForm from '@/components/SearchConfigForm';
-import ListingsDashboard from '@/components/ListingsDashboard';
-import ScrapingStatus from '@/components/ScrapingStatus';
-import SearchMatrixPreview from '@/components/SearchMatrixPreview';
 
 const FeedMeHaystacks = () => {
   const navigate = useNavigate();
@@ -19,28 +16,21 @@ const FeedMeHaystacks = () => {
         </p>
       </div>
 
-      <ScrapingStatus />
-
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-1/2">
-          <SearchConfigForm />
-        </div>
-        <div className="lg:w-1/2 space-y-6">
-          <SearchMatrixPreview />
-          <div className="flex gap-4">
-            <Button
-              onClick={() => navigate('/email-preview')}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Mail className="h-4 w-4" />
-              Preview Daily Digest Email
-            </Button>
-          </div>
-        </div>
+      <div className="flex justify-center mt-8">
+        <Button
+          onClick={() => navigate('/email-preview')}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <Mail className="h-4 w-4" />
+          Preview Daily Digest Email
+        </Button>
       </div>
 
-      <ListingsDashboard />
+      <div className="mt-8 text-center text-muted-foreground">
+        <p>Daily digest email functionality is ready for testing!</p>
+        <p>Click the button above to preview and send test emails.</p>
+      </div>
     </div>
   );
 };
