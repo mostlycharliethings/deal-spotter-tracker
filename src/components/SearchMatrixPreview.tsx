@@ -5,7 +5,6 @@ interface SearchMatrixPreviewProps {
   manufacturer: string;
   itemName: string;
   includeYears: boolean;
-  anyYear: boolean;
   yearStart: number;
   yearEnd: number;
   qualifier: string;
@@ -16,7 +15,6 @@ const SearchMatrixPreview: React.FC<SearchMatrixPreviewProps> = ({
   manufacturer,
   itemName,
   includeYears,
-  anyYear,
   yearStart,
   yearEnd,
   qualifier,
@@ -25,7 +23,7 @@ const SearchMatrixPreview: React.FC<SearchMatrixPreviewProps> = ({
   const generateSearchMatrix = () => {
     const combinations = [];
     
-    if (includeYears && !anyYear) {
+    if (includeYears) {
       // Year-based searches (vehicles, vintage items, etc.)
       for (let year = yearStart; year <= yearEnd; year++) {
         combinations.push(`${year} ${manufacturer} ${itemName}`);

@@ -26,8 +26,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
     price_threshold: 500,
     slider_percent: 50,
     email_address: '',
-    include_years: false,
-    any_year: false
+    include_years: false
   });
 
   const maxPrice = formData.price_threshold * (1 + formData.slider_percent / 100);
@@ -42,9 +41,9 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       user_id: tempUserId,
       item_name: formData.item_name,
       manufacturer: formData.manufacturer,
-      // If any_year is checked, use default wide range. If include_years is checked, use specified range. Otherwise, use defaults.
-      year_start: formData.any_year ? 1900 : (formData.include_years ? formData.year_start : 1900),
-      year_end: formData.any_year ? currentYear : (formData.include_years ? formData.year_end : currentYear),
+      // If include_years is checked, use specified range. Otherwise, use default wide range.
+      year_start: formData.include_years ? formData.year_start : 1900,
+      year_end: formData.include_years ? formData.year_end : currentYear,
       qualifier: formData.qualifier,
       sub_qualifier: formData.sub_qualifier,
       price_threshold: formData.price_threshold,
@@ -68,8 +67,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       price_threshold: 500,
       slider_percent: 50,
       email_address: '',
-      include_years: false,
-      any_year: false
+      include_years: false
     });
   };
 
@@ -108,16 +106,10 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
 
           <SearchYearSelector
             includeYears={formData.include_years}
-            anyYear={formData.any_year}
             yearStart={formData.year_start}
             yearEnd={formData.year_end}
             currentYear={currentYear}
             onIncludeYearsChange={(checked) => setFormData({...formData, include_years: checked})}
-            onAnyYearChange={(checked) => setFormData({
-              ...formData, 
-              any_year: checked,
-              include_years: checked ? false : formData.include_years
-            })}
             onYearStartChange={(year) => setFormData({...formData, year_start: year})}
             onYearEndChange={(year) => setFormData({...formData, year_end: year})}
           />
@@ -166,7 +158,6 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
             manufacturer={formData.manufacturer}
             itemName={formData.item_name}
             includeYears={formData.include_years}
-            anyYear={formData.any_year}
             yearStart={formData.year_start}
             yearEnd={formData.year_end}
             qualifier={formData.qualifier}
