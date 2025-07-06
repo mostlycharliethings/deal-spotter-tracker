@@ -30,15 +30,13 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
     showIgnored: false
   });
 
-  // Debug logging
   console.log('ListingsDashboard render:', {
     listingsReceived: listings.length,
-    filteredCount: filteredListings.length,
-    listings: listings
+    filteredCount: filteredListings.length
   });
 
   useEffect(() => {
-    let filtered = listings;
+    let filtered = [...listings];
 
     // Filter by source
     if (filters.source) {
@@ -65,8 +63,8 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(listing => 
         listing.title.toLowerCase().includes(searchLower) ||
-        listing.description?.toLowerCase().includes(searchLower) ||
-        listing.location?.toLowerCase().includes(searchLower)
+        (listing.description && listing.description.toLowerCase().includes(searchLower)) ||
+        (listing.location && listing.location.toLowerCase().includes(searchLower))
       );
     }
 
@@ -75,7 +73,6 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
       filtered = filtered.filter(listing => !listing.is_ignored);
     }
 
-    console.log('Filtered listings:', filtered.length, 'from', listings.length);
     setFilteredListings(filtered);
   }, [listings, filters]);
 
@@ -109,11 +106,6 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
       </Badge>
     );
   };
-
-  const uniqueSources = [...new Set(listings.map(l => l.source_name))];
-
-  // Debug logging for render
-  console.log('ListingsDashboard rendering with', filteredListings.length, 'filtered listings');
 
   return (
     <div className="space-y-6">
