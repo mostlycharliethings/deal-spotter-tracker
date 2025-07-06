@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,11 +11,13 @@ interface SearchConfigFormProps {
 }
 
 const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) => {
+  const currentYear = new Date().getFullYear();
+  
   const [formData, setFormData] = useState({
     item_name: '',
     manufacturer: '',
     year_start: 2000,
-    year_end: 2024,
+    year_end: currentYear,
     qualifier: '',
     sub_qualifier: '',
     price_threshold: 50000,
@@ -109,7 +110,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
                 value={formData.year_start}
                 onChange={(e) => setFormData({...formData, year_start: parseInt(e.target.value)})}
                 min="1900"
-                max="2024"
+                max={currentYear}
                 required
               />
             </div>
@@ -121,7 +122,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
                 value={formData.year_end}
                 onChange={(e) => setFormData({...formData, year_end: parseInt(e.target.value)})}
                 min="1900"
-                max="2024"
+                max={currentYear}
                 required
               />
             </div>
