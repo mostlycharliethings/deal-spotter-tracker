@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -85,26 +84,27 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="manufacturer">Manufacturer</Label>
-            <Input
-              id="manufacturer"
-              value={formData.manufacturer}
-              onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
-              placeholder="e.g., Porsche"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="item_name">Item Name</Label>
-            <Input
-              id="item_name"
-              value={formData.item_name}
-              onChange={(e) => setFormData({...formData, item_name: e.target.value})}
-              placeholder="e.g., 911"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="manufacturer">Manufacturer</Label>
+              <Input
+                id="manufacturer"
+                value={formData.manufacturer}
+                onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
+                placeholder="e.g., Porsche"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="item_name">Item Name</Label>
+              <Input
+                id="item_name"
+                value={formData.item_name}
+                onChange={(e) => setFormData({...formData, item_name: e.target.value})}
+                placeholder="e.g., 911"
+                required
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
