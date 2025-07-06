@@ -48,7 +48,7 @@ const Index = () => {
               </p>
 
               <p className="leading-relaxed text-lg">
-                While leading Production Support for Shell Energy, I redesigned their CI/CD pipeline, rebuilt their incident intake workflows, and overhauled component tracking—saving them an estimated <span className="font-semibold text-copper-600">$2.88 million</span> and positioning their Salesforce platform to support 350,000 new customers. At CG Infinity and Lightbox RE, I built customer success operations from the ground up, cut attrition rates from <span className="font-semibold text-copper-600">15% to under 2%</span>, and turned at-risk teams into enterprise-grade operations.
+                While leading Production Support for Shell Energy, I redesigned their CI/CD pipeline, rebuilt their incident intake workflows, and overhauled component tracking—saving them an estimated <span className="font-semibold text-copper-600">$2.88 million</span> and positioning their Salesforce platform to support 350,000 new customers across 7 brands. At CG Infinity and Lightbox RE, I built customer success operations from the ground up, cut attrition rates from <span className="font-semibold text-copper-600">15% to under 2%</span>, and turned at-risk teams into enterprise-grade operations.
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700">
@@ -58,13 +58,13 @@ const Index = () => {
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Solutions Group</span> — a Woman-Owned, HUBZone-certified government contractor delivering IT professional services to the federal sector.
+                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Group</span> — a private consulting firm focused on business process reengineering for small and mid-sized companies. There, I developed the <span className="font-semibold text-copper-600">IPE Methodology</span> ("Idiot Proof Everything") and the proprietary <span className="font-semibold text-copper-600">C.L.A.R.I.T.Y.™ Framework</span>, a 7-step system designed to uncover blind spots, eliminate waste, and streamline performance at every level of the organization.
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Group</span> — a private consulting firm focused on business process reengineering for small and mid-sized companies. There, I developed the <span className="font-semibold text-copper-600">IPE Methodology</span> ("Idiot Proof Everything") and the proprietary <span className="font-semibold text-copper-600">C.L.A.R.I.T.Y.™ Framework</span>, a 7-step system designed to uncover blind spots, eliminate waste, and streamline performance at every level of the organization.
+                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Solutions Group</span> — a Woman-Owned, HUBZone-certified government contractor delivering IT professional services to the federal sector.
                   </p>
                 </div>
               </div>
