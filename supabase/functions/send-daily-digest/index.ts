@@ -131,9 +131,9 @@ const handler = async (req: Request): Promise<Response> => {
         })
       );
 
-      // Send the email
+      // Send the email using a verified sender address
       const emailResult = await resend.emails.send({
-        from: 'Feed Me Haystacks <digest@your-domain.com>',
+        from: 'Feed Me Haystacks <onboarding@resend.dev>',
         to: [email],
         subject: totalListings > 0 
           ? `🎯 Daily Digest: ${totalListings} new listings found${goodDeals > 0 ? ` (${goodDeals} good deals!)` : ''}`
