@@ -69,7 +69,7 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
-                  Helpful utilities and applications
+                  Helpful utilities I've built
                 </p>
                 <Link to="/tools">
                   <Button size="lg" className="w-full">

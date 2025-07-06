@@ -25,7 +25,7 @@ const Tools = () => {
           <div className="text-center space-y-4">
             <h2 className="text-5xl font-bold">Tools</h2>
             <p className="text-xl text-muted-foreground">
-              Helpful utilities and applications
+              Helpful utilities I've built
             </p>
           </div>
 
