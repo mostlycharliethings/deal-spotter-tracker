@@ -28,6 +28,15 @@ const FeedMeHaystacks = () => {
   const ignoreListing = useIgnoreListing();
   const unignoreListing = useUnignoreListing();
 
+  // Debug logging
+  console.log('FeedMeHaystacks render:', {
+    searchesCount: searches.length,
+    listingsCount: listings.length,
+    searchesLoading,
+    listingsLoading,
+    listings: listings
+  });
+
   const handleSearchCreated = async (searchConfigData: Omit<SearchConfig, 'id' | 'created_at'>) => {
     console.log('Creating search configuration:', searchConfigData);
     
@@ -259,6 +268,7 @@ const FeedMeHaystacks = () => {
           </TabsContent>
 
           <TabsContent value="listings" className="mt-6">
+            {console.log('Rendering listings tab with:', listings.length, 'listings')}
             {listings.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
@@ -273,11 +283,14 @@ const FeedMeHaystacks = () => {
                 </CardContent>
               </Card>
             ) : (
-              <ListingsDashboard
-                listings={listings}
-                onIgnoreListing={handleIgnoreListing}
-                onUnignoreListing={handleUnignoreListing}
-              />
+              <div>
+                {console.log('About to render ListingsDashboard with listings:', listings)}
+                <ListingsDashboard
+                  listings={listings}
+                  onIgnoreListing={handleIgnoreListing}
+                  onUnignoreListing={handleUnignoreListing}
+                />
+              </div>
             )}
           </TabsContent>
 

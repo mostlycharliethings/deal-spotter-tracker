@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,6 +29,13 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
     showIgnored: false
   });
 
+  // Debug logging
+  console.log('ListingsDashboard render:', {
+    listingsReceived: listings.length,
+    filteredCount: filteredListings.length,
+    listings: listings
+  });
+
   useEffect(() => {
     let filtered = listings;
 
@@ -58,7 +64,7 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(listing => 
         listing.title.toLowerCase().includes(searchLower) ||
-        listing.description.toLowerCase().includes(searchLower) ||
+        listing.description?.toLowerCase().includes(searchLower) ||
         listing.location?.toLowerCase().includes(searchLower)
       );
     }
@@ -68,6 +74,7 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
       filtered = filtered.filter(listing => !listing.is_ignored);
     }
 
+    console.log('Filtered listings:', filtered.length, 'from', listings.length);
     setFilteredListings(filtered);
   }, [listings, filters]);
 
@@ -106,6 +113,8 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
 
   return (
     <div className="space-y-6">
+      {console.log('ListingsDashboard rendering with', filteredListings.length, 'filtered listings')}
+      
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -129,7 +138,7 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">All Sources</SelectItem>
-                {uniqueSources.map(source => (
+                {[...new Set(listings.map(l => l.source_name))].map(source => (
                   <SelectItem key={source} value={source}>{source}</SelectItem>
                 ))}
               </SelectContent>
@@ -168,80 +177,86 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Age</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredListings.map((listing) => (
-                  <TableRow key={listing.id} className={listing.is_ignored ? 'opacity-50' : ''}>
-                    <TableCell className="font-medium max-w-md">
-                      <div className="truncate">{listing.title}</div>
-                      {listing.description && (
-                        <div className="text-sm text-muted-foreground truncate mt-1">
-                          {listing.description}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-bold">${listing.price.toLocaleString()}</div>
-                      {listing.is_price_changed && (
-                        <div className="text-xs text-orange-500">Price Changed</div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {getSourceBadge(listing.source_name)}
-                    </TableCell>
-                    <TableCell>{listing.location || 'N/A'}</TableCell>
-                    <TableCell>
-                      {getPriceBadge(listing)}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {listing.listing_age || 'Unknown'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open(listing.source_url, '_blank')}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                        
-                        {listing.is_ignored ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => onUnignoreListing(listing.id)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleIgnore(listing)}
-                          >
-                            <EyeOff className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
+          {filteredListings.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No listings match your current filters.</p>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Age</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredListings.map((listing) => (
+                    <TableRow key={listing.id} className={listing.is_ignored ? 'opacity-50' : ''}>
+                      <TableCell className="font-medium max-w-md">
+                        <div className="truncate">{listing.title}</div>
+                        {listing.description && (
+                          <div className="text-sm text-muted-foreground truncate mt-1">
+                            {listing.description}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-bold">${listing.price.toLocaleString()}</div>
+                        {listing.is_price_changed && (
+                          <div className="text-xs text-orange-500">Price Changed</div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {getSourceBadge(listing.source_name)}
+                      </TableCell>
+                      <TableCell>{listing.location || 'N/A'}</TableCell>
+                      <TableCell>
+                        {getPriceBadge(listing)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {listing.listing_age || 'Unknown'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(listing.source_url, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                          
+                          {listing.is_ignored ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => onUnignoreListing(listing.id)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleIgnore(listing)}
+                            >
+                              <EyeOff className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
