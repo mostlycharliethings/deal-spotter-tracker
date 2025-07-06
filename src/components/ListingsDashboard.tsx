@@ -24,8 +24,8 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
   const { toast } = useToast();
   const [filteredListings, setFilteredListings] = useState<Listing[]>(listings);
   const [filters, setFilters] = useState({
-    source: '',
-    priceCategory: '',
+    source: 'all',
+    priceCategory: 'all',
     search: '',
     showIgnored: false
   });
@@ -39,12 +39,12 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
     let filtered = [...listings];
 
     // Filter by source
-    if (filters.source) {
+    if (filters.source !== 'all') {
       filtered = filtered.filter(listing => listing.source_name === filters.source);
     }
 
     // Filter by price category
-    if (filters.priceCategory) {
+    if (filters.priceCategory !== 'all') {
       switch (filters.priceCategory) {
         case 'threshold':
           filtered = filtered.filter(listing => listing.is_within_threshold);
@@ -131,7 +131,7 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
                 <SelectValue placeholder="All Sources" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Sources</SelectItem>
+                <SelectItem value="all">All Sources</SelectItem>
                 {[...new Set(listings.map(l => l.source_name))].map(source => (
                   <SelectItem key={source} value={source}>{source}</SelectItem>
                 ))}
@@ -143,7 +143,7 @@ const ListingsDashboard: React.FC<ListingsDashboardProps> = ({
                 <SelectValue placeholder="All Prices" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Prices</SelectItem>
+                <SelectItem value="all">All Prices</SelectItem>
                 <SelectItem value="threshold">Under Threshold</SelectItem>
                 <SelectItem value="slider">Within Range</SelectItem>
                 <SelectItem value="above">Above Range</SelectItem>
