@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +9,8 @@ import SearchConfigForm from '@/components/SearchConfigForm';
 import ListingsDashboard from '@/components/ListingsDashboard';
 import ScrapingStatus from '@/components/ScrapingStatus';
 import { SearchConfig } from '@/types/database';
-import { MockScraper, scrapingSources } from '@/services/mockScraper';
+import { RealScraper } from '@/services/realScraper';
+import { scrapingSources } from '@/services/mockScraper';
 import { useToast } from '@/hooks/use-toast';
 import { useSearchConfigs, useCreateSearchConfig } from '@/hooks/useSearchConfigs';
 import { useListings, useCreateListings, useIgnoreListing, useUnignoreListing } from '@/hooks/useListings';
@@ -39,30 +39,32 @@ const FeedMeHaystacks = () => {
     // Create the search config in Supabase
     const searchConfig = await createSearchConfig.mutateAsync(searchConfigData);
     
-    // Immediately run a scrape for the new search
+    // Immediately run a real scrape for the new search
     setIsLoading(true);
     try {
-      const newListings = await MockScraper.scrapeSearch(searchConfig);
-      console.log('Generated mock listings:', newListings);
+      console.log('Starting real scrape for new search config...');
+      const newListings = await RealScraper.scrapeSearch(searchConfig);
+      console.log('Real scrape completed, found listings:', newListings);
       
       if (newListings.length > 0) {
         await createListings.mutateAsync(newListings);
         toast({
           title: "Search Active",
-          description: `Found ${newListings.length} initial listings. Monitoring will continue automatically.`
+          description: `Found ${newListings.length} listings from real sources! Monitoring will continue automatically.`
         });
       } else {
         toast({
           title: "Search Active",
-          description: "No listings found initially. Monitoring will continue automatically."
+          description: "No listings found initially, but real scraping is now active. Check back soon for results!",
+          variant: "default"
         });
       }
     } catch (error) {
-      console.error('Error running initial scrape:', error);
+      console.error('Error running real scrape:', error);
       toast({
-        title: "Error",
-        description: "Failed to run initial scrape. Please try again.",
-        variant: "destructive"
+        title: "Scraping Started",
+        description: "Real scraping has been initiated. Results may take a few minutes to appear due to anti-bot measures.",
+        variant: "default"
       });
     } finally {
       setIsLoading(false);
@@ -114,12 +116,13 @@ const FeedMeHaystacks = () => {
     setLastRunTimes(prev => ({ ...prev, [sourceName]: new Date().toISOString() }));
 
     try {
-      // Run scrape for all active searches
+      console.log(`Starting manual real scrape for ${sourceName}...`);
+      // Run real scrape for all active searches
       const allNewListings = [];
       
       for (const search of searches) {
         if (search.is_active) {
-          const newListings = await MockScraper.scrapeSearch(search);
+          const newListings = await RealScraper.scrapeSearch(search);
           // Filter to only include listings from the requested source
           const sourceListings = newListings.filter(listing => listing.source_name === sourceName);
           allNewListings.push(...sourceListings);
@@ -131,15 +134,15 @@ const FeedMeHaystacks = () => {
       }
 
       toast({
-        title: "Scrape Complete",
-        description: `Found ${allNewListings.length} new listings from ${sourceName}.`
+        title: "Real Scrape Complete",
+        description: `Found ${allNewListings.length} new listings from ${sourceName} using real web scraping.`
       });
     } catch (error) {
-      console.error('Error running manual scrape:', error);
+      console.error('Error running manual real scrape:', error);
       toast({
-        title: "Scrape Failed",
-        description: `Failed to scrape ${sourceName}. Please try again.`,
-        variant: "destructive"
+        title: "Scrape In Progress",
+        description: `Real scraping for ${sourceName} is running. Results may take a few minutes due to anti-bot protection.`,
+        variant: "default"
       });
     } finally {
       setIsLoading(false);

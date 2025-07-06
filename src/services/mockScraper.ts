@@ -130,11 +130,11 @@ export const scrapingSources = [
   { name: 'Facebook Marketplace', tier: 1 as const, baseUrl: 'https://facebook.com/marketplace', scrapeFrequency: 5, isActive: true },
   { name: 'Craigslist', tier: 1 as const, baseUrl: 'https://craigslist.org', scrapeFrequency: 5, isActive: true },
   { name: 'eBay Motors', tier: 1 as const, baseUrl: 'https://ebay.com/motors', scrapeFrequency: 5, isActive: true },
-  { name: 'OfferUp', tier: 1 as const, baseUrl: 'https://offerup.com', scrapeFrequency: 5, isActive: true },
+  { name: 'OfferUp', tier: 1 as const, baseUrl: 'https://offerup.com', scrapeFrequency: 5, isActive: false },
   { name: 'Kijiji', tier: 1 as const, baseUrl: 'https://kijiji.ca', scrapeFrequency: 5, isActive: false },
   { name: 'Gumtree', tier: 1 as const, baseUrl: 'https://gumtree.com', scrapeFrequency: 5, isActive: false },
-  { name: 'Rennlist Forums', tier: 2 as const, baseUrl: 'https://rennlist.com', scrapeFrequency: 2, isActive: true },
-  { name: 'Cars & Coffee Discord', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: true },
-  { name: 'Reddit r/Porsche', tier: 2 as const, baseUrl: 'https://reddit.com/r/porsche', scrapeFrequency: 2, isActive: true },
-  { name: 'PCA Forums', tier: 2 as const, baseUrl: 'https://forums.pelicanparts.com', scrapeFrequency: 2, isActive: true }
+  { name: 'Rennlist Forums', tier: 2 as const, baseUrl: 'https://rennlist.com', scrapeFrequency: 2, isActive: false },
+  { name: 'Cars & Coffee Discord', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: false },
+  { name: 'Reddit r/Porsche', tier: 2 as const, baseUrl: 'https://reddit.com/r/porsche', scrapeFrequency: 2, isActive: false },
+  { name: 'PCA Forums', tier: 2 as const, baseUrl: 'https://forums.pelicanparts.com', scrapeFrequency: 2, isActive: false }
 ];
