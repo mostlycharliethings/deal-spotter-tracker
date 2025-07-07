@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import SearchConfigsManager from '@/components/SearchConfigsManager';
+import SearchConfigForm from '@/components/SearchConfigForm';
 import ListingsDashboard from '@/components/ListingsDashboard';
 import ScrapingStatus from '@/components/ScrapingStatus';
 import { useSearchConfigs } from '@/hooks/useSearchConfigs';
@@ -241,12 +241,7 @@ const FeedMeHaystacks = () => {
               <CardTitle>Create New Search Configuration</CardTitle>
             </CardHeader>
             <CardContent>
-              <SearchConfigsManager 
-                searchConfigs={[]}
-                onManualRun={handleManualRun}
-                onEditSearch={handleEditSearch}
-                isRunning={isScrapingInProgress}
-              />
+              <SearchConfigForm />
             </CardContent>
           </Card>
         </TabsContent>
