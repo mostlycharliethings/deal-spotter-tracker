@@ -1,4 +1,3 @@
-
 import { Listing, SearchConfig } from '@/types/database';
 
 export class RealScraper {
@@ -41,7 +40,7 @@ export class RealScraper {
       
       console.log('Scraping Facebook Marketplace with URL:', searchUrl);
       
-      const proxyUrl = `${this.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
+      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
       const response = await fetch(proxyUrl);
       const data = await response.json();
       
@@ -68,7 +67,7 @@ export class RealScraper {
       
       console.log('Scraping Craigslist with URL:', searchUrl);
       
-      const proxyUrl = `${this.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
+      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
       const response = await fetch(proxyUrl);
       const data = await response.json();
       
@@ -95,7 +94,7 @@ export class RealScraper {
       
       console.log('Scraping eBay with URL:', searchUrl);
       
-      const proxyUrl = `${this.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
+      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
       const response = await fetch(proxyUrl);
       const data = await response.json();
       
@@ -122,7 +121,7 @@ export class RealScraper {
       
       console.log('Scraping OfferUp with URL:', searchUrl);
       
-      const proxyUrl = `${this.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
+      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
       const response = await fetch(proxyUrl);
       const data = await response.json();
       
