@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, List, Settings, Activity, ArrowLeft, Mail } from 'lucide-react';
+import { Search, List, Settings, Activity, ArrowLeft, Mail, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import SearchConfigForm from '@/components/SearchConfigForm';
+import SearchConfigsManager from '@/components/SearchConfigsManager';
 import ListingsDashboard from '@/components/ListingsDashboard';
 import ScrapingStatus from '@/components/ScrapingStatus';
 import { SearchConfig } from '@/types/database';
@@ -149,6 +150,48 @@ const FeedMeHaystacks = () => {
     }
   };
 
+  const handleManualRunSearch = async (searchId: string) => {
+    const search = searches.find(s => s.id === searchId);
+    if (!search) {
+      toast({
+        title: "Search Not Found",
+        description: "The selected search configuration could not be found.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      console.log('Starting manual scrape for search:', search.id);
+      const newListings = await RealScraper.scrapeSearch(search);
+      console.log('Manual scrape completed, found listings:', newListings);
+      
+      if (newListings.length > 0) {
+        await createListings.mutateAsync(newListings);
+        toast({
+          title: "Search Complete",
+          description: `Found ${newListings.length} new listings for ${search.manufacturer} ${search.item_name}!`
+        });
+      } else {
+        toast({
+          title: "Search Complete",
+          description: `No new listings found for ${search.manufacturer} ${search.item_name}. Check back later!`,
+          variant: "default"
+        });
+      }
+    } catch (error) {
+      console.error('Error running manual search:', error);
+      toast({
+        title: "Search In Progress",
+        description: `Scraping for ${search.manufacturer} ${search.item_name} is running. Results may take a few minutes.`,
+        variant: "default"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getListingStats = () => {
     const total = listings.filter(l => !l.is_ignored).length;
     const underThreshold = listings.filter(l => !l.is_ignored && l.is_within_threshold).length;
@@ -245,10 +288,14 @@ const FeedMeHaystacks = () => {
         </div>
 
         <Tabs defaultValue="search" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="search" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               New Search
+            </TabsTrigger>
+            <TabsTrigger value="manage" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              My Searches ({searches.length})
             </TabsTrigger>
             <TabsTrigger value="listings" className="flex items-center gap-2">
               <List className="h-4 w-4" />
@@ -264,6 +311,14 @@ const FeedMeHaystacks = () => {
             <div className="flex justify-center">
               <SearchConfigForm onSearchCreated={handleSearchCreated} />
             </div>
+          </TabsContent>
+
+          <TabsContent value="manage" className="mt-6">
+            <SearchConfigsManager 
+              searchConfigs={searches}
+              onManualRun={handleManualRunSearch}
+              isRunning={isLoading}
+            />
           </TabsContent>
 
           <TabsContent value="listings" className="mt-6">

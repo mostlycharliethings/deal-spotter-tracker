@@ -63,3 +63,58 @@ export const useCreateSearchConfig = () => {
     },
   });
 };
+
+export const useUpdateSearchConfig = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (update: { id: string } & Partial<SearchConfig>) => {
+      const { id, ...updateData } = update;
+      console.log('Updating search config:', id, updateData);
+      
+      const { data, error } = await supabase
+        .from('search_configs')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating search config:', error);
+        throw error;
+      }
+
+      console.log('Updated search config:', data);
+      return data as SearchConfig;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['search-configs'] });
+    },
+  });
+};
+
+export const useDeleteSearchConfig = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (searchId: string) => {
+      console.log('Deleting search config:', searchId);
+      
+      const { error } = await supabase
+        .from('search_configs')
+        .delete()
+        .eq('id', searchId);
+
+      if (error) {
+        console.error('Error deleting search config:', error);
+        throw error;
+      }
+
+      console.log('Deleted search config:', searchId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['search-configs'] });
+    },
+  });
+};
