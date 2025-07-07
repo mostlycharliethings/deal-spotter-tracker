@@ -86,35 +86,50 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   const sendConfirmationEmail = async (searchConfig: Omit<SearchConfig, 'id' | 'created_at'>) => {
     try {
       setIsSendingConfirmation(true);
+      console.log('Starting to send confirmation email to:', searchConfig.email_address);
       
-      const { error } = await supabase.functions.invoke('send-search-confirmation', {
-        body: {
-          email: searchConfig.email_address,
-          manufacturer: searchConfig.manufacturer,
-          itemName: searchConfig.item_name,
-          yearStart: searchConfig.year_start,
-          yearEnd: searchConfig.year_end,
-          qualifier: searchConfig.qualifier,
-          subQualifier: searchConfig.sub_qualifier,
-          priceThreshold: searchConfig.price_threshold,
-          maxPrice: searchConfig.max_price_allowed,
-        },
+      const emailPayload = {
+        email: searchConfig.email_address,
+        manufacturer: searchConfig.manufacturer,
+        itemName: searchConfig.item_name,
+        yearStart: searchConfig.year_start,
+        yearEnd: searchConfig.year_end,
+        qualifier: searchConfig.qualifier,
+        subQualifier: searchConfig.sub_qualifier,
+        priceThreshold: searchConfig.price_threshold,
+        maxPrice: searchConfig.max_price_allowed,
+      };
+      
+      console.log('Email payload:', emailPayload);
+      
+      const { data, error } = await supabase.functions.invoke('send-search-confirmation', {
+        body: emailPayload,
       });
 
+      console.log('Supabase function response:', { data, error });
+
       if (error) {
-        console.error('Error sending confirmation email:', error);
-        // Don't throw error here - we don't want to fail the search creation if email fails
+        console.error('Supabase function error:', error);
         toast({
           title: "Search Created",
-          description: "Your search is active, but we couldn't send a confirmation email. Check back soon for results!",
+          description: `Your search is active, but we couldn't send a confirmation email: ${error.message}. Check back soon for results!`,
           variant: "default"
         });
       } else {
-        console.log('Confirmation email sent successfully');
+        console.log('Confirmation email sent successfully:', data);
+        toast({
+          title: "Search Created Successfully! 🎉",
+          description: `Your search is active and a confirmation email has been sent to ${searchConfig.email_address}.`,
+          duration: 5000
+        });
       }
     } catch (error) {
-      console.error('Failed to send confirmation email:', error);
-      // Don't throw - email is nice-to-have, not critical
+      console.error('Failed to send confirmation email - caught exception:', error);
+      toast({
+        title: "Search Created",
+        description: `Your search is active, but we couldn't send a confirmation email. Error: ${error instanceof Error ? error.message : 'Unknown error'}. Check back soon for results!`,
+        variant: "default"
+      });
     } finally {
       setIsSendingConfirmation(false);
     }
@@ -175,10 +190,8 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
 
       console.log('Submitting search config:', searchConfig);
       
-      // Send confirmation email in the background
-      sendConfirmationEmail(searchConfig);
-      
-      // Create the search
+      // Send confirmation email and create the search
+      await sendConfirmationEmail(searchConfig);
       onSearchCreated(searchConfig);
     }
     
@@ -361,8 +374,17 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
           />
 
           <div className="flex gap-4">
-            <Button type="submit" className="flex-1" disabled={updateSearchConfig.isPending}>
-              {isEditing ? 'Update Search Configuration' : 'Create Search Configuration'}
+            <Button 
+              type="submit" 
+              className="flex-1" 
+              disabled={updateSearchConfig.isPending || isSendingConfirmation}
+            >
+              {isSendingConfirmation 
+                ? 'Sending Confirmation...' 
+                : isEditing 
+                  ? 'Update Search Configuration' 
+                  : 'Create Search Configuration'
+              }
             </Button>
             {isEditing && (
               <Button type="button" variant="outline" onClick={handleCancel}>

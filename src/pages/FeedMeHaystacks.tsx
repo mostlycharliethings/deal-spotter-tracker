@@ -39,13 +39,7 @@ const FeedMeHaystacks = () => {
     
     // Create the search config in Supabase
     const searchConfig = await createSearchConfig.mutateAsync(searchConfigData);
-    
-    // Show success message that includes email confirmation
-    toast({
-      title: "Search Created Successfully! 🎉",
-      description: `Your search for ${searchConfigData.manufacturer} ${searchConfigData.item_name} is now active. A confirmation email has been sent to ${searchConfigData.email_address}.`,
-      duration: 5000
-    });
+    console.log('Search config created successfully:', searchConfig);
     
     // Immediately run a real scrape for the new search
     setIsLoading(true);
@@ -224,7 +218,7 @@ const FeedMeHaystacks = () => {
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold">Feed Me Haystacks</h1>
+            <h1 className="text-4xl font-bold">Feed Me Haystricks</h1>
             <p className="text-muted-foreground">Loading your dashboard...</p>
           </div>
         </div>
@@ -245,7 +239,7 @@ const FeedMeHaystacks = () => {
         </div>
 
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold">Feed Me Haystracks</h1>
+          <h1 className="text-4xl font-bold">Feed Me Haystricks</h1>
           <p className="text-muted-foreground">
             Automated price monitoring across multiple marketplaces using real data
           </p>
