@@ -21,12 +21,14 @@ import { format } from 'date-fns';
 interface SearchConfigsManagerProps {
   searchConfigs: SearchConfig[];
   onManualRun: (searchId: string) => void;
+  onEditSearch: (search: SearchConfig) => void;
   isRunning: boolean;
 }
 
 const SearchConfigsManager: React.FC<SearchConfigsManagerProps> = ({ 
   searchConfigs, 
   onManualRun,
+  onEditSearch,
   isRunning 
 }) => {
   const { toast } = useToast();
@@ -160,14 +162,24 @@ const SearchConfigsManager: React.FC<SearchConfigsManagerProps> = ({
                       size="sm"
                       onClick={() => onManualRun(search.id)}
                       disabled={isRunning}
+                      title="Run search now"
                     >
                       <Play className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => onEditSearch(search)}
+                      title="Edit search configuration"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleDelete(search.id, `${search.manufacturer} ${search.item_name}`)}
                       disabled={deleteSearchConfig.isPending}
+                      title="Delete search"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

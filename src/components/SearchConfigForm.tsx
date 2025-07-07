@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,13 +8,23 @@ import { SearchConfig } from '@/types/database';
 import SearchYearSelector from './SearchYearSelector';
 import SearchPriceConfig from './SearchPriceConfig';
 import SearchMatrixPreview from './SearchMatrixPreview';
+import { useUpdateSearchConfig } from '@/hooks/useSearchConfigs';
+import { useToast } from '@/hooks/use-toast';
 
 interface SearchConfigFormProps {
   onSearchCreated: (search: Omit<SearchConfig, 'id' | 'created_at'>) => void;
+  editingSearch?: SearchConfig | null;
+  onCancelEdit?: () => void;
 }
 
-const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) => {
+const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ 
+  onSearchCreated, 
+  editingSearch,
+  onCancelEdit 
+}) => {
   const currentYear = new Date().getFullYear();
+  const { toast } = useToast();
+  const updateSearchConfig = useUpdateSearchConfig();
   
   const [formData, setFormData] = useState({
     item_name: '',
@@ -29,34 +39,108 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
     include_years: false
   });
 
+  // Update form when editing a search
+  useEffect(() => {
+    if (editingSearch) {
+      setFormData({
+        item_name: editingSearch.item_name,
+        manufacturer: editingSearch.manufacturer,
+        year_start: editingSearch.year_start,
+        year_end: editingSearch.year_end,
+        qualifier: editingSearch.qualifier || '',
+        sub_qualifier: editingSearch.sub_qualifier || '',
+        price_threshold: editingSearch.price_threshold,
+        slider_percent: editingSearch.slider_percent,
+        email_address: editingSearch.email_address,
+        include_years: editingSearch.year_start !== 1900 || editingSearch.year_end !== currentYear
+      });
+    }
+  }, [editingSearch, currentYear]);
+
   const maxPrice = formData.price_threshold * (1 + formData.slider_percent / 100);
+  const isEditing = !!editingSearch;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Generate a proper UUID for the user_id
-    const tempUserId = crypto.randomUUID();
-    
-    const searchConfig = {
-      user_id: tempUserId,
-      item_name: formData.item_name,
-      manufacturer: formData.manufacturer,
-      // If include_years is checked, use specified range. Otherwise, use default wide range.
-      year_start: formData.include_years ? formData.year_start : 1900,
-      year_end: formData.include_years ? formData.year_end : currentYear,
-      qualifier: formData.qualifier,
-      sub_qualifier: formData.sub_qualifier,
-      price_threshold: formData.price_threshold,
-      slider_percent: formData.slider_percent,
-      max_price_allowed: maxPrice,
-      email_address: formData.email_address,
-      is_active: true
-    };
+    if (isEditing) {
+      // Update existing search
+      try {
+        await updateSearchConfig.mutateAsync({
+          id: editingSearch.id,
+          item_name: formData.item_name,
+          manufacturer: formData.manufacturer,
+          year_start: formData.include_years ? formData.year_start : 1900,
+          year_end: formData.include_years ? formData.year_end : currentYear,
+          qualifier: formData.qualifier,
+          sub_qualifier: formData.sub_qualifier,
+          price_threshold: formData.price_threshold,
+          slider_percent: formData.slider_percent,
+          max_price_allowed: maxPrice,
+          email_address: formData.email_address,
+        });
 
-    console.log('Submitting search config:', searchConfig);
-    onSearchCreated(searchConfig);
+        toast({
+          title: "Search Updated",
+          description: "Your search configuration has been updated successfully."
+        });
+
+        if (onCancelEdit) {
+          onCancelEdit();
+        }
+      } catch (error) {
+        console.error('Error updating search:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update search configuration. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // Create new search
+      const tempUserId = crypto.randomUUID();
+      
+      const searchConfig = {
+        user_id: tempUserId,
+        item_name: formData.item_name,
+        manufacturer: formData.manufacturer,
+        year_start: formData.include_years ? formData.year_start : 1900,
+        year_end: formData.include_years ? formData.year_end : currentYear,
+        qualifier: formData.qualifier,
+        sub_qualifier: formData.sub_qualifier,
+        price_threshold: formData.price_threshold,
+        slider_percent: formData.slider_percent,
+        max_price_allowed: maxPrice,
+        email_address: formData.email_address,
+        is_active: true
+      };
+
+      console.log('Submitting search config:', searchConfig);
+      onSearchCreated(searchConfig);
+    }
     
-    // Reset form
+    // Reset form only if not editing
+    if (!isEditing) {
+      setFormData({
+        item_name: '',
+        manufacturer: '',
+        year_start: 2000,
+        year_end: currentYear,
+        qualifier: '',
+        sub_qualifier: '',
+        price_threshold: 500,
+        slider_percent: 50,
+        email_address: '',
+        include_years: false
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancelEdit) {
+      onCancelEdit();
+    }
+    // Reset form to default values
     setFormData({
       item_name: '',
       manufacturer: '',
@@ -74,9 +158,14 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>Configure Price Tracking Search</CardTitle>
+        <CardTitle>
+          {isEditing ? 'Edit Search Configuration' : 'Configure Price Tracking Search'}
+        </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Search for any item across multiple marketplaces and get notified when deals appear
+          {isEditing 
+            ? 'Modify your existing search parameters'
+            : 'Search for any item across multiple marketplaces and get notified when deals appear'
+          }
         </p>
       </CardHeader>
       <CardContent>
@@ -164,9 +253,16 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({ onSearchCreated }) 
             subQualifier={formData.sub_qualifier}
           />
 
-          <Button type="submit" className="w-full">
-            Create Search Configuration
-          </Button>
+          <div className="flex gap-4">
+            <Button type="submit" className="flex-1" disabled={updateSearchConfig.isPending}>
+              {isEditing ? 'Update Search Configuration' : 'Create Search Configuration'}
+            </Button>
+            {isEditing && (
+              <Button type="button" variant="outline" onClick={handleCancel}>
+                Cancel
+              </Button>
+            )}
+          </div>
         </form>
       </CardContent>
     </Card>

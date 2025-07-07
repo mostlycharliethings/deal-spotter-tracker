@@ -20,6 +20,7 @@ const FeedMeHaystacks = () => {
   const { toast } = useToast();
   const [lastRunTimes, setLastRunTimes] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [editingSearch, setEditingSearch] = useState<SearchConfig | null>(null);
 
   // Use Supabase hooks
   const { data: searches = [], isLoading: searchesLoading } = useSearchConfigs();
@@ -192,6 +193,16 @@ const FeedMeHaystacks = () => {
     }
   };
 
+  const handleEditSearch = (search: SearchConfig) => {
+    setEditingSearch(search);
+    // Switch to the search tab to show the form
+    // Note: You might want to add tab switching logic here if needed
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSearch(null);
+  };
+
   const getListingStats = () => {
     const total = listings.filter(l => !l.is_ignored).length;
     const underThreshold = listings.filter(l => !l.is_ignored && l.is_within_threshold).length;
@@ -309,7 +320,11 @@ const FeedMeHaystacks = () => {
 
           <TabsContent value="search" className="mt-6">
             <div className="flex justify-center">
-              <SearchConfigForm onSearchCreated={handleSearchCreated} />
+              <SearchConfigForm 
+                onSearchCreated={handleSearchCreated}
+                editingSearch={editingSearch}
+                onCancelEdit={handleCancelEdit}
+              />
             </div>
           </TabsContent>
 
@@ -317,6 +332,7 @@ const FeedMeHaystacks = () => {
             <SearchConfigsManager 
               searchConfigs={searches}
               onManualRun={handleManualRunSearch}
+              onEditSearch={handleEditSearch}
               isRunning={isLoading}
             />
           </TabsContent>
