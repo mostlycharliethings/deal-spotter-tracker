@@ -218,7 +218,7 @@ const FeedMeHaystacks = () => {
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold">Feed Me Haystricks</h1>
+            <h1 className="text-4xl font-bold">Feed Me Haystacks</h1>
             <p className="text-muted-foreground">Loading your dashboard...</p>
           </div>
         </div>
@@ -239,7 +239,7 @@ const FeedMeHaystacks = () => {
         </div>
 
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold">Feed Me Haystricks</h1>
+          <h1 className="text-4xl font-bold">Feed Me Haystacks</h1>
           <p className="text-muted-foreground">
             Automated price monitoring across multiple marketplaces using real data
           </p>
