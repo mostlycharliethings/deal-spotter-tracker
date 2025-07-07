@@ -11,11 +11,13 @@ import { useSearchConfigs } from '@/hooks/useSearchConfigs';
 import { useListings, useCreateListings, useIgnoreListing, useUnignoreListing } from '@/hooks/useListings';
 import { RealScraper, scrapingSources } from '@/services/realScraper';
 import { useToast } from '@/hooks/use-toast';
+import { SearchConfig } from '@/types/database';
 
 const FeedMeHaystacks = () => {
   const { toast } = useToast();
   const [isScrapingInProgress, setIsScrapingInProgress] = useState(false);
   const [lastRunTimes, setLastRunTimes] = useState<Record<string, string>>({});
+  const [editingSearch, setEditingSearch] = useState<SearchConfig | null>(null);
   
   const { data: searchConfigs = [], isLoading: isLoadingConfigs } = useSearchConfigs();
   const { data: listings = [], isLoading: isLoadingListings } = useListings();
@@ -113,6 +115,65 @@ const FeedMeHaystacks = () => {
     }
   };
 
+  const handleManualRun = async (searchId: string) => {
+    const config = searchConfigs.find(c => c.id === searchId);
+    if (!config) return;
+
+    if (isScrapingInProgress) {
+      toast({
+        title: "Scraping in Progress",
+        description: "Please wait for the current scraping operation to complete.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsScrapingInProgress(true);
+    
+    try {
+      console.log(`Starting manual run for search config: ${config.manufacturer} ${config.item_name}`);
+      
+      toast({
+        title: "Scraping Started",
+        description: `Searching for real listings: ${config.manufacturer} ${config.item_name}`
+      });
+
+      const newListings = await RealScraper.scrapeSearch(config);
+      
+      if (newListings.length > 0) {
+        console.log(`Found ${newListings.length} real listings for ${config.manufacturer} ${config.item_name}`);
+        await createListingsMutation.mutateAsync(newListings);
+        
+        toast({
+          title: "Real Listings Found",
+          description: `Successfully found ${newListings.length} real listings.`
+        });
+      } else {
+        toast({
+          title: "No Real Listings Found",
+          description: "No listings were found from the scraped sources.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error(`Error scraping for config ${config.id}:`, error);
+      toast({
+        title: "Scraping Error",
+        description: `Failed to scrape for ${config.manufacturer} ${config.item_name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive"
+      });
+    } finally {
+      setIsScrapingInProgress(false);
+    }
+  };
+
+  const handleEditSearch = (search: SearchConfig) => {
+    setEditingSearch(search);
+    // This would typically open an edit modal or navigate to an edit page
+    // For now, we'll just log it
+    console.log('Edit search:', search);
+  };
+
   const handleIgnoreListing = async (listingId: string, reason?: string) => {
     try {
       await ignoreListingMutation.mutateAsync({ listingId, reason });
@@ -181,8 +242,10 @@ const FeedMeHaystacks = () => {
             </CardHeader>
             <CardContent>
               <SearchConfigsManager 
-                onManualScrape={handleManualScrape}
-                isScrapingInProgress={isScrapingInProgress}
+                searchConfigs={[]}
+                onManualRun={handleManualRun}
+                onEditSearch={handleEditSearch}
+                isRunning={isScrapingInProgress}
               />
             </CardContent>
           </Card>
@@ -190,8 +253,10 @@ const FeedMeHaystacks = () => {
 
         <TabsContent value="configs" className="space-y-6">
           <SearchConfigsManager 
-            onManualScrape={handleManualScrape}
-            isScrapingInProgress={isScrapingInProgress}
+            searchConfigs={searchConfigs}
+            onManualRun={handleManualRun}
+            onEditSearch={handleEditSearch}
+            isRunning={isScrapingInProgress}
           />
         </TabsContent>
 
