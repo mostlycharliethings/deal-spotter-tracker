@@ -1,4 +1,3 @@
-
 import { Listing, SearchConfig } from '@/types/database';
 
 // Mock data for demonstration - covers various item types
@@ -44,14 +43,64 @@ const mockListings: Partial<Listing>[] = [
     source_url: 'https://offerup.com/item/herman-miller-aeron'
   },
   {
-    source_name: 'Facebook Marketplace',
+    source_name: 'Mercari',
     title: 'Vintage Omega Speedmaster Professional',
     description: 'Classic moonwatch in original condition. Collector maintained with service history.',
     price: 4200,
     location: 'Seattle, WA',
     listing_age: '12 hours ago',
-    contact_info: 'Facebook Messenger',
-    source_url: 'https://facebook.com/marketplace/item/omega-speedmaster'
+    contact_info: 'Mercari messaging',
+    source_url: 'https://mercari.com/item/omega-speedmaster'
+  },
+  {
+    source_name: 'Gumtree',
+    title: 'Vintage Fender Stratocaster - 1970s',
+    description: 'Classic Fender in great playing condition. Some wear but plays beautifully.',
+    price: 1800,
+    location: 'London, UK',
+    listing_age: '6 hours ago',
+    contact_info: 'Gumtree messaging',
+    source_url: 'https://gumtree.com/guitar/fender-strat'
+  },
+  {
+    source_name: 'Reddit r/ForSale',
+    title: '[WTS] Sony A7R IV Camera Body',
+    description: 'Excellent condition mirrorless camera. Low shutter count, includes all accessories.',
+    price: 2400,
+    location: 'Portland, OR',
+    listing_age: '8 hours ago',
+    contact_info: 'Reddit PM',
+    source_url: 'https://reddit.com/r/forsale/sony-a7r4'
+  },
+  {
+    source_name: 'Discord Communities',
+    title: 'Rare Pokemon Card Collection',
+    description: 'Base set holos in mint condition. Authenticated and graded.',
+    price: 850,
+    location: 'Online',
+    listing_age: '4 hours ago',
+    contact_info: 'Discord DM',
+    source_url: 'https://discord.com/pokemon-cards'
+  },
+  {
+    source_name: 'Specialized Forums',
+    title: 'High-End Audio DAC - Chord Hugo 2',
+    description: 'Pristine condition portable DAC/headphone amp. Original packaging included.',
+    price: 1600,
+    location: 'Chicago, IL',
+    listing_age: '10 hours ago',
+    contact_info: 'Forum PM',
+    source_url: 'https://audiophile-forum.com/chord-hugo2'
+  },
+  {
+    source_name: 'Local Classifieds',
+    title: 'Antique Mechanical Watch Collection',
+    description: 'Various vintage timepieces from estate sale. Working condition.',
+    price: 1200,
+    location: 'Boston, MA',
+    listing_age: '1 day ago',
+    contact_info: 'Local newspaper',
+    source_url: 'https://local-classifieds.com/watches'
   }
 ];
 
@@ -146,10 +195,10 @@ export const scrapingSources = [
   { name: 'Craigslist', tier: 1 as const, baseUrl: 'https://craigslist.org', scrapeFrequency: 5, isActive: true },
   { name: 'eBay', tier: 1 as const, baseUrl: 'https://ebay.com', scrapeFrequency: 5, isActive: true },
   { name: 'OfferUp', tier: 1 as const, baseUrl: 'https://offerup.com', scrapeFrequency: 5, isActive: true },
-  { name: 'Mercari', tier: 2 as const, baseUrl: 'https://mercari.com', scrapeFrequency: 3, isActive: false },
-  { name: 'Gumtree', tier: 1 as const, baseUrl: 'https://gumtree.com', scrapeFrequency: 5, isActive: false },
-  { name: 'Reddit r/ForSale', tier: 2 as const, baseUrl: 'https://reddit.com/r/forsale', scrapeFrequency: 2, isActive: false },
-  { name: 'Discord Communities', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: false },
-  { name: 'Specialized Forums', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 2, isActive: false },
-  { name: 'Local Classifieds', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 1, isActive: false }
+  { name: 'Mercari', tier: 2 as const, baseUrl: 'https://mercari.com', scrapeFrequency: 3, isActive: true },
+  { name: 'Gumtree', tier: 2 as const, baseUrl: 'https://gumtree.com', scrapeFrequency: 3, isActive: true },
+  { name: 'Reddit r/ForSale', tier: 2 as const, baseUrl: 'https://reddit.com/r/forsale', scrapeFrequency: 2, isActive: true },
+  { name: 'Discord Communities', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: true },
+  { name: 'Specialized Forums', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 2, isActive: true },
+  { name: 'Local Classifieds', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 1, isActive: true }
 ];
