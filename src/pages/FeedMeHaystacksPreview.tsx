@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmailPreview from '@/components/EmailPreview';
 
-const EmailPreviewPage = () => {
+const FeedMeHaystacksPreview = () => {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -31,4 +31,4 @@ const EmailPreviewPage = () => {
   );
 };
 
-export default EmailPreviewPage;
+export default FeedMeHaystacksPreview;

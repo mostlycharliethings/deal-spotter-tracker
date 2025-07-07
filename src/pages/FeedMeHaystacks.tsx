@@ -16,20 +16,20 @@ const FeedMeHaystacks = () => {
         </p>
       </div>
 
+      <div className="mt-8 text-center text-muted-foreground">
+        <p>Price tracking tool configuration will be implemented here.</p>
+        <p>Set up your searches, price thresholds, and monitoring preferences.</p>
+      </div>
+
       <div className="flex justify-center mt-8">
         <Button
-          onClick={() => navigate('/email-preview')}
+          onClick={() => navigate('/tools/feedmehaystacks/preview')}
           variant="outline"
           className="flex items-center gap-2"
         >
           <Mail className="h-4 w-4" />
-          Preview Daily Digest Email
+          Send a Daily Digest Preview Email
         </Button>
-      </div>
-
-      <div className="mt-8 text-center text-muted-foreground">
-        <p>Daily digest email functionality is ready for testing!</p>
-        <p>Click the button above to preview and send test emails.</p>
       </div>
     </div>
   );

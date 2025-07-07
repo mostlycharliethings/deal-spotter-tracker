@@ -7,7 +7,7 @@ import Index from './pages/Index';
 import Tools from './pages/Tools';
 import NotFound from './pages/NotFound';
 import FeedMeHaystacks from './pages/FeedMeHaystacks';
-import EmailPreviewPage from './pages/EmailPreviewPage';
+import FeedMeHaystacksPreview from './pages/FeedMeHaystacksPreview';
 
 const queryClient = new QueryClient();
 
@@ -21,7 +21,7 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/feedmehaystacks" element={<FeedMeHaystacks />} />
-            <Route path="/email-preview" element={<EmailPreviewPage />} />
+            <Route path="/tools/feedmehaystacks/preview" element={<FeedMeHaystacksPreview />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
