@@ -1,5 +1,5 @@
-
 import { Listing, SearchConfig } from '@/types/database';
+import { SourceDiscoveryService, DiscoveredSource } from './sourceDiscovery';
 
 export const scrapingSources = [
   { name: 'Facebook Marketplace', tier: 1 as const, baseUrl: 'https://facebook.com/marketplace', scrapeFrequency: 5, isActive: true },
@@ -8,8 +8,6 @@ export const scrapingSources = [
   { name: 'OfferUp', tier: 1 as const, baseUrl: 'https://offerup.com', scrapeFrequency: 5, isActive: true },
   { name: 'Mercari', tier: 2 as const, baseUrl: 'https://mercari.com', scrapeFrequency: 3, isActive: true },
   { name: 'Gumtree', tier: 2 as const, baseUrl: 'https://gumtree.com', scrapeFrequency: 3, isActive: true },
-  { name: 'Reddit r/ForSale', tier: 2 as const, baseUrl: 'https://reddit.com/r/forsale', scrapeFrequency: 2, isActive: true },
-  { name: 'Discord Communities', tier: 2 as const, baseUrl: 'https://discord.com', scrapeFrequency: 2, isActive: false }, // Disabled - requires authentication
   { name: 'Specialized Forums', tier: 2 as const, baseUrl: 'Various', scrapeFrequency: 2, isActive: true },
 ];
 
@@ -20,35 +18,190 @@ export class RealScraper {
     console.log('Starting real scrape for search config:', searchConfig);
     
     const allListings: Listing[] = [];
-    const sources = [
+    
+    // First, discover novel sources using ChatGPT
+    const discoveredSources = await SourceDiscoveryService.discoverSources(
+      searchConfig.manufacturer,
+      searchConfig.item_name,
+      searchConfig.qualifier || undefined,
+      searchConfig.sub_qualifier || undefined
+    );
+    
+    // Standard sources
+    const standardSources = [
       { name: 'Facebook Marketplace', scraper: this.scrapeFacebookMarketplace },
       { name: 'Craigslist', scraper: this.scrapeCraigslist },
       { name: 'eBay', scraper: this.scrapeEbay },
       { name: 'OfferUp', scraper: this.scrapeOfferUp },
       { name: 'Mercari', scraper: this.scrapeMercari },
       { name: 'Gumtree', scraper: this.scrapeGumtree },
-      { name: 'Reddit r/ForSale', scraper: this.scrapeReddit },
       { name: 'Specialized Forums', scraper: this.scrapeForums },
     ];
 
-    for (const source of sources) {
+    // Scrape standard sources
+    for (const source of standardSources) {
       try {
         console.log(`Scraping ${source.name}...`);
         const listings = await source.scraper(searchConfig);
         if (listings.length > 0) {
           allListings.push(...listings);
-          console.log(`Found ${listings.length} real listings from ${source.name}`);
-        } else {
-          console.log(`No real listings found from ${source.name}`);
+          console.log(`Found ${listings.length} listings from ${source.name}`);
         }
       } catch (error) {
         console.error(`Error scraping ${source.name}:`, error);
-        // Continue with other sources even if one fails
+      }
+    }
+
+    // Scrape discovered novel sources
+    if (discoveredSources.length > 0) {
+      console.log(`Scraping ${discoveredSources.length} discovered sources...`);
+      
+      for (const discoveredSource of discoveredSources) {
+        try {
+          const listings = await this.scrapeDiscoveredSource(discoveredSource, searchConfig);
+          if (listings.length > 0) {
+            allListings.push(...listings);
+            console.log(`Found ${listings.length} listings from discovered source: ${discoveredSource.name}`);
+          }
+        } catch (error) {
+          console.error(`Error scraping discovered source ${discoveredSource.name}:`, error);
+        }
       }
     }
 
     console.log(`Total real listings found: ${allListings.length}`);
     return allListings;
+  }
+
+  private static async scrapeDiscoveredSource(
+    source: DiscoveredSource, 
+    searchConfig: SearchConfig
+  ): Promise<Listing[]> {
+    const listings: Listing[] = [];
+    
+    try {
+      const searchQuery = this.buildSearchQuery(searchConfig);
+      const searchUrl = SourceDiscoveryService.buildSearchUrl(source, searchQuery);
+      
+      console.log(`Scraping discovered source: ${source.name} at ${searchUrl}`);
+      
+      const data = await this.fetchWithProxy(searchUrl);
+      
+      if (data.contents) {
+        const parsedListings = await this.parseGenericSource(
+          data.contents, 
+          searchConfig, 
+          source
+        );
+        
+        const validListings = parsedListings.filter(listing => 
+          this.validateListingUrl(listing.source_url, source.name)
+        );
+        
+        listings.push(...validListings);
+        
+        if (parsedListings.length > validListings.length) {
+          console.warn(`Filtered out ${parsedListings.length - validListings.length} invalid listings from ${source.name}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error scraping discovered source ${source.name}:`, error);
+    }
+    
+    return listings;
+  }
+
+  private static async parseGenericSource(
+    html: string,
+    searchConfig: SearchConfig,
+    source: DiscoveredSource
+  ): Promise<Listing[]> {
+    const listings: Listing[] = [];
+    
+    try {
+      console.log(`Parsing ${source.name} HTML, length:`, html.length);
+      
+      // Generic parsing patterns for common marketplace elements
+      const patterns = {
+        // Common price patterns
+        price: /\$([0-9,]+(?:\.[0-9]{2})?)/g,
+        // Common link patterns  
+        links: /<a[^>]*href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/g,
+        // Common title patterns
+        titles: /<(?:h[1-6]|div|span)[^>]*class="[^"]*(?:title|heading|name)[^"]*"[^>]*>([^<]+)</g,
+      };
+      
+      const priceMatches = [...html.matchAll(patterns.price)];
+      const linkMatches = [...html.matchAll(patterns.links)];
+      const titleMatches = [...html.matchAll(patterns.titles)];
+      
+      // Try to correlate prices with links/titles
+      const maxResults = Math.min(5, Math.min(priceMatches.length, linkMatches.length));
+      
+      for (let i = 0; i < maxResults; i++) {
+        try {
+          const priceMatch = priceMatches[i];
+          const linkMatch = linkMatches[i];
+          const titleMatch = titleMatches[i] || linkMatches[i];
+          
+          if (!priceMatch || !linkMatch) continue;
+          
+          const price = parseInt(priceMatch[1].replace(/,/g, ''));
+          const relativeUrl = linkMatch[1];
+          const title = (titleMatch[2] || titleMatch[1] || 'Listing').trim();
+          
+          // Skip if price is unrealistic
+          if (price < 1 || price > 1000000) continue;
+          
+          // Build full URL
+          let fullUrl = relativeUrl;
+          if (!relativeUrl.startsWith('http')) {
+            try {
+              const baseUrl = new URL(source.url);
+              fullUrl = new URL(relativeUrl, baseUrl.origin).href;
+            } catch {
+              continue;
+            }
+          }
+          
+          const listing: Listing = {
+            id: crypto.randomUUID(),
+            search_id: searchConfig.id,
+            source_listing_id: `${source.name.toLowerCase()}-${Date.now()}-${i}`,
+            source_name: source.name,
+            source_url: fullUrl,
+            title: title,
+            description: `${searchConfig.manufacturer} ${searchConfig.item_name} found on ${source.name}`,
+            price: price,
+            price_threshold: searchConfig.price_threshold,
+            max_price_allowed: searchConfig.max_price_allowed,
+            location: 'Location not parsed',
+            listing_age: 'Age not parsed',
+            contact_info: `Contact via ${source.name}`,
+            date_scraped: new Date().toISOString(),
+            last_seen_at: new Date().toISOString(),
+            is_within_threshold: price <= searchConfig.price_threshold,
+            is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
+            is_above_slider: price > searchConfig.max_price_allowed,
+            is_price_changed: false,
+            is_description_changed: false,
+            is_ignored: false
+          };
+          
+          listings.push(listing);
+        } catch (error) {
+          console.error(`Error processing listing ${i} from ${source.name}:`, error);
+          continue;
+        }
+      }
+      
+      console.log(`${source.name}: Extracted ${listings.length} listings from generic parsing`);
+      
+    } catch (error) {
+      console.error(`Error parsing ${source.name}:`, error);
+    }
+    
+    return listings;
   }
 
   private static async fetchWithProxy(url: string): Promise<any> {
@@ -104,7 +257,6 @@ export class RealScraper {
   private static validateListingUrl(url: string, sourceName: string): boolean {
     if (!url || typeof url !== 'string') return false;
     
-    // Check for invalid/fake domains - expanded list
     const invalidDomains = [
       'localclassifieds.com',
       'example.com',
@@ -122,10 +274,8 @@ export class RealScraper {
       return false;
     }
     
-    // Validate URL format
     try {
       const urlObj = new URL(url);
-      // Ensure it's a real domain with proper TLD
       if (!urlObj.hostname.includes('.') || urlObj.hostname.endsWith('.local')) {
         console.warn(`Invalid hostname: ${urlObj.hostname}`);
         return false;
@@ -152,7 +302,6 @@ export class RealScraper {
       
       if (data.contents) {
         const parsedListings = RealScraper.parseFacebookMarketplace(data.contents, searchConfig);
-        // Only return listings that pass validation
         const validListings = parsedListings.filter(listing => 
           this.validateListingUrl(listing.source_url, 'Facebook Marketplace')
         );
@@ -176,7 +325,6 @@ export class RealScraper {
       const searchQuery = RealScraper.buildSearchQuery(searchConfig);
       const encodedQuery = encodeURIComponent(searchQuery);
       
-      // Use multiple major city craigslist sites for better coverage
       const cities = ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago'];
       
       for (const city of cities) {
@@ -189,7 +337,6 @@ export class RealScraper {
           
           if (data.contents) {
             const parsedListings = RealScraper.parseCraigslist(data.contents, searchConfig, city);
-            // Only return listings that pass validation
             const validListings = parsedListings.filter(listing => 
               this.validateListingUrl(listing.source_url, 'Craigslist')
             );
@@ -199,7 +346,6 @@ export class RealScraper {
               console.log(`Found ${validListings.length} valid Craigslist listings from ${city}`);
             }
             
-            // Limit to prevent too many requests
             if (listings.length >= 10) break;
           }
         } catch (error) {
@@ -244,7 +390,6 @@ export class RealScraper {
       
       if (data.contents) {
         const parsedListings = RealScraper.parseOfferUp(data.contents, searchConfig);
-        // Only return listings that pass validation
         const validListings = parsedListings.filter(listing => 
           this.validateListingUrl(listing.source_url, 'OfferUp')
         );
@@ -278,19 +423,6 @@ export class RealScraper {
       console.log('Consider implementing specific Gumtree parsing patterns');
     } catch (error) {
       console.error('Gumtree scraping error:', error);
-    }
-
-    return listings;
-  }
-
-  private static async scrapeReddit(searchConfig: SearchConfig): Promise<Listing[]> {
-    const listings: Listing[] = [];
-    
-    try {
-      console.log('Reddit r/ForSale scraping requires Reddit API access for reliable data');
-      console.log('Direct scraping of Reddit is challenging due to their anti-bot measures');
-    } catch (error) {
-      console.error('Reddit scraping error:', error);
     }
 
     return listings;
@@ -338,7 +470,6 @@ export class RealScraper {
     try {
       console.log('Parsing Facebook HTML, length:', html.length);
       
-      // Facebook Marketplace uses heavy JavaScript - static HTML parsing often fails
       if (html.includes('You must log in to continue') || html.includes('Log into Facebook')) {
         console.warn('Facebook requires login - scraping blocked');
         return listings;
@@ -349,7 +480,6 @@ export class RealScraper {
         return listings;
       }
       
-      // Look for actual listing data in the HTML - Facebook uses complex JSON structures
       const jsonRegex = /"marketplace_listing_title":"([^"]+)"[\s\S]*?"formatted_price":"([^"]+)"[\s\S]*?"listing_id":"([^"]+)"/g;
       let match;
       let foundCount = 0;
@@ -405,13 +535,11 @@ export class RealScraper {
     try {
       console.log(`Parsing Craigslist ${city} HTML, length:`, html.length);
       
-      // Check if Craigslist blocked the request
       if (html.includes('blocked') || html.includes('security check') || html.length < 1000) {
         console.warn(`Craigslist ${city} appears to have blocked the request`);
         return listings;
       }
       
-      // Look for the .result-row class which contains each listing
       const resultRowRegex = /<li class="result-row"[^>]*>([\s\S]*?)<\/li>/g;
       const titleLinkRegex = /<a href="([^"]*)" data-id="([^"]*)" class="result-title[^"]*">([^<]*)<\/a>/;
       const priceRegex = /<span class="result-price"[^>]*>\$([0-9,]+)<\/span>/;
@@ -425,7 +553,6 @@ export class RealScraper {
         const rowHtml = rowMatch[1];
         foundRows++;
         
-        // Extract title and URL
         const titleMatch = titleLinkRegex.exec(rowHtml);
         if (!titleMatch) {
           continue;
@@ -433,7 +560,6 @@ export class RealScraper {
         
         const [, relativeUrl, dataId, title] = titleMatch;
         
-        // Extract price
         const priceMatch = priceRegex.exec(rowHtml);
         if (!priceMatch) {
           continue;
@@ -441,15 +567,12 @@ export class RealScraper {
         
         const price = parseInt(priceMatch[1].replace(/,/g, ''));
         
-        // Extract location
         const hoodMatch = hoodRegex.exec(rowHtml);
         const location = hoodMatch ? hoodMatch[1] : `${city} area`;
         
-        // Extract time - use actual parsed time or indicate unknown
         const timeMatch = timeRegex.exec(rowHtml);
-        const listingAge = timeMatch ? timeMatch[2] : 'Age not available';
+        const listingAge = timeMatch ? timeMatch[2] : 'Age not parsed';
         
-        // Build full URL
         const fullUrl = relativeUrl.startsWith('http') ? 
           relativeUrl : 
           `https://${city}.craigslist.org${relativeUrl}`;
@@ -496,13 +619,11 @@ export class RealScraper {
     try {
       console.log('Parsing OfferUp HTML, length:', html.length);
       
-      // OfferUp uses heavy JavaScript - static HTML parsing often fails
       if (html.includes('Please enable JavaScript') || html.length < 1000) {
         console.warn('OfferUp requires JavaScript - static parsing limited');
         return listings;
       }
       
-      // OfferUp likely requires more sophisticated parsing
       console.log('OfferUp parsing not fully implemented - requires JavaScript rendering');
       
     } catch (error) {

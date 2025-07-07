@@ -1,15 +1,17 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { SearchConfig } from '@/types/database';
 import SearchYearSelector from './SearchYearSelector';
 import SearchPriceConfig from './SearchPriceConfig';
 import SearchMatrixPreview from './SearchMatrixPreview';
 import { useUpdateSearchConfig } from '@/hooks/useSearchConfigs';
+import { useSourceDiscovery } from '@/hooks/useSourceDiscovery';
 import { useToast } from '@/hooks/use-toast';
+import { Sparkles, ExternalLink } from 'lucide-react';
 
 interface SearchConfigFormProps {
   onSearchCreated: (search: Omit<SearchConfig, 'id' | 'created_at'>) => void;
@@ -25,6 +27,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   const currentYear = new Date().getFullYear();
   const { toast } = useToast();
   const updateSearchConfig = useUpdateSearchConfig();
+  const { discoverSources, discoveredSources, isDiscovering, clearDiscoveredSources } = useSourceDiscovery();
   
   const [formData, setFormData] = useState({
     item_name: '',
@@ -39,7 +42,6 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
     include_years: false
   });
 
-  // Update form when editing a search
   useEffect(() => {
     if (editingSearch) {
       setFormData({
@@ -60,11 +62,28 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   const maxPrice = formData.price_threshold * (1 + formData.slider_percent / 100);
   const isEditing = !!editingSearch;
 
+  const handleDiscoverSources = async () => {
+    if (!formData.manufacturer || !formData.item_name) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter manufacturer and item name first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    await discoverSources(
+      formData.manufacturer,
+      formData.item_name,
+      formData.qualifier || undefined,
+      formData.sub_qualifier || undefined
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (isEditing) {
-      // Update existing search
       try {
         await updateSearchConfig.mutateAsync({
           id: editingSearch.id,
@@ -97,7 +116,6 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
         });
       }
     } else {
-      // Create new search
       const tempUserId = crypto.randomUUID();
       
       const searchConfig = {
@@ -119,7 +137,6 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
       onSearchCreated(searchConfig);
     }
     
-    // Reset form only if not editing
     if (!isEditing) {
       setFormData({
         item_name: '',
@@ -133,6 +150,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
         email_address: '',
         include_years: false
       });
+      clearDiscoveredSources();
     }
   };
 
@@ -140,7 +158,6 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
     if (onCancelEdit) {
       onCancelEdit();
     }
-    // Reset form to default values
     setFormData({
       item_name: '',
       manufacturer: '',
@@ -153,6 +170,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
       email_address: '',
       include_years: false
     });
+    clearDiscoveredSources();
   };
 
   return (
@@ -192,6 +210,50 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
               />
             </div>
           </div>
+
+          {/* Source Discovery Section */}
+          {!isEditing && formData.manufacturer && formData.item_name && (
+            <div className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-purple-600" />
+                  <Label className="text-sm font-medium">AI Source Discovery</Label>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDiscoverSources}
+                  disabled={isDiscovering}
+                >
+                  {isDiscovering ? 'Discovering...' : 'Find Novel Sources'}
+                </Button>
+              </div>
+              
+              {discoveredSources.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    AI discovered {discoveredSources.length} specialized sources for this search:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {discoveredSources.map((source, index) => (
+                      <Badge 
+                        key={index} 
+                        variant="secondary" 
+                        className="text-xs flex items-center gap-1"
+                      >
+                        {source.name}
+                        <ExternalLink className="h-3 w-3" />
+                      </Badge>
+                    ))}
+                  </div>
+                  <p className="text-xs text-green-600">
+                    These sources will be included in your search alongside standard marketplaces.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           <SearchYearSelector
             includeYears={formData.include_years}
