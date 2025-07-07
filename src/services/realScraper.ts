@@ -1,3 +1,4 @@
+
 import { Listing, SearchConfig } from '@/types/database';
 
 export const scrapingSources = [
@@ -34,14 +35,19 @@ export class RealScraper {
       try {
         console.log(`Scraping ${source.name}...`);
         const listings = await source.scraper(searchConfig);
-        allListings.push(...listings);
-        console.log(`Found ${listings.length} listings from ${source.name}`);
+        if (listings.length > 0) {
+          allListings.push(...listings);
+          console.log(`Found ${listings.length} real listings from ${source.name}`);
+        } else {
+          console.log(`No real listings found from ${source.name}`);
+        }
       } catch (error) {
         console.error(`Error scraping ${source.name}:`, error);
         // Continue with other sources even if one fails
       }
     }
 
+    console.log(`Total real listings found: ${allListings.length}`);
     return allListings;
   }
 
@@ -98,23 +104,32 @@ export class RealScraper {
   private static validateListingUrl(url: string, sourceName: string): boolean {
     if (!url || typeof url !== 'string') return false;
     
-    // Check for invalid/fake domains
+    // Check for invalid/fake domains - expanded list
     const invalidDomains = [
       'localclassifieds.com',
       'example.com',
       'test.com',
-      'placeholder.com'
+      'placeholder.com',
+      'forum.example.com',
+      'sample.com',
+      'demo.com',
+      'fake.com'
     ];
     
     const domain = url.match(/https?:\/\/(?:www\.)?([^\/]+)/)?.[1];
-    if (domain && invalidDomains.includes(domain)) {
-      console.warn(`Filtering out invalid domain: ${domain}`);
+    if (domain && invalidDomains.some(invalid => domain.includes(invalid))) {
+      console.warn(`Filtering out invalid domain: ${domain} from ${sourceName}`);
       return false;
     }
     
     // Validate URL format
     try {
-      new URL(url);
+      const urlObj = new URL(url);
+      // Ensure it's a real domain with proper TLD
+      if (!urlObj.hostname.includes('.') || urlObj.hostname.endsWith('.local')) {
+        console.warn(`Invalid hostname: ${urlObj.hostname}`);
+        return false;
+      }
       return true;
     } catch {
       console.warn(`Invalid URL format: ${url}`);
@@ -137,7 +152,15 @@ export class RealScraper {
       
       if (data.contents) {
         const parsedListings = RealScraper.parseFacebookMarketplace(data.contents, searchConfig);
-        listings.push(...parsedListings);
+        // Only return listings that pass validation
+        const validListings = parsedListings.filter(listing => 
+          this.validateListingUrl(listing.source_url, 'Facebook Marketplace')
+        );
+        listings.push(...validListings);
+        
+        if (parsedListings.length > validListings.length) {
+          console.warn(`Filtered out ${parsedListings.length - validListings.length} invalid Facebook listings`);
+        }
       }
     } catch (error) {
       console.error('Facebook Marketplace scraping error:', error);
@@ -166,7 +189,15 @@ export class RealScraper {
           
           if (data.contents) {
             const parsedListings = RealScraper.parseCraigslist(data.contents, searchConfig, city);
-            listings.push(...parsedListings);
+            // Only return listings that pass validation
+            const validListings = parsedListings.filter(listing => 
+              this.validateListingUrl(listing.source_url, 'Craigslist')
+            );
+            listings.push(...validListings);
+            
+            if (validListings.length > 0) {
+              console.log(`Found ${validListings.length} valid Craigslist listings from ${city}`);
+            }
             
             // Limit to prevent too many requests
             if (listings.length >= 10) break;
@@ -188,6 +219,7 @@ export class RealScraper {
     
     try {
       console.log('eBay scraping skipped due to consistent large response issues that cause memory problems');
+      console.log('Consider implementing eBay API integration for reliable data');
       return listings;
       
     } catch (error) {
@@ -212,7 +244,11 @@ export class RealScraper {
       
       if (data.contents) {
         const parsedListings = RealScraper.parseOfferUp(data.contents, searchConfig);
-        listings.push(...parsedListings);
+        // Only return listings that pass validation
+        const validListings = parsedListings.filter(listing => 
+          this.validateListingUrl(listing.source_url, 'OfferUp')
+        );
+        listings.push(...validListings);
       }
     } catch (error) {
       console.error('OfferUp scraping error:', error);
@@ -225,19 +261,8 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      const searchQuery = RealScraper.buildSearchQuery(searchConfig);
-      const encodedQuery = encodeURIComponent(searchQuery);
-      
-      const searchUrl = `https://www.mercari.com/search/?keyword=${encodedQuery}`;
-      
-      console.log('Attempting to scrape Mercari with URL:', searchUrl);
-      
-      const data = await RealScraper.fetchWithProxy(searchUrl);
-      
-      if (data.contents) {
-        console.log('Mercari response received, attempting to parse...');
-        console.log('Mercari parsing not yet implemented due to JavaScript-heavy structure');
-      }
+      console.log('Mercari scraping not implemented - requires JavaScript rendering for dynamic content');
+      console.log('Consider using Puppeteer or similar for JavaScript-heavy sites');
     } catch (error) {
       console.error('Mercari scraping error:', error);
     }
@@ -249,19 +274,8 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      const searchQuery = RealScraper.buildSearchQuery(searchConfig);
-      const encodedQuery = encodeURIComponent(searchQuery);
-      
-      const searchUrl = `https://www.gumtree.com/search?q=${encodedQuery}`;
-      
-      console.log('Attempting to scrape Gumtree with URL:', searchUrl);
-      
-      const data = await RealScraper.fetchWithProxy(searchUrl);
-      
-      if (data.contents) {
-        console.log('Gumtree response received, attempting to parse...');
-        console.log('Gumtree parsing not yet implemented due to complex structure');
-      }
+      console.log('Gumtree scraping not implemented - requires complex parsing logic');
+      console.log('Consider implementing specific Gumtree parsing patterns');
     } catch (error) {
       console.error('Gumtree scraping error:', error);
     }
@@ -273,7 +287,8 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      console.log('Reddit r/ForSale scraping requires API access and is not implemented for direct scraping');
+      console.log('Reddit r/ForSale scraping requires Reddit API access for reliable data');
+      console.log('Direct scraping of Reddit is challenging due to their anti-bot measures');
     } catch (error) {
       console.error('Reddit scraping error:', error);
     }
@@ -286,6 +301,7 @@ export class RealScraper {
     
     try {
       console.log('Specialized Forums scraping requires knowledge of specific forum structures');
+      console.log('Consider implementing specific forum parsers based on popular platforms');
     } catch (error) {
       console.error('Forums scraping error:', error);
     }
@@ -320,60 +336,44 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      console.log('Parsing Facebook HTML, first 1000 characters:', html.substring(0, 1000));
+      console.log('Parsing Facebook HTML, length:', html.length);
       
-      // Look for actual listing URLs in the HTML
-      const listingRegex = /href="\/marketplace\/item\/(\d+)"/g;
-      const titleRegex = /"marketplace_listing_title":"([^"]+)"/g;
-      const priceRegex = /"formatted_price":"([^"]+)"/g;
-      
-      let urlMatch;
-      let titleMatch;
-      let priceMatch;
-      
-      const listingIds = [];
-      const titles = [];
-      const prices = [];
-      
-      while ((urlMatch = listingRegex.exec(html)) !== null) {
-        listingIds.push(urlMatch[1]);
+      // Facebook Marketplace uses heavy JavaScript - static HTML parsing often fails
+      if (html.includes('You must log in to continue') || html.includes('Log into Facebook')) {
+        console.warn('Facebook requires login - scraping blocked');
+        return listings;
       }
       
-      while ((titleMatch = titleRegex.exec(html)) !== null) {
-        titles.push(titleMatch[1]);
+      if (html.includes('blocked') || html.includes('security') || html.length < 1000) {
+        console.warn('Facebook appears to have blocked the request');
+        return listings;
       }
       
-      while ((priceMatch = priceRegex.exec(html)) !== null) {
-        const priceStr = priceMatch[1].replace(/[^0-9]/g, '');
-        if (priceStr) {
-          prices.push(parseInt(priceStr));
-        }
-      }
+      // Look for actual listing data in the HTML - Facebook uses complex JSON structures
+      const jsonRegex = /"marketplace_listing_title":"([^"]+)"[\s\S]*?"formatted_price":"([^"]+)"[\s\S]*?"listing_id":"([^"]+)"/g;
+      let match;
+      let foundCount = 0;
       
-      if (listingIds.length > 0 && titles.length > 0 && prices.length > 0) {
-        const maxResults = Math.min(listingIds.length, titles.length, prices.length, 5);
-        for (let i = 0; i < maxResults; i++) {
-          const price = prices[i];
-          const listingUrl = `https://www.facebook.com/marketplace/item/${listingIds[i]}`;
-          
-          // Validate the URL before creating the listing
-          if (!this.validateListingUrl(listingUrl, 'Facebook Marketplace')) {
-            continue;
-          }
+      while ((match = jsonRegex.exec(html)) !== null && foundCount < 5) {
+        const [, title, priceStr, listingId] = match;
+        const price = parseInt(priceStr.replace(/[^0-9]/g, ''));
+        
+        if (price && listingId && title) {
+          const listingUrl = `https://www.facebook.com/marketplace/item/${listingId}`;
           
           const listing: Listing = {
             id: crypto.randomUUID(),
             search_id: searchConfig.id,
-            source_listing_id: `fb-${listingIds[i]}`,
+            source_listing_id: `fb-${listingId}`,
             source_name: 'Facebook Marketplace',
             source_url: listingUrl,
-            title: titles[i],
-            description: `${searchConfig.manufacturer} ${searchConfig.item_name} listing found on Facebook Marketplace`,
+            title: title,
+            description: `${searchConfig.manufacturer} ${searchConfig.item_name} found on Facebook Marketplace`,
             price: price,
             price_threshold: searchConfig.price_threshold,
             max_price_allowed: searchConfig.max_price_allowed,
-            location: this.getRandomLocation(),
-            listing_age: this.getRandomAge(),
+            location: 'Location not parsed',
+            listing_age: 'Age not parsed',
             contact_info: 'Contact via Facebook Marketplace',
             date_scraped: new Date().toISOString(),
             last_seen_at: new Date().toISOString(),
@@ -386,10 +386,11 @@ export class RealScraper {
           };
           
           listings.push(listing);
+          foundCount++;
         }
-      } else {
-        console.log('No Facebook Marketplace listings found in HTML response');
       }
+      
+      console.log(`Facebook parsing found ${foundCount} potential listings`);
       
     } catch (error) {
       console.error('Error parsing Facebook Marketplace:', error);
@@ -403,10 +404,13 @@ export class RealScraper {
     
     try {
       console.log(`Parsing Craigslist ${city} HTML, length:`, html.length);
-      console.log('First 500 chars:', html.substring(0, 500));
-      console.log('Looking for result-row patterns...');
       
-      // Updated patterns to match actual Craigslist HTML structure
+      // Check if Craigslist blocked the request
+      if (html.includes('blocked') || html.includes('security check') || html.length < 1000) {
+        console.warn(`Craigslist ${city} appears to have blocked the request`);
+        return listings;
+      }
+      
       // Look for the .result-row class which contains each listing
       const resultRowRegex = /<li class="result-row"[^>]*>([\s\S]*?)<\/li>/g;
       const titleLinkRegex = /<a href="([^"]*)" data-id="([^"]*)" class="result-title[^"]*">([^<]*)<\/a>/;
@@ -421,12 +425,9 @@ export class RealScraper {
         const rowHtml = rowMatch[1];
         foundRows++;
         
-        console.log(`Processing row ${foundRows}:`, rowHtml.substring(0, 200));
-        
         // Extract title and URL
         const titleMatch = titleLinkRegex.exec(rowHtml);
         if (!titleMatch) {
-          console.log(`No title match found in row ${foundRows}`);
           continue;
         }
         
@@ -435,7 +436,6 @@ export class RealScraper {
         // Extract price
         const priceMatch = priceRegex.exec(rowHtml);
         if (!priceMatch) {
-          console.log(`No price found for listing: ${title}`);
           continue;
         }
         
@@ -445,22 +445,14 @@ export class RealScraper {
         const hoodMatch = hoodRegex.exec(rowHtml);
         const location = hoodMatch ? hoodMatch[1] : `${city} area`;
         
-        // Extract time
+        // Extract time - use actual parsed time or indicate unknown
         const timeMatch = timeRegex.exec(rowHtml);
-        const listingAge = timeMatch ? timeMatch[2] : 'Recently posted';
+        const listingAge = timeMatch ? timeMatch[2] : 'Age not available';
         
         // Build full URL
         const fullUrl = relativeUrl.startsWith('http') ? 
           relativeUrl : 
           `https://${city}.craigslist.org${relativeUrl}`;
-        
-        // Validate the URL
-        if (!this.validateListingUrl(fullUrl, 'Craigslist')) {
-          console.log(`Invalid URL skipped: ${fullUrl}`);
-          continue;
-        }
-        
-        console.log(`Found valid listing: ${title} - $${price} - ${fullUrl}`);
         
         const listing: Listing = {
           id: crypto.randomUUID(),
@@ -469,7 +461,7 @@ export class RealScraper {
           source_name: 'Craigslist',
           source_url: fullUrl,
           title: title.trim(),
-          description: `${searchConfig.manufacturer} ${searchConfig.item_name} listing found on Craigslist ${city}`,
+          description: `${searchConfig.manufacturer} ${searchConfig.item_name} found on Craigslist ${city}`,
           price: price,
           price_threshold: searchConfig.price_threshold,
           max_price_allowed: searchConfig.max_price_allowed,
@@ -489,7 +481,7 @@ export class RealScraper {
         listings.push(listing);
       }
       
-      console.log(`Found ${foundRows} total rows, extracted ${listings.length} valid listings from Craigslist ${city}`);
+      console.log(`Craigslist ${city}: Found ${foundRows} rows, extracted ${listings.length} listings`);
       
     } catch (error) {
       console.error(`Error parsing Craigslist ${city}:`, error);
@@ -502,121 +494,21 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      // Look for actual OfferUp listing URLs
-      const listingRegex = /<a[^>]*href="(\/item\/[^"]*)"[^>]*>[\s\S]*?<h3[^>]*>([^<]*)<\/h3>/g;
-      const priceRegex = /\$([0-9,]+)/g;
+      console.log('Parsing OfferUp HTML, length:', html.length);
       
-      let listingMatch;
-      let priceMatch;
-      
-      const listingData = [];
-      const prices = [];
-      
-      while ((listingMatch = listingRegex.exec(html)) !== null) {
-        listingData.push({
-          url: listingMatch[1],
-          title: listingMatch[2]
-        });
+      // OfferUp uses heavy JavaScript - static HTML parsing often fails
+      if (html.includes('Please enable JavaScript') || html.length < 1000) {
+        console.warn('OfferUp requires JavaScript - static parsing limited');
+        return listings;
       }
       
-      while ((priceMatch = priceRegex.exec(html)) !== null) {
-        prices.push(parseInt(priceMatch[1].replace(/,/g, '')));
-      }
+      // OfferUp likely requires more sophisticated parsing
+      console.log('OfferUp parsing not fully implemented - requires JavaScript rendering');
       
-      if (listingData.length > 0 && prices.length > 0) {
-        const maxResults = Math.min(listingData.length, prices.length, 5);
-        for (let i = 0; i < maxResults; i++) {
-          if (listingData[i] && prices[i]) {
-            const price = prices[i];
-            const fullUrl = `https://offerup.com${listingData[i].url}`;
-            
-            // Validate the URL before creating the listing
-            if (!this.validateListingUrl(fullUrl, 'OfferUp')) {
-              continue;
-            }
-            
-            const listing: Listing = {
-              id: crypto.randomUUID(),
-              search_id: searchConfig.id,
-              source_listing_id: `offerup-${Date.now()}-${i}`,
-              source_name: 'OfferUp',
-              source_url: fullUrl,
-              title: listingData[i].title,
-              description: '',
-              price: price,
-              price_threshold: searchConfig.price_threshold,
-              max_price_allowed: searchConfig.max_price_allowed,
-              location: this.getRandomLocation(),
-              listing_age: this.getRecentAge(),
-              contact_info: 'Contact via OfferUp',
-              date_scraped: new Date().toISOString(),
-              last_seen_at: new Date().toISOString(),
-              is_within_threshold: price <= searchConfig.price_threshold,
-              is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
-              is_above_slider: price > searchConfig.max_price_allowed,
-              is_price_changed: false,
-              is_description_changed: false,
-              is_ignored: false
-            };
-            
-            listings.push(listing);
-          }
-        }
-      } else {
-        console.log('No OfferUp listings found in HTML response');
-      }
     } catch (error) {
       console.error('Error parsing OfferUp:', error);
     }
     
     return listings;
-  }
-
-  private static getRandomLocation(): string {
-    const locations = [
-      'Los Angeles, CA',
-      'New York, NY',
-      'Chicago, IL',
-      'Houston, TX',
-      'Phoenix, AZ',
-      'Philadelphia, PA',
-      'San Antonio, TX',
-      'San Diego, CA',
-      'Dallas, TX',
-      'San Jose, CA',
-      'Austin, TX',
-      'Jacksonville, FL',
-      'Fort Worth, TX',
-      'Columbus, OH',
-      'Charlotte, NC'
-    ];
-    return locations[Math.floor(Math.random() * locations.length)];
-  }
-
-  private static getRecentAge(): string {
-    // Focus on more recent listings to indicate they're likely still active
-    const recentAges = [
-      '1 hour ago',
-      '3 hours ago',
-      '6 hours ago',
-      '12 hours ago',
-      '1 day ago',
-      '2 days ago'
-    ];
-    return recentAges[Math.floor(Math.random() * recentAges.length)];
-  }
-
-  private static getRandomAge(): string {
-    const ages = [
-      '1 hour ago',
-      '3 hours ago',
-      '6 hours ago',
-      '12 hours ago',
-      '1 day ago',
-      '2 days ago',
-      '3 days ago',
-      '1 week ago'
-    ];
-    return ages[Math.floor(Math.random() * ages.length)];
   }
 }
