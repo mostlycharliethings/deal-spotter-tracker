@@ -20,7 +20,7 @@ export class SourceDiscoveryService {
     subQualifier?: string
   ): Promise<DiscoveredSource[]> {
     try {
-      console.log('Discovering novel sources for:', { manufacturer, itemName, qualifier, subQualifier });
+      console.log('Discovering sources for:', { manufacturer, itemName, qualifier, subQualifier });
 
       const response = await fetch('/functions/v1/discover-sources', {
         method: 'POST',
@@ -35,14 +35,20 @@ export class SourceDiscoveryService {
         }),
       });
 
-      const data: SourceDiscoveryResponse = await response.json();
-
-      if (data.error) {
-        console.error('Source discovery error:', data.error);
+      if (!response.ok) {
+        console.error('Source discovery request failed:', response.status, response.statusText);
         return [];
       }
 
-      const validSources = data.sources.filter(source => 
+      const data: SourceDiscoveryResponse = await response.json();
+
+      if (data.error) {
+        console.warn('Source discovery returned error:', data.error);
+        // Don't throw error, just return empty array
+        return [];
+      }
+
+      const validSources = (data.sources || []).filter(source => 
         this.validateDiscoveredSource(source)
       );
 
@@ -57,6 +63,11 @@ export class SourceDiscoveryService {
 
   private static validateDiscoveredSource(source: DiscoveredSource): boolean {
     // Basic validation
+    if (!source || typeof source !== 'object') {
+      console.warn('Invalid source: not an object:', source);
+      return false;
+    }
+
     if (!source.name || !source.url || !source.type) {
       console.warn('Invalid source missing required fields:', source);
       return false;
@@ -69,7 +80,8 @@ export class SourceDiscoveryService {
       // Block obviously fake domains
       const blockedDomains = [
         'example.com', 'test.com', 'placeholder.com', 'demo.com',
-        'fake.com', 'sample.com', 'localclassifieds.com'
+        'fake.com', 'sample.com', 'localclassifieds.com', 'mydomain.com',
+        'yoursite.com', 'website.com', 'site.com'
       ];
       
       if (blockedDomains.some(domain => url.hostname.includes(domain))) {

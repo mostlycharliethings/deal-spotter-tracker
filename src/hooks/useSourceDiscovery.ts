@@ -30,23 +30,24 @@ export const useSourceDiscovery = () => {
       if (sources.length > 0) {
         toast({
           title: "Novel Sources Discovered",
-          description: `Found ${sources.length} specialized sources for ${manufacturer} ${itemName}`
+          description: `Found ${sources.length} specialized sources for ${manufacturer} ${itemName}. These will be included in your search.`
         });
       } else {
         toast({
-          title: "No Additional Sources Found",
-          description: "Will search standard marketplaces only",
-          variant: "destructive"
+          title: "Using Standard Sources",
+          description: "No additional specialized sources found. Your search will use our standard marketplace coverage.",
+          variant: "default"
         });
       }
       
       return sources;
     } catch (error) {
       console.error('Source discovery failed:', error);
+      setDiscoveredSources([]);
       toast({
-        title: "Source Discovery Failed",
-        description: "Unable to discover additional sources. Using standard sources only.",
-        variant: "destructive"
+        title: "Using Standard Sources",
+        description: "Source discovery is temporarily unavailable. Your search will use our standard marketplace coverage.",
+        variant: "default"
       });
       return [];
     } finally {

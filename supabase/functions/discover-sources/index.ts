@@ -24,37 +24,29 @@ serve(async (req) => {
       subQualifier
     ].filter(Boolean).join(' ');
 
-    const prompt = `Research and identify 5-8 specialized online sources where people buy, sell, or discuss "${searchContext}". Focus on:
+    const prompt = `Find 5-8 specialized online sources where people buy, sell, or discuss "${searchContext}". Focus on active, legitimate platforms only.
 
-1. Brand-specific forums and communities
-2. Specialized marketplaces for this product category
-3. Reddit communities (active subreddits only)
-4. Discord servers with marketplace channels
-5. Facebook groups dedicated to this brand/category
-6. Specialized classified sites
-7. Industry-specific forums
-
-For each source, provide:
-- Name: Clear name of the platform/community
-- URL: Direct URL to the marketplace/for-sale section
-- Type: forum, marketplace, social, or classified
-- Reliability: high, medium, or low
-- Notes: Brief description of what makes this source valuable
-
-Avoid banned subreddits like r/forsale. Focus on currently active, legitimate sources where real transactions occur.
-
-Respond in JSON format:
+Return ONLY a valid JSON object in this exact format:
 {
   "sources": [
     {
-      "name": "source name",
+      "name": "Platform Name",
       "url": "https://example.com/marketplace",
       "type": "marketplace",
       "reliability": "high",
-      "notes": "description"
+      "notes": "Brief description"
     }
   ]
-}`;
+}
+
+Requirements:
+- Use real, active websites only
+- Include direct links to marketplace/for-sale sections
+- Types: marketplace, forum, social, classified
+- Reliability: high, medium, low
+- Focus on brand-specific forums, specialized marketplaces, active Reddit communities, Discord servers, Facebook groups
+- Avoid fake domains like example.com, test.com, placeholder.com
+- Return valid JSON only, no additional text`;
 
     console.log('Requesting source discovery for:', searchContext);
 
@@ -69,42 +61,81 @@ Respond in JSON format:
         messages: [
           {
             role: 'system',
-            content: 'You are a research assistant specialized in finding online marketplaces and communities for specific products. Always respond with valid JSON.'
+            content: 'You are a research assistant that finds online marketplaces. Always respond with valid JSON only. Never include explanatory text outside the JSON structure.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 1500,
+        temperature: 0.1,
+        max_tokens: 1000,
       }),
     });
 
     const data = await response.json();
     
     if (!response.ok) {
+      console.error('OpenAI API error:', data);
       throw new Error(`OpenAI API error: ${data.error?.message || 'Unknown error'}`);
     }
 
-    const content = data.choices[0].message.content;
+    const content = data.choices[0].message.content.trim();
     console.log('Raw OpenAI response:', content);
     
     let parsedSources;
+    
     try {
+      // First attempt: direct JSON parsing
       parsedSources = JSON.parse(content);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response as JSON:', parseError);
-      // Fallback: try to extract JSON from the response
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        parsedSources = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('Could not extract valid JSON from OpenAI response');
+      console.log('Direct JSON parse failed, trying extraction methods...');
+      
+      try {
+        // Second attempt: extract JSON from markdown code blocks
+        const codeBlockMatch = content.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+        if (codeBlockMatch) {
+          console.log('Found JSON in code block');
+          parsedSources = JSON.parse(codeBlockMatch[1]);
+        } else {
+          // Third attempt: find JSON object in text
+          const jsonMatch = content.match(/\{[\s\S]*"sources"[\s\S]*\]/);
+          if (jsonMatch) {
+            console.log('Found JSON pattern in text');
+            // Find the complete JSON object
+            let braceCount = 0;
+            let startIndex = content.indexOf('{');
+            let endIndex = startIndex;
+            
+            for (let i = startIndex; i < content.length; i++) {
+              if (content[i] === '{') braceCount++;
+              if (content[i] === '}') braceCount--;
+              if (braceCount === 0) {
+                endIndex = i;
+                break;
+              }
+            }
+            
+            const jsonStr = content.substring(startIndex, endIndex + 1);
+            parsedSources = JSON.parse(jsonStr);
+          } else {
+            throw new Error('No valid JSON structure found in response');
+          }
+        }
+      } catch (extractionError) {
+        console.error('All JSON extraction methods failed:', extractionError);
+        // Return empty sources instead of throwing error
+        parsedSources = { sources: [] };
       }
     }
 
-    console.log('Discovered sources:', parsedSources);
+    // Validate the response structure
+    if (!parsedSources || !Array.isArray(parsedSources.sources)) {
+      console.warn('Invalid response structure, returning empty sources');
+      parsedSources = { sources: [] };
+    }
+
+    console.log('Successfully parsed sources:', parsedSources);
 
     return new Response(JSON.stringify(parsedSources), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -112,11 +143,13 @@ Respond in JSON format:
 
   } catch (error) {
     console.error('Error in discover-sources function:', error);
+    
+    // Return a valid response with empty sources instead of throwing
     return new Response(JSON.stringify({ 
-      error: error.message,
-      sources: [] 
+      sources: [],
+      error: `Source discovery temporarily unavailable: ${error.message}`
     }), {
-      status: 500,
+      status: 200, // Changed from 500 to 200 to avoid breaking the UI
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
