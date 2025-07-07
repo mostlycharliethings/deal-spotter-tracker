@@ -1,4 +1,3 @@
-
 import { Listing, SearchConfig } from '@/types/database';
 
 export const scrapingSources = [
@@ -154,16 +153,28 @@ export class RealScraper {
       const searchQuery = RealScraper.buildSearchQuery(searchConfig);
       const encodedQuery = encodeURIComponent(searchQuery);
       
-      // Use a major city craigslist for better results
-      const searchUrl = `https://sfbay.craigslist.org/search/sss?query=${encodedQuery}&sort=date`;
+      // Use multiple major city craigslist sites for better coverage
+      const cities = ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago'];
       
-      console.log('Scraping Craigslist with URL:', searchUrl);
-      
-      const data = await RealScraper.fetchWithProxy(searchUrl);
-      
-      if (data.contents) {
-        const parsedListings = RealScraper.parseCraigslist(data.contents, searchConfig);
-        listings.push(...parsedListings);
+      for (const city of cities) {
+        try {
+          const searchUrl = `https://${city}.craigslist.org/search/sss?query=${encodedQuery}&sort=date`;
+          
+          console.log(`Scraping Craigslist ${city} with URL:`, searchUrl);
+          
+          const data = await RealScraper.fetchWithProxy(searchUrl);
+          
+          if (data.contents) {
+            const parsedListings = RealScraper.parseCraigslist(data.contents, searchConfig, city);
+            listings.push(...parsedListings);
+            
+            // Limit to prevent too many requests
+            if (listings.length >= 10) break;
+          }
+        } catch (error) {
+          console.error(`Error scraping Craigslist ${city}:`, error);
+          continue;
+        }
       }
     } catch (error) {
       console.error('Craigslist scraping error:', error);
@@ -387,88 +398,101 @@ export class RealScraper {
     return listings;
   }
 
-  private static parseCraigslist(html: string, searchConfig: SearchConfig): Listing[] {
+  private static parseCraigslist(html: string, searchConfig: SearchConfig, city: string): Listing[] {
     const listings: Listing[] = [];
     
     try {
-      console.log('Parsing Craigslist HTML, first 1000 characters:', html.substring(0, 1000));
+      console.log(`Parsing Craigslist ${city} HTML, length:`, html.length);
+      console.log('First 500 chars:', html.substring(0, 500));
+      console.log('Looking for result-row patterns...');
       
-      // Look for actual listing links in Craigslist HTML
-      const listingRegex = /<a href="([^"]*)" data-id="([^"]*)" class="result-title[^"]*">([^<]*)<\/a>/g;
-      const priceRegex = /<span class="result-price">\$([0-9,]+)<\/span>/g;
-      const locationRegex = /<span class="result-hood">\s*\(([^)]+)\)<\/span>/g;
+      // Updated patterns to match actual Craigslist HTML structure
+      // Look for the .result-row class which contains each listing
+      const resultRowRegex = /<li class="result-row"[^>]*>([\s\S]*?)<\/li>/g;
+      const titleLinkRegex = /<a href="([^"]*)" data-id="([^"]*)" class="result-title[^"]*">([^<]*)<\/a>/;
+      const priceRegex = /<span class="result-price"[^>]*>\$([0-9,]+)<\/span>/;
+      const hoodRegex = /<span class="result-hood"[^>]*>\s*\(([^)]+)\)<\/span>/;
+      const timeRegex = /<time[^>]*datetime="([^"]*)"[^>]*title="([^"]*)"[^>]*>/;
       
-      let listingMatch;
-      let priceMatch;
-      let locationMatch;
+      let rowMatch;
+      let foundRows = 0;
       
-      const listingData = [];
-      const prices = [];
-      const locations = [];
-      
-      while ((listingMatch = listingRegex.exec(html)) !== null) {
-        listingData.push({
-          url: listingMatch[1],
-          id: listingMatch[2],
-          title: listingMatch[3]
-        });
-      }
-      
-      while ((priceMatch = priceRegex.exec(html)) !== null) {
-        prices.push(parseInt(priceMatch[1].replace(/,/g, '')));
-      }
-      
-      while ((locationMatch = locationRegex.exec(html)) !== null) {
-        locations.push(locationMatch[1]);
-      }
-      
-      if (listingData.length > 0 && prices.length > 0) {
-        const maxResults = Math.min(listingData.length, prices.length, 10);
-        for (let i = 0; i < maxResults; i++) {
-          if (listingData[i] && prices[i]) {
-            const price = prices[i];
-            // Create proper full URL for Craigslist listings
-            const fullUrl = listingData[i].url.startsWith('http') ? 
-              listingData[i].url : 
-              `https://sfbay.craigslist.org${listingData[i].url}`;
-            
-            // Validate the URL before creating the listing
-            if (!this.validateListingUrl(fullUrl, 'Craigslist')) {
-              continue;
-            }
-            
-            const listing: Listing = {
-              id: crypto.randomUUID(),
-              search_id: searchConfig.id,
-              source_listing_id: listingData[i].id || `cl-${Date.now()}-${i}`,
-              source_name: 'Craigslist',
-              source_url: fullUrl,
-              title: listingData[i].title,
-              description: `${searchConfig.manufacturer} ${searchConfig.item_name} listing found on Craigslist`,
-              price: price,
-              price_threshold: searchConfig.price_threshold,
-              max_price_allowed: searchConfig.max_price_allowed,
-              location: locations[i] || 'San Francisco Bay Area',
-              listing_age: this.getRecentAge(),
-              contact_info: 'Contact via Craigslist',
-              date_scraped: new Date().toISOString(),
-              last_seen_at: new Date().toISOString(),
-              is_within_threshold: price <= searchConfig.price_threshold,
-              is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
-              is_above_slider: price > searchConfig.max_price_allowed,
-              is_price_changed: false,
-              is_description_changed: false,
-              is_ignored: false
-            };
-            
-            listings.push(listing);
-          }
+      while ((rowMatch = resultRowRegex.exec(html)) !== null && foundRows < 15) {
+        const rowHtml = rowMatch[1];
+        foundRows++;
+        
+        console.log(`Processing row ${foundRows}:`, rowHtml.substring(0, 200));
+        
+        // Extract title and URL
+        const titleMatch = titleLinkRegex.exec(rowHtml);
+        if (!titleMatch) {
+          console.log(`No title match found in row ${foundRows}`);
+          continue;
         }
-      } else {
-        console.log('No Craigslist listings found in HTML response');
+        
+        const [, relativeUrl, dataId, title] = titleMatch;
+        
+        // Extract price
+        const priceMatch = priceRegex.exec(rowHtml);
+        if (!priceMatch) {
+          console.log(`No price found for listing: ${title}`);
+          continue;
+        }
+        
+        const price = parseInt(priceMatch[1].replace(/,/g, ''));
+        
+        // Extract location
+        const hoodMatch = hoodRegex.exec(rowHtml);
+        const location = hoodMatch ? hoodMatch[1] : `${city} area`;
+        
+        // Extract time
+        const timeMatch = timeRegex.exec(rowHtml);
+        const listingAge = timeMatch ? timeMatch[2] : 'Recently posted';
+        
+        // Build full URL
+        const fullUrl = relativeUrl.startsWith('http') ? 
+          relativeUrl : 
+          `https://${city}.craigslist.org${relativeUrl}`;
+        
+        // Validate the URL
+        if (!this.validateListingUrl(fullUrl, 'Craigslist')) {
+          console.log(`Invalid URL skipped: ${fullUrl}`);
+          continue;
+        }
+        
+        console.log(`Found valid listing: ${title} - $${price} - ${fullUrl}`);
+        
+        const listing: Listing = {
+          id: crypto.randomUUID(),
+          search_id: searchConfig.id,
+          source_listing_id: dataId || `cl-${city}-${Date.now()}-${foundRows}`,
+          source_name: 'Craigslist',
+          source_url: fullUrl,
+          title: title.trim(),
+          description: `${searchConfig.manufacturer} ${searchConfig.item_name} listing found on Craigslist ${city}`,
+          price: price,
+          price_threshold: searchConfig.price_threshold,
+          max_price_allowed: searchConfig.max_price_allowed,
+          location: location,
+          listing_age: listingAge,
+          contact_info: 'Contact via Craigslist',
+          date_scraped: new Date().toISOString(),
+          last_seen_at: new Date().toISOString(),
+          is_within_threshold: price <= searchConfig.price_threshold,
+          is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
+          is_above_slider: price > searchConfig.max_price_allowed,
+          is_price_changed: false,
+          is_description_changed: false,
+          is_ignored: false
+        };
+        
+        listings.push(listing);
       }
+      
+      console.log(`Found ${foundRows} total rows, extracted ${listings.length} valid listings from Craigslist ${city}`);
+      
     } catch (error) {
-      console.error('Error parsing Craigslist:', error);
+      console.error(`Error parsing Craigslist ${city}:`, error);
     }
     
     return listings;
