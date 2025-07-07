@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,8 +11,7 @@ import SearchConfigsManager from '@/components/SearchConfigsManager';
 import ListingsDashboard from '@/components/ListingsDashboard';
 import ScrapingStatus from '@/components/ScrapingStatus';
 import { SearchConfig } from '@/types/database';
-import { RealScraper } from '@/services/realScraper';
-import { scrapingSources } from '@/services/mockScraper';
+import { RealScraper, scrapingSources } from '@/services/realScraper';
 import { useToast } from '@/hooks/use-toast';
 import { useSearchConfigs, useCreateSearchConfig } from '@/hooks/useSearchConfigs';
 import { useListings, useCreateListings, useIgnoreListing, useUnignoreListing } from '@/hooks/useListings';
@@ -52,7 +52,7 @@ const FeedMeHaystacks = () => {
         await createListings.mutateAsync(newListings);
         toast({
           title: "Search Active",
-          description: `Found ${newListings.length} listings from real sources! Monitoring will continue automatically.`
+          description: `Found ${newListings.length} real listings! Monitoring will continue automatically.`
         });
       } else {
         toast({
@@ -195,8 +195,6 @@ const FeedMeHaystacks = () => {
 
   const handleEditSearch = (search: SearchConfig) => {
     setEditingSearch(search);
-    // Switch to the search tab to show the form
-    // Note: You might want to add tab switching logic here if needed
   };
 
   const handleCancelEdit = () => {
@@ -241,9 +239,9 @@ const FeedMeHaystacks = () => {
         </div>
 
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold">Feed Me Haystacks</h1>
+          <h1 className="text-4xl font-bold">Feed Me Haystracks</h1>
           <p className="text-muted-foreground">
-            Automated price monitoring across multiple marketplaces
+            Automated price monitoring across multiple marketplaces using real data
           </p>
         </div>
 
@@ -348,10 +346,10 @@ const FeedMeHaystacks = () => {
                   <List className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No Listings Yet</h3>
                   <p className="text-muted-foreground mb-4">
-                    Create your first search configuration to start finding deals!
+                    Create your first search configuration to start finding real deals!
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Once you create a search, listings will appear here automatically.
+                    Once you create a search, real listings will appear here automatically.
                   </p>
                 </CardContent>
               </Card>
