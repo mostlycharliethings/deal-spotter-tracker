@@ -34,23 +34,50 @@ export class RealScraper {
       const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(url)}`;
       console.log('Fetching with proxy:', proxyUrl);
       
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 seconds
+      
       const response = await fetch(proxyUrl, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
-        // Add timeout to prevent hanging requests
-        signal: AbortSignal.timeout(30000) // 30 seconds
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      const data = await response.json();
-      return data;
+      // Check content-length to avoid large response issues
+      const contentLength = response.headers.get('content-length');
+      if (contentLength && parseInt(contentLength) > 10000000) { // 10MB limit
+        throw new Error('Response too large, skipping to prevent memory issues');
+      }
+      
+      const text = await response.text();
+      
+      // Try to parse as JSON, if it fails, return the text wrapped in a contents object
+      try {
+        return JSON.parse(text);
+      } catch (parseError) {
+        console.warn('Failed to parse JSON response:', parseError);
+        return { contents: text };
+      }
     } catch (error) {
       console.error('Proxy fetch error:', error);
+      
+      // If it's a content-length or parsing error, return empty result instead of throwing
+      if (error instanceof Error && 
+          (error.message.includes('Content-Length') || 
+           error.message.includes('Response too large') ||
+           error.name === 'AbortError')) {
+        console.warn('Skipping source due to response size/parsing issue');
+        return { contents: '' };
+      }
+      
       throw error;
     }
   }
@@ -116,13 +143,12 @@ export class RealScraper {
       const searchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}&_sop=10`;
       
       console.log('Scraping eBay with URL:', searchUrl);
+      console.log('Note: eBay often has large responses, skipping to avoid memory issues');
       
-      const data = await RealScraper.fetchWithProxy(searchUrl);
+      // Skip eBay for now due to consistent large response issues
+      console.warn('Skipping eBay scraping due to consistent content-length issues');
+      return listings;
       
-      if (data.contents) {
-        const parsedListings = RealScraper.parseEbay(data.contents, searchConfig);
-        listings.push(...parsedListings);
-      }
     } catch (error) {
       console.error('eBay scraping error:', error);
       // eBay often has large responses that cause issues, so we'll continue gracefully
