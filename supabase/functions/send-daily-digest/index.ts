@@ -219,7 +219,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send emails
     const emailPromises = emailAddresses.map(async (email) => {
       return await resend.emails.send({
-        from: "Feed Me Haystacks <onboarding@resend.dev>",
+        from: "Feed Me Haystacks <cscheidebi@gmail.com>",
         to: [email],
         subject: isTestEmail 
           ? "Feed Me Haystacks - Daily Digest Preview" 
