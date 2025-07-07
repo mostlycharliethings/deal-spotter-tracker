@@ -151,7 +151,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResult = await resend.emails.send({
-      from: "Feed Me Haystacks <onboarding@resend.dev>",
+      from: "Feed Me Haystacks <cscheidebi@gmail.com>",
       to: [email],
       subject: `Search Confirmed: ${searchDescription}`,
       html: emailHtml,
