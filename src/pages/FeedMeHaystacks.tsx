@@ -248,7 +248,7 @@ const FeedMeHaystacks = () => {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -299,22 +299,26 @@ const FeedMeHaystacks = () => {
         </div>
 
         <Tabs defaultValue="search" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="w-full">
             <TabsTrigger value="search" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
-              New Search
+              <span className="hidden sm:inline">New Search</span>
+              <span className="sm:hidden">Search</span>
             </TabsTrigger>
             <TabsTrigger value="manage" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              My Searches ({searches.length})
+              <span className="hidden sm:inline">My Searches ({searches.length})</span>
+              <span className="sm:hidden">Mine ({searches.length})</span>
             </TabsTrigger>
             <TabsTrigger value="listings" className="flex items-center gap-2">
               <List className="h-4 w-4" />
-              Listings ({listings.length})
+              <span className="hidden sm:inline">Listings ({listings.length})</span>
+              <span className="sm:hidden">List ({listings.length})</span>
             </TabsTrigger>
             <TabsTrigger value="status" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
-              Scraping Status
+              <span className="hidden sm:inline">Scraping Status</span>
+              <span className="sm:hidden">Status</span>
             </TabsTrigger>
           </TabsList>
 
@@ -374,7 +378,8 @@ const FeedMeHaystacks = () => {
           <Link to="/tools/feedmehaystacks/preview">
             <Button variant="outline" size="lg" className="flex items-center gap-2">
               <Mail className="h-5 w-5" />
-              Preview Daily Digest Email
+              <span className="hidden sm:inline">Preview Daily Digest Email</span>
+              <span className="sm:hidden">Preview Email</span>
             </Button>
           </Link>
         </div>
