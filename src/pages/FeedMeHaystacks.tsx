@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +40,13 @@ const FeedMeHaystacks = () => {
     // Create the search config in Supabase
     const searchConfig = await createSearchConfig.mutateAsync(searchConfigData);
     
+    // Show success message that includes email confirmation
+    toast({
+      title: "Search Created Successfully! 🎉",
+      description: `Your search for ${searchConfigData.manufacturer} ${searchConfigData.item_name} is now active. A confirmation email has been sent to ${searchConfigData.email_address}.`,
+      duration: 5000
+    });
+    
     // Immediately run a real scrape for the new search
     setIsLoading(true);
     try {
@@ -51,21 +57,21 @@ const FeedMeHaystacks = () => {
       if (newListings.length > 0) {
         await createListings.mutateAsync(newListings);
         toast({
-          title: "Search Active",
-          description: `Found ${newListings.length} real listings! Monitoring will continue automatically.`
+          title: "Initial Results Found",
+          description: `Found ${newListings.length} listings! Check the Listings tab for details.`
         });
       } else {
         toast({
-          title: "Search Active",
-          description: "No listings found initially, but real scraping is now active. Check back soon for results!",
+          title: "Monitoring Active",
+          description: "No listings found initially, but monitoring is now active. Check back soon for results!",
           variant: "default"
         });
       }
     } catch (error) {
       console.error('Error running real scrape:', error);
       toast({
-        title: "Scraping Started",
-        description: "Real scraping has been initiated. Results may take a few minutes to appear due to anti-bot measures.",
+        title: "Monitoring Started",
+        description: "Real scraping has been initiated. Results may take a few minutes to appear.",
         variant: "default"
       });
     } finally {
