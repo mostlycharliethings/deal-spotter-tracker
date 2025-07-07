@@ -205,7 +205,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="qualifier">Qualifier (Optional)</Label>
+              <Label htmlFor="qualifier" className="block min-h-[20px]">Qualifier (Optional)</Label>
               <Input
                 id="qualifier"
                 value={formData.qualifier}
@@ -214,7 +214,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor="sub_qualifier">Sub-Qualifier (Optional)</Label>
+              <Label htmlFor="sub_qualifier" className="block min-h-[20px]">Sub-Qualifier (Optional)</Label>
               <Input
                 id="sub_qualifier"
                 value={formData.sub_qualifier}
