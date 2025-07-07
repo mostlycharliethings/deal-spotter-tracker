@@ -7,7 +7,7 @@ import SearchConfigForm from '@/components/SearchConfigForm';
 import ListingsDashboard from '@/components/ListingsDashboard';
 import ScrapingStatus from '@/components/ScrapingStatus';
 import { useCreateSearchConfig, useSearchConfigs } from '@/hooks/useSearchConfigs';
-import { useListings } from '@/hooks/useListings';
+import { useListings, useIgnoreListing, useUnignoreListing } from '@/hooks/useListings';
 import { SearchConfig, ScrapingSource } from '@/types/database';
 
 const FeedMeHaystacks = () => {
@@ -15,6 +15,8 @@ const FeedMeHaystacks = () => {
   const createSearchConfig = useCreateSearchConfig();
   const { data: searchConfigs = [] } = useSearchConfigs();
   const { data: listings = [] } = useListings();
+  const ignoreListing = useIgnoreListing();
+  const unignoreListing = useUnignoreListing();
 
   // Mock scraping sources data
   const scrapingSources: ScrapingSource[] = [
@@ -43,6 +45,22 @@ const FeedMeHaystacks = () => {
   const handleManualScrape = (sourceName: string) => {
     console.log(`Manual scrape triggered for ${sourceName}`);
     // TODO: Implement manual scraping functionality
+  };
+
+  const handleIgnoreListing = async (listingId: string, reason?: string) => {
+    try {
+      await ignoreListing.mutateAsync({ listingId, reason });
+    } catch (error) {
+      console.error('Failed to ignore listing:', error);
+    }
+  };
+
+  const handleUnignoreListing = async (listingId: string) => {
+    try {
+      await unignoreListing.mutateAsync(listingId);
+    } catch (error) {
+      console.error('Failed to unignore listing:', error);
+    }
   };
 
   // Calculate statistics
@@ -90,7 +108,11 @@ const FeedMeHaystacks = () => {
 
           {/* Listings Dashboard */}
           <div>
-            <ListingsDashboard />
+            <ListingsDashboard 
+              listings={listings}
+              onIgnoreListing={handleIgnoreListing}
+              onUnignoreListing={handleUnignoreListing}
+            />
           </div>
         </div>
 
