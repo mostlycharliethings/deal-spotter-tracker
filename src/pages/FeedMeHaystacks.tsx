@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, List, Settings, Activity, ArrowLeft } from 'lucide-react';
+import { Search, List, Settings, Activity, ArrowLeft, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import SearchConfigForm from '@/components/SearchConfigForm';
@@ -297,6 +297,16 @@ const FeedMeHaystacks = () => {
             />
           </TabsContent>
         </Tabs>
+
+        {/* Daily Digest Preview Button */}
+        <div className="flex justify-center pt-8 border-t">
+          <Link to="/tools/feedmehaystacks/preview">
+            <Button variant="outline" size="lg" className="flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Preview Daily Digest Email
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
