@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useSearchConfigs } from '@/hooks/useSearchConfigs';
 import { useListings } from '@/hooks/useListings';
+import { supabase } from '@/integrations/supabase/client';
 import DailyDigestEmailPreview from '@/components/DailyDigestEmailPreview';
 
 const DailyDigestPreview = () => {
@@ -32,7 +33,18 @@ const DailyDigestPreview = () => {
 
     setIsLoading(true);
     try {
-      // This would call your edge function to send the daily digest email
+      console.log('Sending test digest email to:', email);
+      
+      const { data, error } = await supabase.functions.invoke('send-daily-digest', {
+        body: { email, isTest: true }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('Email sent successfully:', data);
+      
       toast({
         title: "Test Email Sent",
         description: `Daily digest preview sent to ${email}`,
