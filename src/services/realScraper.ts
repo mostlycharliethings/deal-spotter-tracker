@@ -1,3 +1,4 @@
+
 import { Listing, SearchConfig } from '@/types/database';
 
 export class RealScraper {
@@ -32,7 +33,7 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      const searchQuery = this.buildSearchQuery(searchConfig);
+      const searchQuery = RealScraper.buildSearchQuery(searchConfig);
       const encodedQuery = encodeURIComponent(searchQuery);
       
       // Facebook Marketplace general search URL
@@ -45,7 +46,7 @@ export class RealScraper {
       const data = await response.json();
       
       if (data.contents) {
-        const parsedListings = this.parseFacebookMarketplace(data.contents, searchConfig);
+        const parsedListings = RealScraper.parseFacebookMarketplace(data.contents, searchConfig);
         listings.push(...parsedListings);
       }
     } catch (error) {
@@ -59,7 +60,7 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      const searchQuery = this.buildSearchQuery(searchConfig);
+      const searchQuery = RealScraper.buildSearchQuery(searchConfig);
       const encodedQuery = encodeURIComponent(searchQuery);
       
       // Craigslist for sale search URL (general items, not just cars)
@@ -72,7 +73,7 @@ export class RealScraper {
       const data = await response.json();
       
       if (data.contents) {
-        const parsedListings = this.parseCraigslist(data.contents, searchConfig);
+        const parsedListings = RealScraper.parseCraigslist(data.contents, searchConfig);
         listings.push(...parsedListings);
       }
     } catch (error) {
@@ -86,7 +87,7 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      const searchQuery = this.buildSearchQuery(searchConfig);
+      const searchQuery = RealScraper.buildSearchQuery(searchConfig);
       const encodedQuery = encodeURIComponent(searchQuery);
       
       // eBay general search URL (not limited to motors)
@@ -99,7 +100,7 @@ export class RealScraper {
       const data = await response.json();
       
       if (data.contents) {
-        const parsedListings = this.parseEbay(data.contents, searchConfig);
+        const parsedListings = RealScraper.parseEbay(data.contents, searchConfig);
         listings.push(...parsedListings);
       }
     } catch (error) {
@@ -113,7 +114,7 @@ export class RealScraper {
     const listings: Listing[] = [];
     
     try {
-      const searchQuery = this.buildSearchQuery(searchConfig);
+      const searchQuery = RealScraper.buildSearchQuery(searchConfig);
       const encodedQuery = encodeURIComponent(searchQuery);
       
       // OfferUp search URL
@@ -126,7 +127,7 @@ export class RealScraper {
       const data = await response.json();
       
       if (data.contents) {
-        const parsedListings = this.parseOfferUp(data.contents, searchConfig);
+        const parsedListings = RealScraper.parseOfferUp(data.contents, searchConfig);
         listings.push(...parsedListings);
       }
     } catch (error) {
