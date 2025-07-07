@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Mail, Eye, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { useListings, useSearchConfigs } from '@/hooks/useSearchConfigs';
+import { useSearchConfigs } from '@/hooks/useSearchConfigs';
+import { useListings } from '@/hooks/useListings';
 import DailyDigestEmailPreview from '@/components/DailyDigestEmailPreview';
 
 const DailyDigestPreview = () => {
