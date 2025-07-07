@@ -22,10 +22,37 @@ export class RealScraper {
         console.log(`Found ${listings.length} listings from ${source.name}`);
       } catch (error) {
         console.error(`Error scraping ${source.name}:`, error);
+        // Continue with other sources even if one fails
       }
     }
 
     return allListings;
+  }
+
+  private static async fetchWithProxy(url: string): Promise<any> {
+    try {
+      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(url)}`;
+      console.log('Fetching with proxy:', proxyUrl);
+      
+      const response = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+        // Add timeout to prevent hanging requests
+        signal: AbortSignal.timeout(30000) // 30 seconds
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Proxy fetch error:', error);
+      throw error;
+    }
   }
 
   private static async scrapeFacebookMarketplace(searchConfig: SearchConfig): Promise<Listing[]> {
@@ -40,9 +67,7 @@ export class RealScraper {
       
       console.log('Scraping Facebook Marketplace with URL:', searchUrl);
       
-      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
-      const response = await fetch(proxyUrl);
-      const data = await response.json();
+      const data = await RealScraper.fetchWithProxy(searchUrl);
       
       if (data.contents) {
         const parsedListings = RealScraper.parseFacebookMarketplace(data.contents, searchConfig);
@@ -67,9 +92,7 @@ export class RealScraper {
       
       console.log('Scraping Craigslist with URL:', searchUrl);
       
-      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
-      const response = await fetch(proxyUrl);
-      const data = await response.json();
+      const data = await RealScraper.fetchWithProxy(searchUrl);
       
       if (data.contents) {
         const parsedListings = RealScraper.parseCraigslist(data.contents, searchConfig);
@@ -94,9 +117,7 @@ export class RealScraper {
       
       console.log('Scraping eBay with URL:', searchUrl);
       
-      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
-      const response = await fetch(proxyUrl);
-      const data = await response.json();
+      const data = await RealScraper.fetchWithProxy(searchUrl);
       
       if (data.contents) {
         const parsedListings = RealScraper.parseEbay(data.contents, searchConfig);
@@ -104,6 +125,7 @@ export class RealScraper {
       }
     } catch (error) {
       console.error('eBay scraping error:', error);
+      // eBay often has large responses that cause issues, so we'll continue gracefully
     }
 
     return listings;
@@ -121,9 +143,7 @@ export class RealScraper {
       
       console.log('Scraping OfferUp with URL:', searchUrl);
       
-      const proxyUrl = `${RealScraper.CORS_PROXY}${encodeURIComponent(searchUrl)}`;
-      const response = await fetch(proxyUrl);
-      const data = await response.json();
+      const data = await RealScraper.fetchWithProxy(searchUrl);
       
       if (data.contents) {
         const parsedListings = RealScraper.parseOfferUp(data.contents, searchConfig);
