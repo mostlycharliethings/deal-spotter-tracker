@@ -6,8 +6,6 @@ import { renderAsync } from 'npm:@react-email/components@0.0.22';
 import React from 'npm:react@18.3.1';
 import { DailyDigestEmail } from './_templates/daily-digest-email.tsx';
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -27,11 +25,39 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Check if RESEND_API_KEY is available
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY environment variable is not set');
+      return new Response(
+        JSON.stringify({ error: 'Email service not configured' }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    const resend = new Resend(resendApiKey);
+    console.log('Resend client initialized successfully');
+
     // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Supabase environment variables not set');
+      return new Response(
+        JSON.stringify({ error: 'Database service not configured' }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    console.log('Supabase client initialized successfully');
 
     const body: RequestBody = req.method === 'POST' ? await req.json() : {};
     const targetDate = body.date || new Date().toISOString().split('T')[0];
@@ -115,6 +141,8 @@ const handler = async (req: Request): Promise<Response> => {
         continue;
       }
 
+      console.log('Rendering email template...');
+      
       // Render the email template
       const emailHtml = await renderAsync(
         React.createElement(DailyDigestEmail, {
@@ -131,7 +159,10 @@ const handler = async (req: Request): Promise<Response> => {
         })
       );
 
+      console.log('Email template rendered successfully');
+
       // Send the email using a verified sender address
+      console.log(`Sending email to ${email}...`);
       const emailResult = await resend.emails.send({
         from: 'Feed Me Haystacks <onboarding@resend.dev>',
         to: [email],
@@ -143,6 +174,7 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (emailResult.error) {
         console.error(`Error sending email to ${email}:`, emailResult.error);
+        throw new Error(`Failed to send email: ${emailResult.error.message}`);
       } else {
         console.log(`Successfully sent digest email to ${email}`);
         emailsSent.push(email);
@@ -161,7 +193,10 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-daily-digest function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack 
+      }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
