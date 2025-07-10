@@ -140,7 +140,7 @@ export class RealScraper {
     try {
       console.log('Triggering automated scraping via Edge Function');
       
-      const response = await fetch('/functions/v1/automated-scraping', {
+      const response = await fetch('https://brlvephljobxfivqlope.supabase.co/functions/v1/automated-scraping', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
