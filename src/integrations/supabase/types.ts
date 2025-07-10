@@ -151,6 +151,99 @@ export type Database = {
         }
         Relationships: []
       }
+      search_tier2_map: {
+        Row: {
+          created_at: string
+          id: string
+          last_scraped_at: string | null
+          listings_found: number | null
+          search_id: string
+          tier2_source_id: string
+          was_successful: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_scraped_at?: string | null
+          listings_found?: number | null
+          search_id: string
+          tier2_source_id: string
+          was_successful?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_scraped_at?: string | null
+          listings_found?: number | null
+          search_id?: string
+          tier2_source_id?: string
+          was_successful?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_tier2_map_search_id_fkey"
+            columns: ["search_id"]
+            isOneToOne: false
+            referencedRelation: "search_configs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_tier2_map_tier2_source_id_fkey"
+            columns: ["tier2_source_id"]
+            isOneToOne: false
+            referencedRelation: "tier2_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tier2_sources: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          last_used_at: string | null
+          name: string
+          notes: string | null
+          reliability: string
+          success_rate: number | null
+          total_listings_found: number | null
+          total_searches: number | null
+          type: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          notes?: string | null
+          reliability: string
+          success_rate?: number | null
+          total_listings_found?: number | null
+          total_searches?: number | null
+          type: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          notes?: string | null
+          reliability?: string
+          success_rate?: number | null
+          total_listings_found?: number | null
+          total_searches?: number | null
+          type?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
