@@ -1,7 +1,6 @@
 
 import { Listing, SearchConfig } from '@/types/database';
 import { EnhancedScraper } from './enhancedScraper';
-import { EmailNotifier } from './emailNotifier';
 
 export const scrapingSources = [
   { name: 'Craigslist', tier: 1 as const, baseUrl: 'https://craigslist.org', scrapeFrequency: 5, isActive: true },
@@ -149,16 +148,22 @@ export class RealScraper {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP ${response.status}: ${response.statusText}`, errorText);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
       console.log('Automated scraping result:', result);
 
-      return {
-        success: true,
-        message: `Automated scraping completed. Found ${result.totalNewListings || 0} new listings across ${result.totalSearchConfigs || 0} searches.`
-      };
+      if (result.success) {
+        return {
+          success: true,
+          message: `Automated scraping completed. Found ${result.totalNewListings || 0} new listings across ${result.totalSearchConfigs || 0} searches.`
+        };
+      } else {
+        throw new Error(result.error || 'Unknown error occurred');
+      }
 
     } catch (error) {
       console.error('Error triggering automated scraping:', error);
