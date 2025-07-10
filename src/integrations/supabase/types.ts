@@ -100,6 +100,57 @@ export type Database = {
           },
         ]
       }
+      price_reference: {
+        Row: {
+          average_price: number | null
+          created_at: string
+          expires_at: string
+          high_price: number | null
+          id: string
+          item_name: string
+          low_price: number | null
+          manufacturer: string
+          qualifier: string | null
+          sample_count: number | null
+          scraped_at: string
+          source: string | null
+          year_end: number | null
+          year_start: number | null
+        }
+        Insert: {
+          average_price?: number | null
+          created_at?: string
+          expires_at?: string
+          high_price?: number | null
+          id?: string
+          item_name: string
+          low_price?: number | null
+          manufacturer: string
+          qualifier?: string | null
+          sample_count?: number | null
+          scraped_at?: string
+          source?: string | null
+          year_end?: number | null
+          year_start?: number | null
+        }
+        Update: {
+          average_price?: number | null
+          created_at?: string
+          expires_at?: string
+          high_price?: number | null
+          id?: string
+          item_name?: string
+          low_price?: number | null
+          manufacturer?: string
+          qualifier?: string | null
+          sample_count?: number | null
+          scraped_at?: string
+          source?: string | null
+          year_end?: number | null
+          year_start?: number | null
+        }
+        Relationships: []
+      }
       search_configs: {
         Row: {
           created_at: string
@@ -196,6 +247,45 @@ export type Database = {
           },
         ]
       }
+      tertiary_sources: {
+        Row: {
+          created_at: string
+          domain: string
+          first_seen_at: string
+          id: string
+          last_seen_at: string
+          notes: string | null
+          source_type: string | null
+          times_used: number | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          domain: string
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          notes?: string | null
+          source_type?: string | null
+          times_used?: number | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          notes?: string | null
+          source_type?: string | null
+          times_used?: number | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       tier2_sources: {
         Row: {
           category: string | null
@@ -249,7 +339,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_cached_price_estimate: {
+        Args: {
+          manufacturer_param: string
+          item_name_param: string
+          qualifier_param: string
+          year_start_param: number
+        }
+        Returns: {
+          low_price: number
+          average_price: number
+          high_price: number
+          sample_count: number
+          is_fresh: boolean
+        }[]
+      }
+      increment_times_used: {
+        Args: { url_param: string }
+        Returns: undefined
+      }
+      log_tertiary_source_if_new: {
+        Args: {
+          url_param: string
+          domain_param: string
+          source_type_param?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
