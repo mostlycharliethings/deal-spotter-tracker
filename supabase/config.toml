@@ -1,1 +1,22 @@
 project_id = "brlvephljobxfivqlope"
+
+[functions.automated-scraping]
+verify_jwt = false
+
+[functions.send-listing-notification]
+verify_jwt = false
+
+[functions.send-daily-digest]
+verify_jwt = false
+
+[functions.send-search-confirmation]
+verify_jwt = false
+
+[functions.discover-sources]
+verify_jwt = false
+
+[functions.setup-automated-scraping-cron]
+verify_jwt = false
+
+[functions.setup-daily-digest-cron]
+verify_jwt = false
