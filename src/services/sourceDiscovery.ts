@@ -22,7 +22,7 @@ export class SourceDiscoveryService {
     try {
       console.log('Discovering sources for:', { manufacturer, itemName, qualifier, subQualifier });
 
-      const response = await fetch('/functions/v1/discover-sources', {
+      const response = await fetch('https://brlvephljobxfivqlope.supabase.co/functions/v1/discover-sources', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
