@@ -64,20 +64,7 @@ const SearchConfigsManager: React.FC<SearchConfigsManagerProps> = ({
       return;
     }
 
-    try {
-      await deleteSearchConfig.mutateAsync(searchId);
-      toast({
-        title: "Search Deleted",
-        description: `Search for "${itemName}" has been removed.`
-      });
-    } catch (error) {
-      console.error('Error deleting search:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete search. Please try again.",
-        variant: "destructive"
-      });
-    }
+    await deleteSearchConfig.mutateAsync(searchId);
   };
 
   const handleSetupAutomation = async () => {

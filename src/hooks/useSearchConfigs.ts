@@ -96,11 +96,35 @@ export const useUpdateSearchConfig = () => {
 
 export const useDeleteSearchConfig = () => {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: async (searchId: string) => {
-      console.log('Deleting search config:', searchId);
+      console.log('Deleting search config and related data:', searchId);
       
+      // First, delete related scrape activity logs
+      const { error: logError } = await supabase
+        .from('scrape_activity_log')
+        .delete()
+        .eq('search_config_id', searchId);
+
+      if (logError) {
+        console.error('Error deleting scrape activity logs:', logError);
+        throw logError;
+      }
+
+      // Then, delete related listings
+      const { error: listingsError } = await supabase
+        .from('listings')
+        .delete()
+        .eq('search_id', searchId);
+
+      if (listingsError) {
+        console.error('Error deleting listings:', listingsError);
+        throw listingsError;
+      }
+
+      // Finally, delete the search config
       const { error } = await supabase
         .from('search_configs')
         .delete()
@@ -111,10 +135,23 @@ export const useDeleteSearchConfig = () => {
         throw error;
       }
 
-      console.log('Deleted search config:', searchId);
+      console.log('Deleted search config and related data:', searchId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['search-configs'] });
+      queryClient.invalidateQueries({ queryKey: ['listings'] });
+      toast({
+        title: "Search Deleted",
+        description: "Search configuration and all related data have been removed."
+      });
+    },
+    onError: (error) => {
+      console.error('Failed to delete search config:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete search configuration. Please try again.",
+        variant: "destructive"
+      });
     },
   });
 };
