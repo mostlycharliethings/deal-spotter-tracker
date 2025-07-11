@@ -151,6 +151,44 @@ export type Database = {
         }
         Relationships: []
       }
+      scrape_activity_log: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          error_details: string | null
+          id: string
+          message: string | null
+          search_config_id: string | null
+          stage: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          error_details?: string | null
+          id?: string
+          message?: string | null
+          search_config_id?: string | null
+          stage: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          error_details?: string | null
+          id?: string
+          message?: string | null
+          search_config_id?: string | null
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scrape_activity_log_search_config_id_fkey"
+            columns: ["search_config_id"]
+            isOneToOne: false
+            referencedRelation: "search_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       search_configs: {
         Row: {
           created_at: string

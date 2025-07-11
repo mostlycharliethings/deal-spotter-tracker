@@ -15,23 +15,42 @@ class EdgeScraper {
   static async scrapeSearchConfig(searchConfig: any, supabase: any): Promise<any[]> {
     console.log('Starting automated scrape for search config:', searchConfig.id);
     
+    // Log config queued stage
+    await this.logActivity(supabase, searchConfig.id, 'config_queued', 
+      `Processing search: ${searchConfig.manufacturer} ${searchConfig.item_name}`, { searchConfig });
+    
     const allListings: any[] = [];
     const searchVariants = this.generateSearchVariants(searchConfig);
+    
+    // Log variants generated stage
+    await this.logActivity(supabase, searchConfig.id, 'variants_generated', 
+      `Generated ${searchVariants.length} search variants`, { variants: searchVariants });
     
     // Scrape multiple sources with better error handling
     for (const variant of searchVariants.slice(0, 2)) { // Limit variants to avoid timeouts
       console.log(`Processing search variant: "${variant}"`);
       
       try {
+        // Log source scraping attempt
+        await this.logActivity(supabase, searchConfig.id, 'source_scraped', 
+          `Attempting to scrape variant: ${variant}`, { variant });
+        
         // Scrape Craigslist
         const craigslistListings = await this.scrapeCraigslist(variant, searchConfig);
         allListings.push(...craigslistListings);
+        
+        // Log parsing results
+        await this.logActivity(supabase, searchConfig.id, 'listings_parsed', 
+          `Parsed ${craigslistListings.length} listings for variant: ${variant}`, 
+          { variant, listingsCount: craigslistListings.length });
         
         // Add delay between requests
         await this.delay(1000);
         
       } catch (error) {
         console.error(`Error scraping variant "${variant}":`, error);
+        await this.logActivity(supabase, searchConfig.id, 'failed', 
+          `Error scraping variant: ${variant}`, { variant }, error instanceof Error ? error.message : 'Unknown error');
         // Continue with other variants even if one fails
       }
     }
@@ -202,6 +221,29 @@ class EdgeScraper {
   private static delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  private static async logActivity(
+    supabase: any, 
+    searchConfigId: string, 
+    stage: string, 
+    message: string, 
+    data?: any, 
+    errorDetails?: string
+  ): Promise<void> {
+    try {
+      await supabase
+        .from('scrape_activity_log')
+        .insert({
+          search_config_id: searchConfigId,
+          stage,
+          message,
+          data,
+          error_details: errorDetails
+        });
+    } catch (error) {
+      console.error('Failed to log activity:', error);
+    }
+  }
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -255,6 +297,10 @@ const handler = async (req: Request): Promise<Response> => {
         const newListings = await EdgeScraper.scrapeSearchConfig(searchConfig, supabase);
 
         if (newListings.length > 0) {
+          // Log database insert attempt
+          await EdgeScraper.logActivity(supabase, searchConfig.id, 'db_insert_attempted', 
+            `Attempting to insert ${newListings.length} new listings`, { listingsCount: newListings.length });
+          
           // Insert new listings into database
           const { data: insertedListings, error: insertError } = await supabase
             .from('listings')
@@ -263,9 +309,13 @@ const handler = async (req: Request): Promise<Response> => {
 
           if (insertError) {
             console.error(`Error inserting listings for search ${searchConfig.id}:`, insertError);
+            await EdgeScraper.logActivity(supabase, searchConfig.id, 'failed', 
+              `Failed to insert listings`, { listingsCount: newListings.length }, insertError.message);
           } else {
             console.log(`Inserted ${newListings.length} new listings for search ${searchConfig.id}`);
             totalNewListings += newListings.length;
+            await EdgeScraper.logActivity(supabase, searchConfig.id, 'completed', 
+              `Successfully inserted ${newListings.length} new listings`, { insertedCount: newListings.length });
 
             // Send email notification if new listings found
             if (insertedListings && insertedListings.length > 0) {
