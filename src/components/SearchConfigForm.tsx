@@ -290,14 +290,16 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>
-            {isEditing ? 'Edit Search Configuration' : 'Configure Price Tracking Search'}
-          </CardTitle>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle>
+              {isEditing ? 'Edit Search Configuration' : 'Configure Price Tracking Search'}
+            </CardTitle>
+          </div>
           {geocodedLocation && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-md">
               <MapPin className="h-4 w-4" />
-              <span>Approximate Location: {geocodedLocation}</span>
+              <span className="font-medium">Your Approximate Location: {geocodedLocation}</span>
             </div>
           )}
         </div>
