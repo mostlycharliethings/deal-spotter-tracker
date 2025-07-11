@@ -14,6 +14,9 @@ export interface SearchConfig {
   email_address: string;
   created_at: string;
   is_active: boolean;
+  user_latitude?: number;
+  user_longitude?: number;
+  geocoded_location?: string;
 }
 
 export interface Listing {
@@ -40,6 +43,9 @@ export interface Listing {
   is_ignored: boolean;
   ignored_at?: string;
   ignore_reason?: string;
+  tier?: string;
+  distance_miles?: number;
+  proximity_bucket?: string;
 }
 
 export interface ScrapingSource {

@@ -11,8 +11,9 @@ import SearchMatrixPreview from './SearchMatrixPreview';
 import { useUpdateSearchConfig } from '@/hooks/useSearchConfigs';
 import { useSourceDiscovery } from '@/hooks/useSourceDiscovery';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, ExternalLink } from 'lucide-react';
+import { Sparkles, ExternalLink, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { GeoUtils } from '@/services/geoUtils';
 
 interface SearchConfigFormProps {
   onSearchCreated: (search: Omit<SearchConfig, 'id' | 'created_at'>) => void;
@@ -40,10 +41,35 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
     price_threshold: 500,
     slider_percent: 50,
     email_address: '',
-    include_years: false
+    include_years: false,
+    user_location: ''
   });
-
+  
+  const [geocodedLocation, setGeocodedLocation] = useState<string>('');
+  const [isGeocodingLocation, setIsGeocodingLocation] = useState(false);
   const [isSendingConfirmation, setIsSendingConfirmation] = useState(false);
+
+  const handleLocationGeocoding = async (location: string) => {
+    if (!location.trim()) {
+      setGeocodedLocation('');
+      return;
+    }
+
+    setIsGeocodingLocation(true);
+    try {
+      const locationInfo = await GeoUtils.geocodeLocation(location);
+      if (locationInfo.coordinates) {
+        setGeocodedLocation(locationInfo.address);
+      } else {
+        setGeocodedLocation('Location not found');
+      }
+    } catch (error) {
+      console.error('Error geocoding location:', error);
+      setGeocodedLocation('Error geocoding location');
+    } finally {
+      setIsGeocodingLocation(false);
+    }
+  };
 
   useEffect(() => {
     if (editingSearch) {
@@ -57,8 +83,10 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
         price_threshold: editingSearch.price_threshold,
         slider_percent: editingSearch.slider_percent,
         email_address: editingSearch.email_address,
-        include_years: editingSearch.year_start !== 1900 || editingSearch.year_end !== currentYear
+        include_years: editingSearch.year_start !== 1900 || editingSearch.year_end !== currentYear,
+        user_location: ''
       });
+      setGeocodedLocation(editingSearch.geocoded_location || '');
     }
   }, [editingSearch, currentYear]);
 
@@ -138,6 +166,24 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Get coordinates for the location if provided
+    let userLatitude: number | undefined;
+    let userLongitude: number | undefined;
+    let finalGeocodedLocation = geocodedLocation;
+    
+    if (formData.user_location && geocodedLocation && geocodedLocation !== 'Location not found' && geocodedLocation !== 'Error geocoding location') {
+      try {
+        const locationInfo = await GeoUtils.geocodeLocation(formData.user_location);
+        if (locationInfo.coordinates) {
+          userLatitude = locationInfo.coordinates.latitude;
+          userLongitude = locationInfo.coordinates.longitude;
+          finalGeocodedLocation = locationInfo.address;
+        }
+      } catch (error) {
+        console.warn('Could not get coordinates for location:', error);
+      }
+    }
+    
     if (isEditing) {
       try {
         await updateSearchConfig.mutateAsync({
@@ -152,6 +198,9 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
           slider_percent: formData.slider_percent,
           max_price_allowed: maxPrice,
           email_address: formData.email_address,
+          user_latitude: userLatitude,
+          user_longitude: userLongitude,
+          geocoded_location: finalGeocodedLocation,
         });
 
         toast({
@@ -185,7 +234,10 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
         slider_percent: formData.slider_percent,
         max_price_allowed: maxPrice,
         email_address: formData.email_address,
-        is_active: true
+        is_active: true,
+        user_latitude: userLatitude,
+        user_longitude: userLongitude,
+        geocoded_location: finalGeocodedLocation
       };
 
       console.log('Submitting search config:', searchConfig);
@@ -206,8 +258,10 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
         price_threshold: 500,
         slider_percent: 50,
         email_address: '',
-        include_years: false
+        include_years: false,
+        user_location: ''
       });
+      setGeocodedLocation('');
       clearDiscoveredSources();
     }
   };
@@ -226,17 +280,27 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
       price_threshold: 500,
       slider_percent: 50,
       email_address: '',
-      include_years: false
+      include_years: false,
+      user_location: ''
     });
+    setGeocodedLocation('');
     clearDiscoveredSources();
   };
 
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>
-          {isEditing ? 'Edit Search Configuration' : 'Configure Price Tracking Search'}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>
+            {isEditing ? 'Edit Search Configuration' : 'Configure Price Tracking Search'}
+          </CardTitle>
+          {geocodedLocation && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>Approximate Location: {geocodedLocation}</span>
+            </div>
+          )}
+        </div>
         <p className="text-sm text-muted-foreground">
           {isEditing 
             ? 'Modify your existing search parameters'
@@ -350,6 +414,23 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
             onPriceThresholdChange={(price) => setFormData({...formData, price_threshold: price})}
             onSliderPercentChange={(percent) => setFormData({...formData, slider_percent: percent})}
           />
+
+          <div>
+            <Label htmlFor="user_location">Your Location (for proximity sorting)</Label>
+            <Input
+              id="user_location"
+              value={formData.user_location}
+              onChange={(e) => {
+                setFormData({...formData, user_location: e.target.value});
+                handleLocationGeocoding(e.target.value);
+              }}
+              placeholder="e.g., San Francisco, CA or 94102"
+              disabled={isGeocodingLocation}
+            />
+            {isGeocodingLocation && (
+              <p className="text-xs text-muted-foreground mt-1">Geocoding location...</p>
+            )}
+          </div>
 
           <div>
             <Label htmlFor="email_address">Email Address</Label>

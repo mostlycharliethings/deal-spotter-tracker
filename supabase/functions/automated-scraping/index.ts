@@ -1,6 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
+import { TieringService } from './tieringService.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -318,14 +319,26 @@ const handler = async (req: Request): Promise<Response> => {
         const newListings = await EdgeScraper.scrapeSearchConfig(searchConfig, supabase);
 
         if (newListings.length > 0) {
+          // Enrich listings with tier and proximity data
+          const enrichedListings = await Promise.all(
+            newListings.map(listing => 
+              TieringService.enrichListingWithTierAndProximity(
+                listing,
+                searchConfig.user_latitude,
+                searchConfig.user_longitude,
+                [] // TODO: Get tertiary domains from database
+              )
+            )
+          );
+
           // Log database insert attempt
           await EdgeScraper.logActivity(supabase, searchConfig.id, 'db_insert_attempted', 
-            `Attempting to insert ${newListings.length} new listings`, { listingsCount: newListings.length });
+            `Attempting to insert ${enrichedListings.length} new listings`, { listingsCount: enrichedListings.length });
           
           // Insert new listings into database
           const { data: insertedListings, error: insertError } = await supabase
             .from('listings')
-            .insert(newListings)
+            .insert(enrichedListings)
             .select();
 
           if (insertError) {

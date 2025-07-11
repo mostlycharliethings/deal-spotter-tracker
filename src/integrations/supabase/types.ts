@@ -61,6 +61,7 @@ export type Database = {
           contact_info: string | null
           date_scraped: string
           description: string | null
+          distance_miles: number | null
           id: string
           ignore_reason: string | null
           ignored_at: string | null
@@ -76,16 +77,19 @@ export type Database = {
           max_price_allowed: number
           price: number
           price_threshold: number
+          proximity_bucket: string | null
           search_id: string
           source_listing_id: string
           source_name: string
           source_url: string
+          tier: string | null
           title: string
         }
         Insert: {
           contact_info?: string | null
           date_scraped?: string
           description?: string | null
+          distance_miles?: number | null
           id?: string
           ignore_reason?: string | null
           ignored_at?: string | null
@@ -101,16 +105,19 @@ export type Database = {
           max_price_allowed: number
           price: number
           price_threshold: number
+          proximity_bucket?: string | null
           search_id: string
           source_listing_id: string
           source_name: string
           source_url: string
+          tier?: string | null
           title: string
         }
         Update: {
           contact_info?: string | null
           date_scraped?: string
           description?: string | null
+          distance_miles?: number | null
           id?: string
           ignore_reason?: string | null
           ignored_at?: string | null
@@ -126,10 +133,12 @@ export type Database = {
           max_price_allowed?: number
           price?: number
           price_threshold?: number
+          proximity_bucket?: string | null
           search_id?: string
           source_listing_id?: string
           source_name?: string
           source_url?: string
+          tier?: string | null
           title?: string
         }
         Relationships: [
@@ -235,6 +244,7 @@ export type Database = {
         Row: {
           created_at: string
           email_address: string
+          geocoded_location: string | null
           id: string
           is_active: boolean
           item_name: string
@@ -245,12 +255,15 @@ export type Database = {
           slider_percent: number
           sub_qualifier: string | null
           user_id: string
+          user_latitude: number | null
+          user_longitude: number | null
           year_end: number
           year_start: number
         }
         Insert: {
           created_at?: string
           email_address: string
+          geocoded_location?: string | null
           id?: string
           is_active?: boolean
           item_name: string
@@ -261,12 +274,15 @@ export type Database = {
           slider_percent?: number
           sub_qualifier?: string | null
           user_id?: string
+          user_latitude?: number | null
+          user_longitude?: number | null
           year_end: number
           year_start: number
         }
         Update: {
           created_at?: string
           email_address?: string
+          geocoded_location?: string | null
           id?: string
           is_active?: boolean
           item_name?: string
@@ -277,6 +293,8 @@ export type Database = {
           slider_percent?: number
           sub_qualifier?: string | null
           user_id?: string
+          user_latitude?: number | null
+          user_longitude?: number | null
           year_end?: number
           year_start?: number
         }

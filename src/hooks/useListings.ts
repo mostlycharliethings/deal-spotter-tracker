@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Listing } from '@/types/database';
 import { useToast } from '@/hooks/use-toast';
+import { TieringService } from '@/services/tieringService';
 
 export const useListings = () => {
   return useQuery({
@@ -20,7 +21,10 @@ export const useListings = () => {
       }
       
       console.log('Fetched listings:', data);
-      return data as Listing[];
+      
+      // Apply tier and proximity sorting
+      const sortedListings = TieringService.sortListingsByTierAndProximity(data as Listing[]);
+      return sortedListings;
     },
   });
 };
