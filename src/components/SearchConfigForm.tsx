@@ -11,7 +11,8 @@ import SearchMatrixPreview from './SearchMatrixPreview';
 import { useUpdateSearchConfig } from '@/hooks/useSearchConfigs';
 import { useSourceDiscovery } from '@/hooks/useSourceDiscovery';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, ExternalLink, MapPin } from 'lucide-react';
+import { Sparkles, ExternalLink, MapPin, HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { GeoUtils } from '@/services/geoUtils';
 
@@ -436,7 +437,19 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
           />
 
           <div>
-            <Label htmlFor="user_location">Your Location (for proximity sorting)</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="user_location">Search Location (used for radius matching)</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Used to group results by distance.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Input
               id="user_location"
               value={formData.user_location}
@@ -447,6 +460,9 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
               placeholder="e.g., San Francisco, CA or 94102"
               disabled={isGeocodingLocation}
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              Leave blank to use your current location.
+            </p>
             {isGeocodingLocation && (
               <p className="text-xs text-muted-foreground mt-1">Geocoding location...</p>
             )}
