@@ -74,11 +74,18 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   };
 
   // Auto-detect user location on component mount
+  const [autoDetectedLocation, setAutoDetectedLocation] = useState<{latitude: number, longitude: number, address: string} | null>(null);
+  
   useEffect(() => {
     const detectUserLocation = async () => {
       try {
         const locationInfo = await GeoUtils.getCurrentUserLocation();
-        if (locationInfo && locationInfo.city && locationInfo.state) {
+        if (locationInfo && locationInfo.coordinates && locationInfo.city && locationInfo.state) {
+          setAutoDetectedLocation({
+            latitude: locationInfo.coordinates.latitude,
+            longitude: locationInfo.coordinates.longitude,
+            address: `${locationInfo.city}, ${locationInfo.state}`
+          });
           setUserDetectedLocation(`${locationInfo.city}, ${locationInfo.state}`);
         } else {
           setUserDetectedLocation('Location unavailable');
@@ -187,21 +194,30 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Get coordinates for the location if provided
+    // Priority 1: Use auto-detected location if available
+    // Priority 2: Use manual input from search location field
     let userLatitude: number | undefined;
     let userLongitude: number | undefined;
-    let finalGeocodedLocation = geocodedLocation;
+    let finalGeocodedLocation: string | undefined;
     
-    if (formData.user_location && geocodedLocation && geocodedLocation !== 'Location not found' && geocodedLocation !== 'Error geocoding location') {
+    if (autoDetectedLocation) {
+      // Priority 1: Auto-detected location (user clicked "Allow")
+      userLatitude = autoDetectedLocation.latitude;
+      userLongitude = autoDetectedLocation.longitude;
+      finalGeocodedLocation = autoDetectedLocation.address;
+      console.log('Using auto-detected location:', finalGeocodedLocation);
+    } else if (formData.user_location && geocodedLocation && geocodedLocation !== 'Location not found' && geocodedLocation !== 'Error geocoding location') {
+      // Priority 2: Manual input in search location field
       try {
         const locationInfo = await GeoUtils.geocodeLocation(formData.user_location);
         if (locationInfo.coordinates) {
           userLatitude = locationInfo.coordinates.latitude;
           userLongitude = locationInfo.coordinates.longitude;
           finalGeocodedLocation = locationInfo.address;
+          console.log('Using manual location input:', finalGeocodedLocation);
         }
       } catch (error) {
-        console.warn('Could not get coordinates for location:', error);
+        console.warn('Could not get coordinates for manual location:', error);
       }
     }
     
