@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, List, Settings, Activity, ArrowLeft, Mail, FileText, Bug, Database } from 'lucide-react';
+import { Search, List, Settings, Activity, ArrowLeft, Mail, FileText, Bug, Database, TestTube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import SearchConfigForm from '@/components/SearchConfigForm';
@@ -398,6 +398,14 @@ const FeedMeHaystacks = () => {
               <Database className="h-5 w-5" />
               <span className="hidden sm:inline">Scrape Logs</span>
               <span className="sm:hidden">Logs</span>
+            </Button>
+          </Link>
+          
+          <Link to="/testing">
+            <Button variant="outline" size="lg" className="flex items-center gap-2 border-copper-400 text-copper-600 hover:bg-copper-50 hover:text-copper-700">
+              <TestTube className="h-5 w-5" />
+              <span className="hidden sm:inline">Testing Suite</span>
+              <span className="sm:hidden">Testing</span>
             </Button>
           </Link>
         </div>

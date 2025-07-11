@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Tools from "./pages/Tools";
 import FeedMeHaystacks from "./pages/FeedMeHaystacks";
+import Testing from "./pages/Testing";
 import DailyDigestPreview from "./pages/DailyDigestPreview";
 import ScrapeLogs from "./pages/ScrapeLogs";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/index.html" element={<Index />} />
           <Route path="/tools" element={<Tools />} />
           <Route path="/tools/feedmehaystacks" element={<FeedMeHaystacks />} />
+          <Route path="/testing" element={<Testing />} />
           <Route path="/tools/feedmehaystacks/preview" element={<DailyDigestPreview />} />
           <Route path="/tools/feedmehaystacks/logs" element={<ScrapeLogs />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
