@@ -70,7 +70,7 @@ const Index = () => {
               </div>
 
               <p className="leading-relaxed text-lg">
-                Neurodivergent myself (ADHD/AuDHD), I approach problem-solving with a unique mix of empathy, precision, and obsession with simplification. Whether I'm working with SaaS execs, government procurement officers, or mom-and-pop operators, my goal is always the same: <span className="font-semibold text-forest-700 italic">make smart people's lives easier by making systems smarter.</span>
+                I approach problem-solving with a unique mix of empathy, precision, and obsession with simplification. Whether I'm working with SaaS execs, government procurement officers, or mom-and-pop operators, my goal is always the same: <span className="font-semibold text-forest-700 italic">make smart people's lives easier by making systems smarter.</span>
               </p>
             </div>
           </div>
