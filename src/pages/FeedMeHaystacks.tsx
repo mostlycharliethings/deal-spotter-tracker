@@ -220,7 +220,7 @@ const FeedMeHaystacks = () => {
       <div className="min-h-screen p-4" style={{ backgroundColor: 'rgb(251, 250, 247)' }}>
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <img src="/lovable-uploads/feedme-logo.png" alt="Feed Me Haystacks" className="h-64 mx-auto" />
+            <img src="/lovable-uploads/ea41d53e-acc5-4adc-83d1-f0ba86082bee.png" alt="Feed Me Haystacks" className="h-64 mx-auto" />
             <p className="text-muted-foreground">Loading your dashboard...</p>
           </div>
         </div>
@@ -242,7 +242,7 @@ const FeedMeHaystacks = () => {
         </div>
 
         <div className="text-center space-y-2">
-          <img src="/lovable-uploads/feedme-logo.png" alt="Feed Me Haystacks" className="h-64 mx-auto" />
+          <img src="/lovable-uploads/ea41d53e-acc5-4adc-83d1-f0ba86082bee.png" alt="Feed Me Haystacks" className="h-64 mx-auto" />
           <p className="text-muted-foreground">
             Automated price monitoring across multiple marketplaces using real data
           </p>
