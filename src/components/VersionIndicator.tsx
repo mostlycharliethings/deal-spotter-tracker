@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 
 const VersionIndicator = () => {
   // Simple semantic versioning - you can update this when making changes
-  const version = "1.3.0";
+  const version = "1.3.0001";
   
   return (
     <div className="fixed top-4 right-4 z-50">
