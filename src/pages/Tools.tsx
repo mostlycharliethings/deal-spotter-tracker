@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Search, ArrowLeft, TestTube } from 'lucide-react';
 import { ScraperApiTest } from '@/components/ScraperApiTest';
 import { ManualScrapeTrigger } from '@/components/ManualScrapeTrigger';
+import { ComprehensiveScrapingProof } from '@/components/ComprehensiveScrapingProof';
 
 const Tools = () => {
   return (
@@ -30,6 +31,11 @@ const Tools = () => {
             <p className="text-2xl text-forest-600 font-medium">
               Helpful utilities I've built
             </p>
+          </div>
+
+          {/* Comprehensive Scraping Proof - Full Width */}
+          <div className="mb-12">
+            <ComprehensiveScrapingProof />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 justify-center">
