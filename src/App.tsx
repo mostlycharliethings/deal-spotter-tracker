@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Tools from "./pages/Tools";
 import FeedMeHaystacks from "./pages/FeedMeHaystacks";
 import DailyDigestPreview from "./pages/DailyDigestPreview";
+import ScrapeLogs from "./pages/ScrapeLogs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/tools" element={<Tools />} />
           <Route path="/tools/feedmehaystacks" element={<FeedMeHaystacks />} />
           <Route path="/tools/feedmehaystacks/preview" element={<DailyDigestPreview />} />
+          <Route path="/tools/feedmehaystacks/logs" element={<ScrapeLogs />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
