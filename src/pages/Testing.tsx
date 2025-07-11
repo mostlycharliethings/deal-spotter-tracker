@@ -5,6 +5,7 @@ import { ArrowLeft, TestTube } from 'lucide-react';
 import { ComprehensiveScrapingProof } from '@/components/ComprehensiveScrapingProof';
 import { ScraperApiTest } from '@/components/ScraperApiTest';
 import { ManualScrapeTrigger } from '@/components/ManualScrapeTrigger';
+import ScrapingPipelineDebugger from '@/components/ScrapingPipelineDebugger';
 
 const Testing = () => {
   return (
@@ -37,7 +38,7 @@ const Testing = () => {
           </div>
 
           {/* API Diagnostics and Manual Scrape */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <div className="bg-white/80 backdrop-blur-sm border border-sage-200/50 rounded-lg p-6 hover:shadow-xl transition-all duration-300">
               <div className="flex items-center gap-3 mb-6">
                 <TestTube className="h-8 w-8 text-copper-500" />
@@ -53,6 +54,11 @@ const Testing = () => {
               </div>
               <ManualScrapeTrigger />
             </div>
+          </div>
+
+          {/* Pipeline Debugger - Full Width */}
+          <div className="mb-12">
+            <ScrapingPipelineDebugger />
           </div>
         </div>
       </div>

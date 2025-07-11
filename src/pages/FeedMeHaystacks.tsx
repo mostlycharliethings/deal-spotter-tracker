@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, List, Settings, ArrowLeft, Mail, FileText, Bug, Database, TestTube } from 'lucide-react';
+import { Search, List, Settings, ArrowLeft, Mail, FileText, Database, TestTube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import SearchConfigForm from '@/components/SearchConfigForm';
 import SearchConfigsManager from '@/components/SearchConfigsManager';
 import ListingsDashboard from '@/components/ListingsDashboard';
 
-import ScrapingPipelineDebugger from '@/components/ScrapingPipelineDebugger';
+
 import { SearchConfig } from '@/types/database';
 import { RealScraper, scrapingSources } from '@/services/realScraper';
 import { useToast } from '@/hooks/use-toast';
@@ -316,11 +316,6 @@ const FeedMeHaystacks = () => {
               <span className="hidden sm:inline">Listings ({listings.length})</span>
               <span className="sm:hidden">List ({listings.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="debug" className="flex items-center gap-2">
-              <Bug className="h-4 w-4" />
-              <span className="hidden sm:inline">Pipeline Debug</span>
-              <span className="sm:hidden">Debug</span>
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="search" className="mt-6">
@@ -366,9 +361,6 @@ const FeedMeHaystacks = () => {
           </TabsContent>
 
 
-          <TabsContent value="debug" className="mt-6">
-            <ScrapingPipelineDebugger />
-          </TabsContent>
         </Tabs>
 
         {/* Navigation Buttons */}
