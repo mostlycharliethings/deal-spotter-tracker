@@ -9,7 +9,7 @@ const corsHeaders = {
 
 // Enhanced scraper implementation for Edge Function
 class EdgeScraper {
-  private static readonly SCRAPER_API_KEY = 'dd7d33c454f2bbca7b228f9d9eb23aec';
+  private static readonly SCRAPER_API_KEY = Deno.env.get("SCRAPER_API_KEY") ?? '';
   private static readonly SCRAPER_API_URL = 'http://api.scraperapi.com';
 
   static async scrapeSearchConfig(searchConfig: any, supabase: any): Promise<any[]> {
