@@ -58,7 +58,8 @@ class EdgeScraper {
 
     // Remove duplicates and filter existing listings
     const uniqueListings = await this.removeDuplicatesAndFilter(allListings, supabase, searchConfig.id);
-    console.log(`Found ${uniqueListings.length} new unique listings`);
+        console.log(`Found ${uniqueListings.length} new unique listings after deduplication`);
+        console.log(`Raw listings before deduplication: ${allListings.length}`);
     
     return uniqueListings;
   }
@@ -127,57 +128,132 @@ class EdgeScraper {
   private static parseCraigslistResults(html: string, searchConfig: any, city: string, searchQuery: string): any[] {
     const listings: any[] = [];
     
+    console.log(`Parsing HTML for ${city}, length: ${html.length} chars`);
+    
+    // Log a sample of the HTML to understand the structure
+    if (html.length > 1000) {
+      console.log(`Sample HTML chunk: ${html.substring(1000, 1500)}`);
+    }
+    
     try {
-      const resultRowRegex = /<li class="[^"]*cl-search-result[^"]*"[^>]*>([\s\S]*?)<\/li>/g;
-      const titleLinkRegex = /<a[^>]*href="([^"]*)"[^>]*class="[^"]*cl-app-anchor[^"]*"[^>]*[^>]*>([^<]*)<\/a>/;
-      const priceRegex = /<span class="[^"]*result-price[^"]*"[^>]*>\$([0-9,]+)<\/span>/;
-      const locationRegex = /<span class="[^"]*result-locality[^"]*"[^>]*>([^<]+)<\/span>/;
+      // Multiple patterns to try for different Craigslist layouts
+      const patterns = [
+        // Modern Craigslist structure
+        {
+          resultRow: /<div[^>]*class="[^"]*result-info[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
+          titleLink: /<a[^>]*href="([^"]*)"[^>]*class="[^"]*result-title[^"]*"[^>]*>([^<]+)<\/a>/,
+          price: /<span[^>]*class="[^"]*result-price[^"]*"[^>]*>\$([0-9,]+)<\/span>/
+        },
+        // Alternative structure
+        {
+          resultRow: /<li[^>]*class="[^"]*result-row[^"]*"[^>]*>([\s\S]*?)<\/li>/g,
+          titleLink: /<a[^>]*href="([^"]*)"[^>]*>([^<]+)<\/a>/,
+          price: /<span[^>]*>\$([0-9,]+)<\/span>/
+        },
+        // Gallery view structure
+        {
+          resultRow: /<div[^>]*class="[^"]*result-image[^"]*"[^>]*>[\s\S]*?<a[^>]*href="([^"]*)"[^>]*>[\s\S]*?<span[^>]*>\$([0-9,]+)<\/span>[\s\S]*?title="([^"]*)"[^>]*>/g,
+          titleLink: null, // Special handling for gallery
+          price: null
+        }
+      ];
       
-      let rowMatch;
       let foundCount = 0;
+      let patternUsed = -1;
       
-      while ((rowMatch = resultRowRegex.exec(html)) !== null && foundCount < 3) {
-        const rowHtml = rowMatch[1];
+      for (let i = 0; i < patterns.length && foundCount === 0; i++) {
+        const pattern = patterns[i];
+        console.log(`Trying pattern ${i + 1}...`);
         
-        const titleMatch = titleLinkRegex.exec(rowHtml);
-        const priceMatch = priceRegex.exec(rowHtml);
-        
-        if (titleMatch && priceMatch) {
-          const [, relativeUrl, title] = titleMatch;
-          const price = parseInt(priceMatch[1].replace(/,/g, ''));
-          
-          const locationMatch = locationRegex.exec(rowHtml);
-          const location = locationMatch ? locationMatch[1].trim() : `${city} area`;
-          
-          const fullUrl = relativeUrl.startsWith('http') ? 
-            relativeUrl : 
-            `https://${city}.craigslist.org${relativeUrl}`;
-          
-          const listing = {
-            search_id: searchConfig.id,
-            source_listing_id: `cl-${city}-${Date.now()}-${foundCount}`,
-            source_name: 'Craigslist',
-            source_url: fullUrl,
-            title: title.trim(),
-            description: `${searchQuery} found on Craigslist ${city}`,
-            price: price,
-            price_threshold: searchConfig.price_threshold,
-            max_price_allowed: searchConfig.max_price_allowed,
-            location: location,
-            listing_age: 'Recently posted',
-            contact_info: 'Contact via Craigslist',
-            is_within_threshold: price <= searchConfig.price_threshold,
-            is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
-            is_above_slider: price > searchConfig.max_price_allowed,
-            is_price_changed: false,
-            is_description_changed: false,
-            is_ignored: false
-          };
-          
-          listings.push(listing);
-          foundCount++;
+        if (i === 2) {
+          // Special handling for gallery view
+          let galleryMatch;
+          while ((galleryMatch = pattern.resultRow.exec(html)) !== null && foundCount < 5) {
+            const [, url, priceStr, title] = galleryMatch;
+            const price = parseInt(priceStr.replace(/,/g, ''));
+            
+            if (title && price) {
+              const fullUrl = url.startsWith('http') ? url : `https://${city}.craigslist.org${url}`;
+              
+              const listing = {
+                search_id: searchConfig.id,
+                source_listing_id: `cl-${city}-${Date.now()}-${foundCount}`,
+                source_name: 'Craigslist',
+                source_url: fullUrl,
+                title: title.trim(),
+                description: `${searchQuery} found on Craigslist ${city}`,
+                price: price,
+                price_threshold: searchConfig.price_threshold,
+                max_price_allowed: searchConfig.max_price_allowed,
+                location: `${city} area`,
+                listing_age: 'Recently posted',
+                contact_info: 'Contact via Craigslist',
+                is_within_threshold: price <= searchConfig.price_threshold,
+                is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
+                is_above_slider: price > searchConfig.max_price_allowed,
+                is_price_changed: false,
+                is_description_changed: false,
+                is_ignored: false
+              };
+              
+              listings.push(listing);
+              foundCount++;
+              patternUsed = i;
+            }
+          }
+        } else {
+          // Regular patterns
+          let rowMatch;
+          while ((rowMatch = pattern.resultRow.exec(html)) !== null && foundCount < 5) {
+            const rowHtml = rowMatch[1];
+            console.log(`Checking row HTML: ${rowHtml.substring(0, 200)}...`);
+            
+            const titleMatch = pattern.titleLink.exec(rowHtml);
+            const priceMatch = pattern.price.exec(rowHtml);
+            
+            console.log(`Title match: ${titleMatch ? 'YES' : 'NO'}, Price match: ${priceMatch ? 'YES' : 'NO'}`);
+            
+            if (titleMatch && priceMatch) {
+              const [, relativeUrl, title] = titleMatch;
+              const price = parseInt(priceMatch[1].replace(/,/g, ''));
+              
+              console.log(`Found listing: ${title} - $${price}`);
+              
+              const fullUrl = relativeUrl.startsWith('http') ? 
+                relativeUrl : 
+                `https://${city}.craigslist.org${relativeUrl}`;
+              
+              const listing = {
+                search_id: searchConfig.id,
+                source_listing_id: `cl-${city}-${Date.now()}-${foundCount}`,
+                source_name: 'Craigslist',
+                source_url: fullUrl,
+                title: title.trim(),
+                description: `${searchQuery} found on Craigslist ${city}`,
+                price: price,
+                price_threshold: searchConfig.price_threshold,
+                max_price_allowed: searchConfig.max_price_allowed,
+                location: `${city} area`,
+                listing_age: 'Recently posted',
+                contact_info: 'Contact via Craigslist',
+                is_within_threshold: price <= searchConfig.price_threshold,
+                is_within_slider_range: price > searchConfig.price_threshold && price <= searchConfig.max_price_allowed,
+                is_above_slider: price > searchConfig.max_price_allowed,
+                is_price_changed: false,
+                is_description_changed: false,
+                is_ignored: false
+              };
+              
+              listings.push(listing);
+              foundCount++;
+              patternUsed = i;
+            }
+          }
         }
       }
+      
+      console.log(`Found ${foundCount} listings using pattern ${patternUsed + 1} for ${city}`);
+      
     } catch (error) {
       console.error(`Error parsing Craigslist ${city}:`, error);
     }
