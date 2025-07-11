@@ -3,7 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
-import { Search, ArrowLeft } from 'lucide-react';
+import { Search, ArrowLeft, TestTube } from 'lucide-react';
+import { ScraperApiTest } from '@/components/ScraperApiTest';
 
 const Tools = () => {
   return (
@@ -30,8 +31,8 @@ const Tools = () => {
             </p>
           </div>
 
-          <div className="flex justify-center">
-            <Card className="w-full max-w-lg hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm border-sage-200/50 hover:border-copper-300">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 justify-center max-w-4xl mx-auto">
+            <Card className="hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm border-sage-200/50 hover:border-copper-300">
               <CardHeader className="text-center pb-4">
                 <CardTitle className="flex items-center justify-center gap-3 font-playfair text-forest-700 text-2xl">
                   <Search className="h-8 w-8 text-copper-500" />
@@ -47,6 +48,18 @@ const Tools = () => {
                     Feed Me Haystacks
                   </Button>
                 </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm border-sage-200/50 hover:border-copper-300">
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="flex items-center justify-center gap-3 font-playfair text-forest-700 text-2xl">
+                  <TestTube className="h-8 w-8 text-copper-500" />
+                  API Diagnostics
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ScraperApiTest />
               </CardContent>
             </Card>
           </div>
