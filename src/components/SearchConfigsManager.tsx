@@ -17,6 +17,7 @@ import { SearchConfig } from '@/types/database';
 import { useToast } from '@/hooks/use-toast';
 import { useUpdateSearchConfig, useDeleteSearchConfig } from '@/hooks/useSearchConfigs';
 import { RealScraper } from '@/services/realScraper';
+import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 
 interface SearchConfigsManagerProps {
@@ -84,19 +85,15 @@ const SearchConfigsManager: React.FC<SearchConfigsManagerProps> = ({
     try {
       console.log('Setting up automated scraping...');
       
-      const response = await fetch('/functions/v1/setup-automated-scraping-cron', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const { data, error } = await supabase.functions.invoke('setup-automated-scraping-cron', {
+        body: {}
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (error) {
+        throw new Error(error.message);
       }
 
-      const result = await response.json();
-      console.log('Automation setup result:', result);
+      console.log('Automation setup result:', data);
 
       toast({
         title: "🤖 Automation Enabled!",
