@@ -93,11 +93,35 @@ export class EnhancedScraper {
     return [...new Set(variants)]; // Remove duplicates
   }
 
+  private static async getCraigslistCities(): Promise<string[]> {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data: areas, error } = await supabase
+        .from('craigslist_areas')
+        .select('area_code')
+        .eq('is_active', true)
+        .order('city_name');
+      
+      if (error) {
+        console.error('Error fetching Craigslist areas:', error);
+        // Fallback to hardcoded list if database fetch fails
+        return ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago', 'seattle', 'austin'];
+      }
+      
+      return areas?.map(area => area.area_code) || ['denver', 'sfbay', 'losangeles'];
+    } catch (error) {
+      console.error('Failed to fetch cities from database:', error);
+      return ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago', 'seattle', 'austin'];
+    }
+  }
+
   private static async scrapeCraigslistEnhanced(searchQuery: string, searchConfig: SearchConfig): Promise<Listing[]> {
     const listings: Listing[] = [];
-    const cities = ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago', 'seattle', 'austin'];
     
-    for (const city of cities.slice(0, 3)) { // Limit to 3 cities to avoid rate limits
+    // Get cities from database instead of hardcoded list
+    const cities = await this.getCraigslistCities();
+    
+    for (const city of cities.slice(0, 8)) { // Increased from 3 to 8 cities for better coverage
       try {
         const encodedQuery = encodeURIComponent(searchQuery);
         const searchUrl = `https://${city}.craigslist.org/search/sss?query=${encodedQuery}&sort=date`;

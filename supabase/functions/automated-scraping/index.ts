@@ -36,7 +36,7 @@ class EdgeScraper {
           `Attempting to scrape variant: ${variant}`, { variant });
         
         // Scrape Craigslist
-        const craigslistListings = await this.scrapeCraigslist(variant, searchConfig);
+        const craigslistListings = await this.scrapeCraigslist(variant, searchConfig, supabase);
         allListings.push(...craigslistListings);
         
         // Log parsing results
@@ -75,11 +75,11 @@ class EdgeScraper {
     return [...new Set(variants)];
   }
 
-  private static async scrapeCraigslist(searchQuery: string, searchConfig: any): Promise<any[]> {
+  private static async scrapeCraigslist(searchQuery: string, searchConfig: any, supabase: any): Promise<any[]> {
     const listings: any[] = [];
-    const cities = ['denver', 'sfbay'];
+    const cities = await this.getCraigslistCities(supabase);
     
-    for (const city of cities) {
+    for (const city of cities.slice(0, 8)) { // Increased coverage to 8 cities
       try {
         const encodedQuery = encodeURIComponent(searchQuery);
         const searchUrl = `https://${city}.craigslist.org/search/sss?query=${encodedQuery}&sort=date`;
@@ -242,6 +242,27 @@ class EdgeScraper {
         });
     } catch (error) {
       console.error('Failed to log activity:', error);
+    }
+  }
+
+  static async getCraigslistCities(supabase: any): Promise<string[]> {
+    try {
+      const { data: areas, error } = await supabase
+        .from('craigslist_areas')
+        .select('area_code')
+        .eq('is_active', true)
+        .order('city_name');
+      
+      if (error) {
+        console.error('Error fetching Craigslist areas:', error);
+        // Fallback to hardcoded list if database fetch fails
+        return ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago', 'seattle', 'austin'];
+      }
+      
+      return areas?.map((area: any) => area.area_code) || ['denver', 'sfbay', 'losangeles'];
+    } catch (error) {
+      console.error('Failed to fetch cities from database:', error);
+      return ['denver', 'sfbay', 'losangeles', 'newyork', 'chicago', 'seattle', 'austin'];
     }
   }
 }

@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      craigslist_areas: {
+        Row: {
+          area_code: string
+          city_name: string
+          country_code: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          state_code: string | null
+          timezone: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_code: string
+          city_name: string
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          state_code?: string | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_code?: string
+          city_name?: string
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          state_code?: string | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       listings: {
         Row: {
           contact_info: string | null

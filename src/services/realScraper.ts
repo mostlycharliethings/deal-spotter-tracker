@@ -37,9 +37,9 @@ export class RealScraper {
     // Basic Craigslist scraping as fallback
     try {
       const searchQuery = this.buildSearchQuery(searchConfig);
-      const cities = ['denver', 'sfbay', 'losangeles'];
+      const cities = await this.getCraigslistCities();
       
-      for (const city of cities) {
+      for (const city of cities.slice(0, 5)) { // Increased coverage
         try {
           const encodedQuery = encodeURIComponent(searchQuery);
           const searchUrl = `https://${city}.craigslist.org/search/sss?query=${encodedQuery}&sort=date`;
@@ -136,6 +136,27 @@ export class RealScraper {
   }
 
   // Static method to trigger automated scraping via Edge Function
+  private static async getCraigslistCities(): Promise<string[]> {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data: areas, error } = await supabase
+        .from('craigslist_areas')
+        .select('area_code')
+        .eq('is_active', true)
+        .order('city_name');
+      
+      if (error) {
+        console.error('Error fetching Craigslist areas:', error);
+        return ['denver', 'sfbay', 'losangeles'];
+      }
+      
+      return areas?.map(area => area.area_code) || ['denver', 'sfbay', 'losangeles'];
+    } catch (error) {
+      console.error('Failed to fetch cities from database:', error);
+      return ['denver', 'sfbay', 'losangeles'];
+    }
+  }
+
   static async triggerAutomatedScraping(): Promise<{ success: boolean; message: string }> {
     try {
       console.log('Triggering automated scraping via Edge Function');
