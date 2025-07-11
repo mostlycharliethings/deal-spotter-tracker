@@ -67,6 +67,83 @@ export class GeoUtils {
     }
   }
 
+  static async reverseGeocode(coordinates: Coordinates): Promise<LocationInfo> {
+    try {
+      const url = `${this.OPENCAGE_URL}?q=${coordinates.latitude}%2C${coordinates.longitude}&key=${this.OPENCAGE_API_KEY}&limit=1&no_annotations=1`;
+      
+      console.log(`Reverse geocoding coordinates: ${coordinates.latitude}, ${coordinates.longitude}`);
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`OpenCage API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.results && data.results.length > 0) {
+        const result = data.results[0];
+        const components = result.components;
+        
+        return {
+          coordinates,
+          address: result.formatted,
+          city: components.city || components.town || components.village,
+          state: components.state || components.province,
+          country: components.country
+        };
+      } else {
+        console.warn(`No reverse geocoding results for coordinates: ${coordinates.latitude}, ${coordinates.longitude}`);
+        return {
+          coordinates,
+          address: 'Location unknown'
+        };
+      }
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      return {
+        coordinates,
+        address: 'Location unknown'
+      };
+    }
+  }
+
+  static async getCurrentUserLocation(): Promise<LocationInfo | null> {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        console.warn('Geolocation is not supported by this browser');
+        resolve(null);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const coordinates: Coordinates = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            };
+            
+            const locationInfo = await this.reverseGeocode(coordinates);
+            resolve(locationInfo);
+          } catch (error) {
+            console.error('Error reverse geocoding user location:', error);
+            resolve(null);
+          }
+        },
+        (error) => {
+          console.warn('Error getting user location:', error.message);
+          resolve(null);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        }
+      );
+    });
+  }
+
   static calculateDistance(coord1: Coordinates, coord2: Coordinates): DistanceInfo {
     const distanceKm = this.haversineDistance(coord1, coord2);
     const distanceMiles = distanceKm * 0.621371;

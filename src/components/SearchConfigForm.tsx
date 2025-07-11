@@ -48,6 +48,7 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
   const [geocodedLocation, setGeocodedLocation] = useState<string>('');
   const [isGeocodingLocation, setIsGeocodingLocation] = useState(false);
   const [isSendingConfirmation, setIsSendingConfirmation] = useState(false);
+  const [userDetectedLocation, setUserDetectedLocation] = useState<string>('Detecting location...');
 
   const handleLocationGeocoding = async (location: string) => {
     if (!location.trim()) {
@@ -70,6 +71,25 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
       setIsGeocodingLocation(false);
     }
   };
+
+  // Auto-detect user location on component mount
+  useEffect(() => {
+    const detectUserLocation = async () => {
+      try {
+        const locationInfo = await GeoUtils.getCurrentUserLocation();
+        if (locationInfo && locationInfo.city && locationInfo.state) {
+          setUserDetectedLocation(`${locationInfo.city}, ${locationInfo.state}`);
+        } else {
+          setUserDetectedLocation('Location unavailable');
+        }
+      } catch (error) {
+        console.warn('Could not detect user location:', error);
+        setUserDetectedLocation('Location unavailable');
+      }
+    };
+
+    detectUserLocation();
+  }, []);
 
   useEffect(() => {
     if (editingSearch) {
@@ -296,12 +316,10 @@ const SearchConfigForm: React.FC<SearchConfigFormProps> = ({
               {isEditing ? 'Edit Search Configuration' : 'Configure Price Tracking Search'}
             </CardTitle>
           </div>
-          {geocodedLocation && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-md">
-              <MapPin className="h-4 w-4" />
-              <span className="font-medium">Your Approximate Location: {geocodedLocation}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-md">
+            <MapPin className="h-4 w-4" />
+            <span className="font-medium">Your Approximate Location: {userDetectedLocation}</span>
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
           {isEditing 
