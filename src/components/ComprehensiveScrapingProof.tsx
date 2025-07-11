@@ -168,29 +168,40 @@ export const ComprehensiveScrapingProof = () => {
       updateStep('full_scrape_test', 'running');
 
       // Trigger the full automated scraping pipeline
-      const { data: scrapeResult, error: scrapeError } = await supabase.functions.invoke('automated-scraping', {
-        body: { 
-          manual_trigger: true,
-          test_mode: true,
-          search_config_id: searchConfig.id
+      try {
+        const { data: scrapeResult, error: scrapeError } = await supabase.functions.invoke('automated-scraping', {
+          body: { 
+            manual_trigger: true,
+            test_mode: true,
+            search_config_id: searchConfig.id
+          }
+        });
+
+        if (scrapeError) {
+          console.error('Edge Function invocation error:', scrapeError);
+          updateStep('full_scrape_test', 'error', { error: scrapeError.message }, [
+            `❌ Scraping failed: ${scrapeError.message}`,
+            `🔧 Check Edge Function logs for detailed error information`,
+            `💡 Most common cause: SCRAPER_API_KEY not configured in Edge Function secrets`
+          ]);
+        } else {
+          updateStep('full_scrape_test', 'success', scrapeResult, [
+            `✅ Multi-tier scraping pipeline executed successfully`,
+            `✅ Total listings found: ${scrapeResult?.total_listings || 0}`,
+            `✅ All three tiers (Tier 1, 2, 3) were processed`,
+            `✅ Listings stored in database for review`,
+            `✅ System is fully operational and ready for automated runs`
+          ]);
+
+          toast.success(`🎉 Comprehensive proof complete! Found ${scrapeResult?.total_listings || 0} listings across all tiers.`);
         }
-      });
-
-      if (scrapeError) {
-        updateStep('full_scrape_test', 'error', { error: scrapeError.message }, [
-          `❌ Scraping failed: ${scrapeError.message}`,
-          `🔧 Check Edge Function logs for detailed error information`
+      } catch (functionError) {
+        console.error('Edge Function invocation failed:', functionError);
+        updateStep('full_scrape_test', 'error', { error: functionError.message }, [
+          `❌ Failed to send a request to the Edge Function`,
+          `🔧 This usually means the SCRAPER_API_KEY is not configured`,
+          `💡 Check Edge Function secrets in Supabase Dashboard`
         ]);
-      } else {
-        updateStep('full_scrape_test', 'success', scrapeResult, [
-          `✅ Multi-tier scraping pipeline executed successfully`,
-          `✅ Total listings found: ${scrapeResult?.total_listings || 0}`,
-          `✅ All three tiers (Tier 1, 2, 3) were processed`,
-          `✅ Listings stored in database for review`,
-          `✅ System is fully operational and ready for automated runs`
-        ]);
-
-        toast.success(`🎉 Comprehensive proof complete! Found ${scrapeResult?.total_listings || 0} listings across all tiers.`);
       }
 
     } catch (error) {
