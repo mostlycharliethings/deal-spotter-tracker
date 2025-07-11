@@ -301,23 +301,46 @@ class EdgeScraper {
 
   private static async fetchWithScraperAPI(url: string): Promise<string | null> {
     try {
+      // Check if API key is configured
+      if (!this.SCRAPER_API_KEY || this.SCRAPER_API_KEY.trim() === '') {
+        console.error('❌ SCRAPER_API_KEY is not configured! This is why scraping is failing.');
+        console.log('🔧 Please add SCRAPER_API_KEY to your Supabase Edge Function secrets');
+        return null;
+      }
+      
       const scraperUrl = `${this.SCRAPER_API_URL}?api_key=${this.SCRAPER_API_KEY}&url=${encodeURIComponent(url)}&render=false`;
+      
+      console.log(`🔍 Fetching: ${url}`);
+      console.log(`🌐 ScraperAPI URL: ${scraperUrl.replace(this.SCRAPER_API_KEY, '[HIDDEN]')}`);
       
       const response = await fetch(scraperUrl, {
         method: 'GET',
         headers: {
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         },
       });
       
+      console.log(`📊 Response status: ${response.status} ${response.statusText}`);
+      
       if (!response.ok) {
-        console.error(`ScraperAPI HTTP ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`❌ ScraperAPI HTTP ${response.status}: ${response.statusText}`);
+        console.error(`❌ Error response: ${errorText}`);
         return null;
       }
       
-      return await response.text();
+      const html = await response.text();
+      console.log(`✅ Received ${html.length} characters of HTML`);
+      
+      // Log first 500 chars to see what we're getting
+      if (html.length > 0) {
+        console.log(`📄 HTML sample: ${html.substring(0, 500)}...`);
+      }
+      
+      return html;
     } catch (error) {
-      console.error('ScraperAPI fetch error:', error);
+      console.error('❌ ScraperAPI fetch error:', error);
       return null;
     }
   }
@@ -325,11 +348,17 @@ class EdgeScraper {
   private static parseCraigslistResults(html: string, searchConfig: any, city: string, searchQuery: string, distanceMiles?: number, proximityBucket?: string): any[] {
     const listings: any[] = [];
     
-    console.log(`Parsing HTML for ${city}, length: ${html.length} chars`);
+    console.log(`🏙️ Parsing Craigslist HTML for ${city}, length: ${html.length} chars`);
+    
+    // Check if we got blocked or error page
+    if (html.includes('blocked') || html.includes('captcha') || html.includes('verify') || html.length < 100) {
+      console.log(`❌ Craigslist ${city}: Appears to be blocked or error page`);
+      return listings;
+    }
     
     // Log a sample of the HTML to understand the structure
     if (html.length > 1000) {
-      console.log(`Sample HTML chunk: ${html.substring(1000, 1500)}`);
+      console.log(`📋 Sample HTML chunk: ${html.substring(1000, 1500)}`);
     }
     
     try {
