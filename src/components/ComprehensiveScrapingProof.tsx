@@ -180,9 +180,10 @@ export const ComprehensiveScrapingProof = () => {
         if (scrapeError) {
           console.error('Edge Function invocation error:', scrapeError);
           updateStep('full_scrape_test', 'error', { error: scrapeError.message }, [
-            `❌ Scraping failed: ${scrapeError.message}`,
-            `🔧 Check Edge Function logs for detailed error information`,
-            `💡 Most common cause: SCRAPER_API_KEY not configured in Edge Function secrets`
+            `❌ Edge Function invocation failed: ${scrapeError.message}`,
+            `🔧 Check Edge Function deployment status`,
+            `⏱️ This could be a timeout, deployment, or resource limit issue`,
+            `📋 Edge Function logs will show more details`
           ]);
         } else {
           updateStep('full_scrape_test', 'success', scrapeResult, [
@@ -198,9 +199,10 @@ export const ComprehensiveScrapingProof = () => {
       } catch (functionError) {
         console.error('Edge Function invocation failed:', functionError);
         updateStep('full_scrape_test', 'error', { error: functionError.message }, [
-          `❌ Failed to send a request to the Edge Function`,
-          `🔧 This usually means the SCRAPER_API_KEY is not configured`,
-          `💡 Check Edge Function secrets in Supabase Dashboard`
+          `❌ Failed to invoke the Edge Function`,
+          `🔧 This could be a network connectivity or deployment issue`,
+          `⏱️ Function may have timed out or hit resource limits`,
+          `📋 Check Edge Function logs for specific error details`
         ]);
       }
 
