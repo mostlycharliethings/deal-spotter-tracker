@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 import SearchConfigForm from '@/components/SearchConfigForm';
 import SearchConfigsManager from '@/components/SearchConfigsManager';
 import ListingsDashboard from '@/components/ListingsDashboard';
-import { ManualScrapeTrigger } from '@/components/ManualScrapeTrigger';
 
 
 import { SearchConfig } from '@/types/database';
@@ -330,16 +329,12 @@ const FeedMeHaystacks = () => {
           </TabsContent>
 
           <TabsContent value="manage" className="mt-6">
-            <div className="space-y-6">
-              <ManualScrapeTrigger />
-              
-              <SearchConfigsManager 
-                searchConfigs={searches}
-                onManualRun={handleManualRunSearch}
-                onEditSearch={handleEditSearch}
-                isRunning={isLoading}
-              />
-            </div>
+            <SearchConfigsManager 
+              searchConfigs={searches}
+              onManualRun={handleManualRunSearch}
+              onEditSearch={handleEditSearch}
+              isRunning={isLoading}
+            />
           </TabsContent>
 
           <TabsContent value="listings" className="mt-6">
