@@ -142,48 +142,6 @@ const SearchConfigsManager: React.FC<SearchConfigsManagerProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Automation Control Panel */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Automation Controls
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Set up automated scraping and manage your search monitoring
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              onClick={handleSetupAutomation}
-              disabled={isSettingUpAutomation}
-              className="flex items-center gap-2"
-            >
-              <Zap className="h-4 w-4" />
-              {isSettingUpAutomation ? 'Setting Up...' : 'Enable Auto-Scraping (5x Daily)'}
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={handleTriggerAutomatedScraping}
-              disabled={isTriggeringAutomated || isRunning}
-              className="flex items-center gap-2"
-            >
-              <Play className="h-4 w-4" />
-              {isTriggeringAutomated ? 'Running...' : 'Run All Searches Now'}
-            </Button>
-          </div>
-          
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>🤖 Auto-Scraping Schedule:</strong> Your searches will run automatically at 6 AM, 10 AM, 2 PM, 6 PM, and 10 PM Eastern time. 
-              Email alerts are sent immediately when new matching listings are found.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Search Configurations Table */}
       <Card>
         <CardHeader>
@@ -283,6 +241,48 @@ const SearchConfigsManager: React.FC<SearchConfigsManagerProps> = ({
               ))}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      {/* Automation Control Panel */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            Automation Controls
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Set up automated scraping and manage your search monitoring
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              onClick={handleSetupAutomation}
+              disabled={isSettingUpAutomation}
+              className="flex items-center gap-2"
+            >
+              <Zap className="h-4 w-4" />
+              {isSettingUpAutomation ? 'Setting Up...' : 'Enable Auto-Scraping (5x Daily)'}
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={handleTriggerAutomatedScraping}
+              disabled={isTriggeringAutomated || isRunning}
+              className="flex items-center gap-2"
+            >
+              <Play className="h-4 w-4" />
+              {isTriggeringAutomated ? 'Running...' : 'Run All Searches Now'}
+            </Button>
+          </div>
+          
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>🤖 Auto-Scraping Schedule:</strong> Your searches will run automatically at 6 AM, 10 AM, 2 PM, 6 PM, and 10 PM Eastern time. 
+              Email alerts are sent immediately when new matching listings are found.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
