@@ -1,7 +1,102 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
-import { TieringService } from './tieringService.ts';
+
+// Inline TieringService to avoid import issues
+export interface TierMapping {
+  tier1: string[];
+  tier2: string[];
+  tier3: string[];
+}
+
+export const TIER_MAPPING: TierMapping = {
+  tier1: [
+    'craigslist',
+    'ebay', 
+    'facebook',
+    'offerup',
+    'mercari',
+    'reverb',
+    'guitar center',
+    'amazon'
+  ],
+  tier2: [
+    'mpb',
+    'bring a trailer',
+    'cars and bids',
+    'reverb',
+    'guitar center used',
+    'sweetwater used',
+    'guitar center vintage',
+    'vintage king',
+    'chicago music exchange',
+    'willcutt guitars',
+    'music go round',
+    'sam ash used',
+    'musicians friend used',
+    'zzounds used'
+  ],
+  tier3: [
+    'local music stores',
+    'pawn shops',
+    'estate sales',
+    'garage sales',
+    'music forums',
+    'reddit marketplace',
+    'facebook groups',
+    'discord servers',
+    'craigslist musicians',
+    'local classifieds',
+    'university boards',
+    'community centers'
+  ]
+};
+
+export class TieringService {
+  static determineTier(sourceName: string): string {
+    const lowerSourceName = sourceName.toLowerCase();
+    
+    if (TIER_MAPPING.tier1.some(tier1Source => lowerSourceName.includes(tier1Source))) {
+      return 'tier1';
+    }
+    
+    if (TIER_MAPPING.tier2.some(tier2Source => lowerSourceName.includes(tier2Source))) {
+      return 'tier2';
+    }
+    
+    return 'tier3';
+  }
+
+  static getAllSources(): string[] {
+    return [
+      ...TIER_MAPPING.tier1,
+      ...TIER_MAPPING.tier2,
+      ...TIER_MAPPING.tier3
+    ];
+  }
+
+  static getSourcesByTier(tier: keyof TierMapping): string[] {
+    return TIER_MAPPING[tier] || [];
+  }
+
+  static validateSourceTier(sourceName: string, expectedTier: string): boolean {
+    const actualTier = this.determineTier(sourceName);
+    return actualTier === expectedTier;
+  }
+
+  static getRecommendedSources(itemType?: string): { tier1: string[], tier2: string[], tier3: string[] } {
+    // For now, return all sources, but this could be enhanced with item-specific logic
+    return {
+      tier1: TIER_MAPPING.tier1,
+      tier2: TIER_MAPPING.tier2.slice(0, 5), // Limit tier2 for performance
+      tier3: TIER_MAPPING.tier3.slice(0, 3)  // Limit tier3 for performance
+    };
+  }
+
+  static logTierUsage(tier: string, sourceName: string, success: boolean): void {
+    console.log(`[TieringService] ${tier.toUpperCase()} - ${sourceName}: ${success ? 'SUCCESS' : 'FAILURE'}`);
+  }
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
