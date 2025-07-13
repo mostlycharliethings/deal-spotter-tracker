@@ -22,9 +22,14 @@ export const ManualScrapeTrigger = () => {
       });
       
       if (error) {
-        console.error('❌ Scrape error:', error);
-        toast.error(`Scrape failed: ${error.message}`);
-        setLastResult({ error: error.message, timestamp: new Date().toISOString() });
+        console.error('❌ Scrape error (full object):', error);
+        console.error('❌ Error details:', JSON.stringify(error, null, 2));
+        toast.error(`Scrape failed: ${error.message || 'Unknown error'}`);
+        setLastResult({ 
+          error: error.message || 'Unknown error', 
+          errorDetails: error,
+          timestamp: new Date().toISOString() 
+        });
       } else {
         console.log('✅ Scrape result:', data);
         toast.success(`Scrape completed! Found ${data?.total_listings || 0} listings`);
