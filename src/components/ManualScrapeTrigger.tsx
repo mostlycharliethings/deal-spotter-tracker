@@ -13,7 +13,26 @@ export const ManualScrapeTrigger = () => {
     setIsRunning(true);
     try {
       console.log('🚀 Triggering manual scrape...');
+      console.log('🧪 First testing if Edge Functions are working with test-scraper...');
       
+      // First test with the simpler test-scraper function
+      const { data: testData, error: testError } = await supabase.functions.invoke('test-scraper');
+      
+      if (testError) {
+        console.error('❌ Test scraper failed:', testError);
+        toast.error(`Edge Functions not accessible: ${testError.message}`);
+        setLastResult({ 
+          error: `Test function failed: ${testError.message}`, 
+          errorDetails: testError,
+          timestamp: new Date().toISOString() 
+        });
+        return;
+      } else {
+        console.log('✅ Test scraper successful:', testData);
+        toast.success('Edge Functions are working! Now testing main scraper...');
+      }
+      
+      // Now try the actual automated-scraping function
       const { data, error } = await supabase.functions.invoke('automated-scraping', {
         body: { 
           manual_trigger: true,
