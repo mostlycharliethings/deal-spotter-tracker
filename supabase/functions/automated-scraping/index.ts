@@ -1200,13 +1200,8 @@ const handler = async (req: Request): Promise<Response> => {
             // Send email notification if new listings found
             if (insertedListings && insertedListings.length > 0) {
               try {
-                const notificationResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-listing-notification`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`
-                  },
-                  body: JSON.stringify({
+                const { data: notificationData, error: notificationError } = await supabase.functions.invoke('send-listing-notification', {
+                  body: {
                     to: searchConfig.email_address,
                     subject: `🎯 ${newListings.length} New ${searchConfig.manufacturer} ${searchConfig.item_name} Deal${newListings.length > 1 ? 's' : ''} Found!`,
                     html: `
@@ -1223,11 +1218,13 @@ const handler = async (req: Request): Promise<Response> => {
                       subQualifier: searchConfig.sub_qualifier
                     },
                     listingsCount: newListings.length
-                  })
+                  }
                 });
 
-                if (!notificationResponse.ok) {
-                  console.error(`Failed to send notification for search ${searchConfig.id}`);
+                if (notificationError) {
+                  console.error(`Failed to send notification for search ${searchConfig.id}:`, notificationError);
+                } else {
+                  console.log(`✅ Email notification sent for search ${searchConfig.id}`);
                 }
               } catch (notificationError) {
                 console.error(`Error sending notification for search ${searchConfig.id}:`, notificationError);
