@@ -14,6 +14,8 @@ export const ManualScrapeTrigger = () => {
     try {
       console.log('🚀 Triggering manual scrape...');
       console.log('⚠️ Note: Function may take up to 2-3 minutes to complete');
+      console.log('📍 Project URL: https://brlvephljobxfivqlope.supabase.co');
+      console.log('🔗 Function URL will be: https://brlvephljobxfivqlope.supabase.co/functions/v1/automated-scraping');
       
       const { data, error } = await supabase.functions.invoke('automated-scraping', {
         body: { 
