@@ -13,11 +13,13 @@ export const ManualScrapeTrigger = () => {
     setIsRunning(true);
     try {
       console.log('🚀 Triggering manual scrape...');
+      console.log('⚠️ Note: Function may take up to 2-3 minutes to complete');
       
       const { data, error } = await supabase.functions.invoke('automated-scraping', {
         body: { 
           manual_trigger: true,
-          test_mode: true 
+          test_mode: true,
+          max_listings_per_source: 5 // Limit for testing
         }
       });
       
