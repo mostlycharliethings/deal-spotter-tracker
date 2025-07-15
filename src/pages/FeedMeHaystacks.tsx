@@ -365,7 +365,7 @@ const FeedMeHaystacks = () => {
 
         {/* Navigation Buttons */}
         <div className="flex justify-center gap-4 pt-8 border-t">
-          <Link to="/tools/feedmehaystacks/preview">
+          <Link to="/tools/v1testhaystacks/preview">
             <Button variant="outline" size="lg" className="flex items-center gap-2">
               <Mail className="h-5 w-5" />
               <span className="hidden sm:inline">Preview Daily Digest Email</span>
@@ -373,7 +373,7 @@ const FeedMeHaystacks = () => {
             </Button>
           </Link>
           
-          <Link to="/tools/feedmehaystacks/logs">
+          <Link to="/tools/v1testhaystacks/logs">
             <Button variant="outline" size="lg" className="flex items-center gap-2">
               <Database className="h-5 w-5" />
               <span className="hidden sm:inline">Scrape Logs</span>

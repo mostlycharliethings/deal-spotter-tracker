@@ -44,7 +44,7 @@ const Tools = () => {
                 <p className="text-forest-600 text-lg leading-relaxed">
                   Automated price monitoring across multiple marketplaces
                 </p>
-                <Link to="/tools/feedmehaystacks">
+                <Link to="/tools/v1testhaystacks">
                   <Button size="lg" className="w-full text-xl py-8 bg-gradient-to-r from-forest-600 to-forest-700 hover:from-forest-700 hover:to-forest-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300">
                     Feed Me Haystacks
                   </Button>

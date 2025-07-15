@@ -12,7 +12,7 @@ const Testing = () => {
     <div className="min-h-screen bg-gradient-to-br from-sage-50 via-background to-sage-100">
       {/* Navigation */}
       <nav className="flex items-center p-6 max-w-6xl mx-auto backdrop-blur-sm bg-white/10 rounded-lg mx-4 mt-4 border border-sage-200/50">
-        <Link to="/tools/feedmehaystacks">
+        <Link to="/tools/v1testhaystacks">
           <Button variant="outline" className="flex items-center gap-2 mr-6 border-copper-400 text-copper-600 hover:bg-copper-50 hover:text-copper-700 font-medium">
             <ArrowLeft className="h-4 w-4" />
             Back to Feed Me Haystacks

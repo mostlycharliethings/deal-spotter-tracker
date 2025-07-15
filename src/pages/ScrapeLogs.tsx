@@ -122,7 +122,7 @@ const ScrapeLogs = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/tools/feedmehaystacks">
+            <Link to="/tools/v1testhaystacks">
               <Button variant="outline" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
