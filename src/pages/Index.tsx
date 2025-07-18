@@ -58,7 +58,7 @@ const Index = () => {
               </p>
 
               <p className="leading-relaxed text-lg">
-                I bring more than a decade of experience working across regulated industries, SaaS platforms, and high-growth environments—often stepping in when the stakes are high and the path forward isn't yet clear.
+                I bring more than a decade of experience working across regulated industries, SaaS platforms, and high-growth environments, often stepping in when the stakes are high and the path forward isn't yet clear.
               </p>
 
               <p className="leading-relaxed text-lg">
@@ -82,7 +82,7 @@ const Index = () => {
                     A modern strategy group for teams ready to make real progress.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We help leadership identify what's slowing them down—whether it's misaligned systems, fragmented processes, or decision bottlenecks—and guide them toward clear, achievable outcomes. Our proprietary frameworks bring structure to complexity, grounded in reality and tailored to each organization's context.
+                    We help leadership identify what's slowing them down, whether it's misaligned systems, fragmented processes, or decision bottlenecks, and guide them toward clear, achievable outcomes. Our proprietary frameworks bring structure to complexity, grounded in reality and tailored to each organization's context.
                   </p>
                   <p className="leading-relaxed text-lg">
                     Every engagement is designed to stand on its own. Our goal is to equip teams with the tools, clarity, and alignment they need to succeed long after we leave. We don't stay longer than necessary, and we don't build dependency.
