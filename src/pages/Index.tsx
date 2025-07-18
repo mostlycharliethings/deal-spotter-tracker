@@ -40,38 +40,49 @@ const Index = () => {
 
             <div className="prose prose-lg max-w-none space-y-8 text-forest-600">
               <p className="text-2xl leading-relaxed font-playfair text-forest-700 font-medium">
-                I'm a systems thinker, builder, and problem solver with a track record of turning complexity into clarity.
+                I help teams solve operational problems that get in the way of growth.
               </p>
 
               <p className="leading-relaxed text-lg">
-                I specialize in transforming legacy operations, reengineering flawed systems, and aligning technical execution with business outcomes. Over the last decade, I've helped companies—from growth-stage startups to enterprise giants—scale more intelligently, operate more efficiently, and retain more customers.
+                Over the past decade, I've stepped into companies where processes were broken, teams were overwhelmed, and systems couldn't keep up. I simplify the mess, rebuild what matters, and align day-to-day execution with long-term goals. The result is usually more traction, better retention, and a faster path to scale.
               </p>
 
               <p className="leading-relaxed text-lg">
-                While leading Production Support for Shell Energy, I redesigned their CI/CD pipeline, rebuilt their incident intake workflows, and overhauled component tracking—saving them an estimated <span className="font-semibold text-copper-600">$2.88 million</span> and positioning their Salesforce platform to support 350,000 new customers across 7 brands. At CG Infinity and Lightbox RE, I built customer success operations from the ground up, cut attrition rates from <span className="font-semibold text-copper-600">15% to under 2%</span>, and turned at-risk teams into enterprise-grade operations.
+                My experience blends systems thinking, service design, customer operations, and strategic execution. I'm most useful in situations where there is no playbook, where decisions need to be made quickly, and where the path forward isn't yet clear.
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700">
-                I'm the founder of two companies:
+                I currently lead two companies:
               </p>
 
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Group</span> — a private consulting firm focused on business process reengineering for small and mid-sized companies. There, I developed the <span className="font-semibold text-copper-600">IPE Methodology</span> ("Idiot Proof Everything") and the proprietary <span className="font-semibold text-copper-600">C.L.A.R.I.T.Y.™ Framework</span>, a 7-step system designed to uncover blind spots, eliminate waste, and streamline performance at every level of the organization.
+                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Group</span>
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    A modern strategy group helping businesses simplify, scale, and get out of their own way.
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    We work directly with leadership teams to identify the root causes of friction. Whether it's misaligned tools, bloated workflows, or cultural drift, we focus on solving the real problems, not just the visible ones. We bring structure, clarity, and executional support without the overhead or canned frameworks typical of consulting firms.
+                  </p>
+                  <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
+                    We don't deal in theory. We deal in progress.
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Solutions Group</span> — a Woman-Owned, HUBZone-certified government contractor delivering IT professional services to the federal sector.
+                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Solutions Group</span>
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    A Woman-Owned, Small Disadvantaged Business located in a HUBZone.
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    We specialize in IT professional services and technology feasibility for federal clients. Our work supports mission-critical modernization efforts where clarity, compliance, and outcomes matter. Whether evaluating systems or delivering scoped execution, we bring sharp thinking and consistent results to high-stakes environments.
                   </p>
                 </div>
               </div>
-
-              <p className="leading-relaxed text-lg">
-                I approach problem-solving with a unique mix of empathy, precision, and obsession with simplification. Whether I'm working with SaaS execs, government procurement officers, or mom-and-pop operators, my goal is always the same: <span className="font-semibold text-forest-700 italic">make smart people's lives easier by making systems smarter.</span>
-              </p>
             </div>
           </div>
 
