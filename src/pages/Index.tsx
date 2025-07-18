@@ -39,20 +39,38 @@ const Index = () => {
             </div>
 
             <div className="prose prose-lg max-w-none space-y-8 text-forest-600">
-              <p className="text-2xl leading-relaxed font-playfair text-forest-700 font-medium">
-                I help teams solve operational problems that get in the way of growth.
+              <p className="text-2xl leading-relaxed font-playfair text-forest-700 font-bold">
+                Operational clarity for companies that are ready to scale, not stall.
               </p>
 
               <p className="leading-relaxed text-lg">
-                Over the past decade, I've stepped into companies where processes were broken, teams were overwhelmed, and systems couldn't keep up. I simplify the mess, rebuild what matters, and align day-to-day execution with long-term goals. The result is usually more traction, better retention, and a faster path to scale.
+                I work with leadership teams to remove friction, align operations, and build systems that support sustainable growth. Whether you're navigating a period of rapid change, fixing structural issues that have become too costly to ignore, or preparing to scale with confidence, I help you get there without adding unnecessary complexity.
+              </p>
+
+              <div className="flex justify-center pt-2 pb-6">
+                <Button className="bg-copper-500 hover:bg-copper-600 text-white font-medium px-8 py-3 text-lg">
+                  Let's Talk
+                </Button>
+              </div>
+
+              <p className="leading-relaxed text-lg font-medium text-forest-700 text-xl font-playfair">
+                About Charlie
               </p>
 
               <p className="leading-relaxed text-lg">
-                My experience blends systems thinking, service design, customer operations, and strategic execution. I'm most useful in situations where there is no playbook, where decisions need to be made quickly, and where the path forward isn't yet clear.
+                I bring more than a decade of experience working across regulated industries, SaaS platforms, and high-growth environments—often stepping in when the stakes are high and the path forward isn't yet clear.
+              </p>
+
+              <p className="leading-relaxed text-lg">
+                My work focuses on aligning people, systems, and strategy. I've rebuilt customer experience programs, modernized internal workflows, and led platform redesigns supporting hundreds of thousands of users. I've worked with companies at every stage, helping them operate with more clarity, consistency, and control.
+              </p>
+
+              <p className="leading-relaxed text-lg">
+                I'm most often brought in when an organization is scaling faster than its infrastructure can support. I bring the structure and precision needed to move forward with confidence, backed by frameworks that are actionable, not abstract.
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700">
-                I currently lead two companies:
+                Today, I lead two specialized firms designed to deliver exactly that.
               </p>
 
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
@@ -60,14 +78,17 @@ const Index = () => {
                   <p className="leading-relaxed text-lg">
                     <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Group</span>
                   </p>
-                  <p className="leading-relaxed text-lg">
-                    A modern strategy group helping businesses simplify, scale, and get out of their own way.
+                  <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
+                    A modern strategy group for teams ready to make real progress.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We work directly with leadership teams to identify the root causes of friction. Whether it's misaligned tools, bloated workflows, or cultural drift, we focus on solving the real problems, not just the visible ones. We bring structure, clarity, and executional support without the overhead or canned frameworks typical of consulting firms.
+                    We help leadership identify what's slowing them down—whether it's misaligned systems, fragmented processes, or decision bottlenecks—and guide them toward clear, achievable outcomes. Our proprietary frameworks bring structure to complexity, grounded in reality and tailored to each organization's context.
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    Every engagement is designed to stand on its own. Our goal is to equip teams with the tools, clarity, and alignment they need to succeed long after we leave. We don't stay longer than necessary, and we don't build dependency.
                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                    We don't deal in theory. We deal in progress.
+                    We're not here to take over. We're here to make sure you don't need us twice.
                   </p>
                 </div>
 
@@ -75,11 +96,14 @@ const Index = () => {
                   <p className="leading-relaxed text-lg">
                     <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Solutions Group</span>
                   </p>
-                  <p className="leading-relaxed text-lg">
-                    A Woman-Owned, Small Disadvantaged Business located in a HUBZone.
+                  <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
+                    A Woman-Owned, Small Disadvantaged Business located in a certified HUBZone.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We specialize in IT professional services and technology feasibility for federal clients. Our work supports mission-critical modernization efforts where clarity, compliance, and outcomes matter. Whether evaluating systems or delivering scoped execution, we bring sharp thinking and consistent results to high-stakes environments.
+                    We specialize in IT Professional Services and Technology Feasibility for federal agencies and integrators. Our work supports modernization initiatives, vendor evaluations, and mission-critical system improvements where clarity, compliance, and execution are non-negotiable.
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    We combine strategic insight with hands-on delivery to ensure agencies meet their goals with confidence and credibility. Whether embedded on a project or brought in for assessment, our approach is clear, responsive, and built for results.
                   </p>
                 </div>
               </div>
