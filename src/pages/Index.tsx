@@ -11,12 +11,12 @@ const Index = () => {
       {/* Navigation */}
       <nav className="flex justify-between items-center p-6 max-w-6xl mx-auto backdrop-blur-sm bg-white/10 rounded-lg mx-4 mt-4 border border-sage-200/50">
         <h1 className="text-3xl font-bold font-playfair text-forest-700">Charlie Scheid</h1>
-        <Link to="/tools">
+        <a href="https://haystacks.charliescheid.com" target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="flex items-center gap-2 border-copper-400 text-copper-600 hover:bg-copper-50 hover:text-copper-700 font-medium">
             <Wrench className="h-4 w-4" />
             Tools
           </Button>
-        </Link>
+        </a>
       </nav>
 
       {/* Main Content */}
@@ -88,13 +88,22 @@ const Index = () => {
                 <p className="text-forest-600 text-lg">
                   Helpful utilities I've built
                 </p>
-                <Link to="/tools">
+                <a href="https://haystacks.charliescheid.com" target="_blank" rel="noopener noreferrer">
                   <Button size="lg" className="w-full bg-gradient-to-r from-forest-600 to-forest-700 hover:from-forest-700 hover:to-forest-800 text-white font-medium py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
                     Explore Tools
                   </Button>
-                </Link>
+                </a>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Archive Button */}
+          <div className="flex justify-center pt-4">
+            <Link to="/tools/v1testhaystacks">
+              <Button variant="outline" className="flex items-center gap-2 border-sage-300 text-sage-600 hover:bg-sage-50 hover:text-sage-700 font-medium">
+                Archive
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
