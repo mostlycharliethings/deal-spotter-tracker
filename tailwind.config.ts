@@ -102,8 +102,7 @@ export default {
 				}
 			},
 			fontFamily: {
-				'playfair': ['Playfair Display', 'serif'],
-				'inter': ['Inter', 'sans-serif'],
+				'sans': ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -10,7 +10,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-sage-50 via-background to-sage-100">
       {/* Navigation */}
       <nav className="flex justify-between items-center p-6 max-w-6xl mx-auto backdrop-blur-sm bg-white/10 rounded-lg mx-4 mt-4 border border-sage-200/50">
-        <h1 className="text-3xl font-bold font-playfair text-forest-700">Charlie Scheid</h1>
+        <h1 className="text-3xl font-bold text-forest-700">Charlie Scheid</h1>
         <a href="https://haystacks.charliescheid.com" target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="flex items-center gap-2 border-copper-400 text-copper-600 hover:bg-copper-50 hover:text-copper-700 font-medium">
             <Wrench className="h-4 w-4" />
@@ -23,7 +23,7 @@ const Index = () => {
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="space-y-12">
           <div className="text-center space-y-6 pt-8">
-            <h2 className="text-6xl font-bold font-playfair text-forest-700 tracking-tight">About Me</h2>
+            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">About Me</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-copper-400 to-copper-600 mx-auto rounded-full"></div>
           </div>
 
@@ -39,7 +39,7 @@ const Index = () => {
             </div>
 
             <div className="prose prose-lg max-w-none space-y-8 text-forest-600">
-              <p className="text-2xl leading-relaxed font-playfair text-forest-700 font-bold">
+              <p className="text-2xl leading-relaxed text-forest-700 font-bold">
                 Operational clarity for companies that are ready to scale, not stall.
               </p>
 
@@ -53,7 +53,7 @@ const Index = () => {
                 </Button>
               </div>
 
-              <p className="leading-relaxed text-lg font-medium text-forest-700 text-xl font-playfair">
+              <p className="leading-relaxed text-lg font-semibold text-forest-700 text-xl">
                 About Charlie
               </p>
 
@@ -76,7 +76,7 @@ const Index = () => {
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Group</span>
+                    <span className="font-bold text-forest-700 text-xl">Foxton Group</span>
                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
                     A modern strategy group for teams ready to make real progress.
@@ -94,7 +94,7 @@ const Index = () => {
 
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 font-playfair text-xl">Foxton Solutions Group</span>
+                    <span className="font-bold text-forest-700 text-xl">Foxton Solutions Group</span>
                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
                     A Woman-Owned, Small Disadvantaged Business located in a certified HUBZone.
