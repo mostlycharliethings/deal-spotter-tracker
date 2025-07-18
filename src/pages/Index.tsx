@@ -48,8 +48,8 @@ const Index = () => {
               </p>
 
               <div className="flex justify-center pt-2 pb-6">
-                <Button className="bg-copper-500 hover:bg-copper-600 text-white font-medium px-8 py-3 text-lg">
-                  Let's Talk
+                <Button asChild className="bg-copper-500 hover:bg-copper-600 text-white font-medium px-8 py-3 text-lg">
+                  <a href="mailto:charlie@foxtonsolutionsgroup.com">Let's Talk</a>
                 </Button>
               </div>
 
