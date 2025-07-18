@@ -10,7 +10,11 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-sage-50 via-background to-sage-100">
       {/* Navigation */}
       <nav className="flex justify-between items-center p-6 max-w-6xl mx-auto backdrop-blur-sm bg-white/10 rounded-lg mx-4 mt-4 border border-sage-200/50">
-        <h1 className="text-3xl font-bold text-forest-700">Charlie Scheid</h1>
+        <img 
+          src="/lovable-uploads/aa4e6dc4-ee27-43d6-95ee-12d1b41d5843.png" 
+          alt="Charlie Scheid" 
+          className="h-12 w-auto"
+        />
         <a href="https://haystacks.charliescheid.com" target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="flex items-center gap-2 border-copper-400 text-copper-600 hover:bg-copper-50 hover:text-copper-700 font-medium">
             <Wrench className="h-4 w-4" />
