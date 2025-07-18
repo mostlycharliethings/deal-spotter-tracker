@@ -75,27 +75,6 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Tools Button */}
-          <div className="flex justify-center pt-8 clear-both">
-            <Card className="w-full max-w-md hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm border-sage-200/50 hover:border-copper-300">
-              <CardHeader className="text-center pb-4">
-                <CardTitle className="flex items-center justify-center gap-3 font-playfair text-forest-700">
-                  <Wrench className="h-7 w-7 text-copper-500" />
-                  Tools
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center space-y-6 pt-0">
-                <p className="text-forest-600 text-lg">
-                  Helpful utilities I've built
-                </p>
-                <a href="https://haystacks.charliescheid.com" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" className="w-full bg-gradient-to-r from-forest-600 to-forest-700 hover:from-forest-700 hover:to-forest-800 text-white font-medium py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                    Explore Tools
-                  </Button>
-                </a>
-              </CardContent>
-            </Card>
-          </div>
 
           {/* Archive Button */}
           <div className="flex justify-center pt-4">
