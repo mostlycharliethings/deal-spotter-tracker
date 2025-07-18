@@ -80,8 +80,15 @@ const Index = () => {
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 text-xl">Foxton Group</span>
-                  </p>
+                     <a 
+                       href="https://Foxton.Group" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="font-bold text-forest-700 text-xl hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+                     >
+                       Foxton Group
+                     </a>
+                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
                     A modern strategy group for teams ready to make real progress.
                   </p>
@@ -98,8 +105,15 @@ const Index = () => {
 
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold text-forest-700 text-xl">Foxton Solutions Group</span>
-                  </p>
+                     <a 
+                       href="https://FoxtonSolutionsGroup.com" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="font-bold text-forest-700 text-xl hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+                     >
+                       Foxton Solutions Group
+                     </a>
+                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
                     A Woman-Owned, Small Disadvantaged Business located in a certified HUBZone.
                   </p>
