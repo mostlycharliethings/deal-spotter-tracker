@@ -70,7 +70,7 @@ const Index = () => {
               </p>
 
               <p className="leading-relaxed text-lg">
-                I'm most often brought in when an organization is scaling faster than its infrastructure can support. I bring the structure and precision needed to move forward with confidence, backed by frameworks that are actionable, not abstract.
+                I bring the structure and precision needed to move forward with confidence, backed by frameworks that are actionable, not abstract.
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700">
