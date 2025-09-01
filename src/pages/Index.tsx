@@ -120,7 +120,7 @@ const Index = () => {
                   <p className="leading-relaxed text-lg">
                     <span className="font-bold">Every engagement is designed for lasting impact.</span> Our objective is to embed the capabilities, clarity, and strategic alignment necessary for teams to excel independently. We establish sustainable systems, not dependencies. Our success is measured by your team's continued performance long after our engagement concludes.
                   </p>
-                  <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
+                  <p className="leading-relaxed text-lg font-bold font-medium text-forest-700 italic">
                     We're not here to manage your operations. We're here to ensure you never need us to.
                   </p>
                 </div>
