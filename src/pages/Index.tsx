@@ -92,6 +92,10 @@ const Index = () => {
                 The difference is in the execution. Where others see complexity, I see opportunity for systematic optimization.
               </p>
 
+              <p className="leading-relaxed text-lg font-bold text-forest-700 text-xl pt-4">
+                Companies I've founded:
+              </p>
+
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
                 <div className="space-y-2">
                   <p className="leading-relaxed text-lg">
