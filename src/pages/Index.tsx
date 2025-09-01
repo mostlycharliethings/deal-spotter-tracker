@@ -114,7 +114,7 @@ const Index = () => {
                   <p className="leading-relaxed text-lg">
                     When growth stalls or operational friction threatens competitive position, executive teams turn to Foxton Group for precision-engineered solutions. We diagnose and eliminate the root causes of organizational inefficiency—whether systemic misalignment, fragmented processes, or critical decision bottlenecks—delivering clear, actionable pathways to sustainable performance improvement.
                   </p>
-                  <p className="leading-relaxed text-lg">
+                  <p className="leading-relaxed text-lg font-bold">
                     Our proprietary methodologies transform complexity into competitive advantage, combining strategic intelligence with tactical precision tailored to each organization's unique operational DNA. We don't deliver generic frameworks—we architect bespoke solutions grounded in real-world complexity and organizational context.
                   </p>
                   <p className="leading-relaxed text-lg">
