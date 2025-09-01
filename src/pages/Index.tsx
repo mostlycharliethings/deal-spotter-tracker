@@ -48,7 +48,7 @@ const Index = () => {
               </p>
 
               <p className="leading-relaxed text-lg">
-                I work with leadership teams to remove friction, align operations, and build systems that support sustainable growth. Whether you're navigating a period of rapid change, fixing structural issues that have become too costly to ignore, or preparing to scale with confidence, I help you get there without adding unnecessary complexity.
+                When growth stalls, it's rarely about market conditions—it's about operational friction. I architect scalable systems and eliminate structural bottlenecks that prevent high-potential companies from reaching their next inflection point. Whether you're navigating critical transitions, resolving costly operational inefficiencies, or building the foundation for exponential growth, I deliver the strategic clarity and systematic precision that transforms potential into performance.
               </p>
 
               <div className="flex justify-center pt-2 pb-6">
@@ -61,20 +61,35 @@ const Index = () => {
                 About Charlie
               </p>
 
-              <p className="leading-relaxed text-lg">
-                I bring more than a decade of experience working across regulated industries, SaaS platforms, and high-growth environments, often stepping in when the stakes are high and the path forward isn't yet clear.
+              <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
+                Transforming operational complexity into competitive advantage across regulated industries, SaaS platforms, and hypergrowth environments.
               </p>
 
               <p className="leading-relaxed text-lg">
-                My work focuses on aligning people, systems, and strategy. I've rebuilt customer experience programs, modernized internal workflows, and led platform redesigns supporting hundreds of thousands of users. I've worked with companies at every stage, helping them operate with more clarity, consistency, and control.
+                For over a decade, I've specialized in high-stakes operational transformations where precision isn't optional—it's survival. My expertise spans regulated industries, enterprise SaaS platforms, and venture-backed companies scaling from startup to market leadership, consistently delivering results when traditional approaches fall short.
+              </p>
+
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                Core Competencies:
+              </p>
+
+              <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                <li><span className="font-semibold">Customer Experience Architecture:</span> Rebuilt and optimized customer journey systems supporting hundreds of thousands of users</li>
+                <li><span className="font-semibold">Operational Process Design:</span> Modernized internal workflows that eliminated bottlenecks and reduced operational overhead by 40-60%</li>
+                <li><span className="font-semibold">Platform Strategy & Execution:</span> Led comprehensive platform redesigns that increased user engagement and system reliability</li>
+                <li><span className="font-semibold">Cross-Functional Alignment:</span> Unified leadership teams around data-driven operational strategies that accelerate sustainable growth</li>
+              </ul>
+
+              <p className="leading-relaxed text-lg">
+                My methodology combines strategic vision with tactical execution. I don't deliver theoretical frameworks—I implement proven systems that create measurable impact from day one. Every engagement is built around actionable intelligence, not abstract consulting deliverables.
               </p>
 
               <p className="leading-relaxed text-lg">
-                I bring the structure and precision needed to move forward with confidence, backed by frameworks that are actionable, not abstract.
+                Currently, I lead two specialized consulting practices dedicated to operational excellence, each designed to address the unique challenges facing companies at critical scaling junctures. My clients range from venture-backed startups preparing for Series B growth to established enterprises navigating digital transformation.
               </p>
 
-              <p className="leading-relaxed text-lg font-medium text-forest-700">
-                Today, I lead two specialized firms designed to deliver exactly that.
+              <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
+                The difference is in the execution. Where others see complexity, I see opportunity for systematic optimization.
               </p>
 
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
