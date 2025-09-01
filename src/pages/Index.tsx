@@ -118,7 +118,7 @@ const Index = () => {
                     <span className="font-bold">Our proprietary methodologies transform complexity into competitive advantage, </span>combining strategic intelligence with tactical precision tailored to each organization's unique operational DNA. We don't deliver generic frameworks—we architect bespoke solutions grounded in real-world complexity and organizational context.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    Every engagement is designed for lasting impact. Our objective is to embed the capabilities, clarity, and strategic alignment necessary for teams to excel independently. We establish sustainable systems, not dependencies. Our success is measured by your team's continued performance long after our engagement concludes.
+                    <span className="font-bold">Every engagement is designed for lasting impact.</span> Our objective is to embed the capabilities, clarity, and strategic alignment necessary for teams to excel independently. We establish sustainable systems, not dependencies. Our success is measured by your team's continued performance long after our engagement concludes.
                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
                     We're not here to manage your operations. We're here to ensure you never need us to.
