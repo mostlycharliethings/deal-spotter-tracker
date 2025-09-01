@@ -109,16 +109,19 @@ const Index = () => {
                      </a>
                    </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                    A modern strategy group for teams ready to make real progress.
+                    Strategic transformation for leadership teams demanding measurable results, not theoretical solutions.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We help leadership identify what's slowing them down, whether it's misaligned systems, fragmented processes, or decision bottlenecks, and guide them toward clear, achievable outcomes. Our proprietary frameworks bring structure to complexity, grounded in reality and tailored to each organization's context.
+                    When growth stalls or operational friction threatens competitive position, executive teams turn to Foxton Group for precision-engineered solutions. We diagnose and eliminate the root causes of organizational inefficiency—whether systemic misalignment, fragmented processes, or critical decision bottlenecks—delivering clear, actionable pathways to sustainable performance improvement.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    Every engagement is designed to stand on its own. Our goal is to equip teams with the tools, clarity, and alignment they need to succeed long after we leave. We don't stay longer than necessary, and we don't build dependency.
+                    Our proprietary methodologies transform complexity into competitive advantage, combining strategic intelligence with tactical precision tailored to each organization's unique operational DNA. We don't deliver generic frameworks—we architect bespoke solutions grounded in real-world complexity and organizational context.
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    Every engagement is designed for lasting impact. Our objective is to embed the capabilities, clarity, and strategic alignment necessary for teams to excel independently. We establish sustainable systems, not dependencies. Our success is measured by your team's continued performance long after our engagement concludes.
                   </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                    We're not here to take over. We're here to make sure you don't need us twice.
+                    We're not here to manage your operations. We're here to ensure you never need us to.
                   </p>
                 </div>
 
@@ -134,13 +137,16 @@ const Index = () => {
                      </a>
                    </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                    A Woman-Owned, Small Disadvantaged Business located in a certified HUBZone.
+                    Mission-critical technology strategy and implementation for federal agencies and prime contractors operating in high-stakes environments.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We specialize in IT Professional Services and Technology Feasibility for federal agencies and integrators. Our work supports modernization initiatives, vendor evaluations, and mission-critical system improvements where clarity, compliance, and execution are non-negotiable.
+                    As a certified Woman-Owned Small Disadvantaged Business (WOSDB) strategically positioned in a designated HUBZone, Foxton Solutions Group delivers specialized IT professional services and technology feasibility solutions to the federal marketplace where precision, compliance, and execution excellence are mission-critical.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We combine strategic insight with hands-on delivery to ensure agencies meet their goals with confidence and credibility. Whether embedded on a project or brought in for assessment, our approach is clear, responsive, and built for results.
+                    Our expertise centers on modernization initiatives, strategic vendor evaluations, and system improvements where regulatory compliance, operational clarity, and flawless execution determine mission success. We operate in environments where failure is not an option—supporting federal agencies and integrators through complex technology transformations that directly impact national priorities.
+                  </p>
+                  <p className="leading-relaxed text-lg">
+                    We deliver strategic insight with operational precision, ensuring agencies achieve their objectives with complete confidence and institutional credibility. Whether leading comprehensive technology assessments or executing embedded project roles, our approach is methodical, responsive, and engineered for measurable results that meet the highest standards of federal accountability.
                   </p>
                 </div>
               </div>
