@@ -143,10 +143,10 @@ const Index = () => {
                     As a certified Woman-Owned Small Disadvantaged Business (WOSDB) strategically positioned in a designated HUBZone, Foxton Solutions Group delivers specialized IT professional services and technology feasibility solutions to the federal marketplace where precision, compliance, and execution excellence are mission-critical.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    Our expertise centers on modernization initiatives, strategic vendor evaluations, and system improvements where regulatory compliance, operational clarity, and flawless execution determine mission success. We operate in environments where failure is not an option—supporting federal agencies and integrators through complex technology transformations that directly impact national priorities.
+                    <span className="font-bold">Our expertise centers on modernization initiatives, strategic vendor evaluations, and system improvements</span> where regulatory compliance, operational clarity, and flawless execution determine mission success. We operate in environments where failure is not an option—supporting federal agencies and integrators through complex technology transformations that directly impact national priorities.
                   </p>
                   <p className="leading-relaxed text-lg">
-                    We deliver strategic insight with operational precision, ensuring agencies achieve their objectives with complete confidence and institutional credibility. Whether leading comprehensive technology assessments or executing embedded project roles, our approach is methodical, responsive, and engineered for measurable results that meet the highest standards of federal accountability.
+                    <span className="font-bold">We deliver strategic insight with operational precision,</span> ensuring agencies achieve their objectives with complete confidence and institutional credibility. Whether leading comprehensive technology assessments or executing embedded project roles, our approach is methodical, responsive, and engineered for measurable results that meet the highest standards of federal accountability.
                   </p>
                 </div>
               </div>
