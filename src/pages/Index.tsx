@@ -27,7 +27,7 @@ const Index = () => {
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="space-y-12">
           <div className="text-center space-y-6 pt-8">
-            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">Don't Panic.</h2>
+            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">Operations excellence that drives bottom-line results.</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-copper-400 to-copper-600 mx-auto rounded-full"></div>
           </div>
 
@@ -44,56 +44,56 @@ const Index = () => {
 
             <div className="prose prose-lg max-w-none space-y-8 text-forest-600">
               <p className="text-2xl leading-relaxed text-forest-700 font-bold">
-                Operational clarity for companies that are ready to scale, not stall.
+                Most companies know their operations could be better. Few know exactly where to start—or have the bandwidth to execute while running the business.
               </p>
 
               <p className="leading-relaxed text-lg">
-                When growth stalls, it's rarely about market conditions—it's about operational friction. I architect scalable systems and eliminate structural bottlenecks that prevent high-potential companies from reaching their next inflection point. Whether you're navigating critical transitions, resolving costly operational inefficiencies, or building the foundation for exponential growth, I deliver the strategic clarity and systematic precision that transforms potential into performance.
+                I solve the operational problems that keep executives awake at night. Revenue teams missing targets due to process bottlenecks. Customer churn from service delivery gaps. Operational costs spiraling without clear ROI. Technology investments that never deliver promised efficiency gains.
+              </p>
+
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                The result: measurable performance improvement within 90 days.
               </p>
 
               <div className="flex justify-center pt-2 pb-6">
                 <Button asChild className="bg-copper-500 hover:bg-copper-600 text-white font-medium px-8 py-3 text-lg">
-                  <a href="mailto:charlie@foxtonsolutionsgroup.com">Let's Talk</a>
+                  <a href="mailto:charlie@foxtonsolutionsgroup.com">Let's discuss your operational challenges.</a>
                 </Button>
               </div>
 
               <p className="leading-relaxed text-lg font-semibold text-forest-700 text-xl">
-                About Charlie
+                About Charlie Scheid
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                Transforming operational complexity into competitive advantage across regulated industries, SaaS platforms, and hypergrowth environments.
+                13+ years optimizing operations for SaaS, technology, and regulated industries.
               </p>
 
               <p className="leading-relaxed text-lg">
-                For over a decade, I've specialized in high-stakes operational transformations where precision isn't optional—it's survival. My expertise spans regulated industries, enterprise SaaS platforms, and venture-backed companies scaling from startup to market leadership, consistently delivering results when traditional approaches fall short.
+                I've led operational transformations at companies scaling from $10M to $100M+ in revenue, consistently delivering cost reductions of 30-40% while improving customer satisfaction and team performance.
+              </p>
+
+              <p className="leading-relaxed text-lg">
+                My approach combines strategic assessment with hands-on implementation. I don't deliver PowerPoints—I fix what's broken and build what's missing.
               </p>
 
               <p className="leading-relaxed text-lg font-bold text-forest-700">
-                Core Competencies:
+                Core Expertise:
               </p>
 
               <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
-                <li><span className="font-semibold">Customer Experience Architecture:</span> Rebuilt and optimized customer journey systems supporting hundreds of thousands of users</li>
-                <li><span className="font-semibold">Operational Process Design:</span> Modernized internal workflows that eliminated bottlenecks and reduced operational overhead by 40-60%</li>
-                <li><span className="font-semibold">Platform Strategy & Execution:</span> Led comprehensive platform redesigns that increased user engagement and system reliability</li>
-                <li><span className="font-semibold">Cross-Functional Alignment:</span> Unified leadership teams around data-driven operational strategies that accelerate sustainable growth</li>
+                <li><span className="font-semibold">Customer Operations:</span> Redesigned support and success processes serving 500K+ users, reducing response times 97% while cutting operational costs $750K annually</li>
+                <li><span className="font-semibold">Process Optimization:</span> Led cross-functional initiatives eliminating manual workflows, improving team productivity 170% in under nine months</li>
+                <li><span className="font-semibold">Technology Integration:</span> Implemented automation solutions saving $2M+ in operational expenses across SaaS platforms</li>
+                <li><span className="font-semibold">Team Leadership:</span> Built and scaled operational teams through M&A integrations and rapid growth phases</li>
               </ul>
 
               <p className="leading-relaxed text-lg">
-                My methodology combines strategic vision with tactical execution. I don't deliver theoretical frameworks—I implement proven systems that create measurable impact from day one. Every engagement is built around actionable intelligence, not abstract consulting deliverables.
+                <span className="font-semibold">Industry Experience:</span> SaaS platforms, enterprise software, regulated financial services, federal contracting, transportation technology.
               </p>
 
               <p className="leading-relaxed text-lg">
-                Currently, I lead two specialized consulting practices dedicated to operational excellence, each designed to address the unique challenges facing companies at critical scaling junctures. My clients range from venture-backed startups preparing for Series B growth to established enterprises navigating digital transformation.
-              </p>
-
-              <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                The difference is in the execution. Where others see complexity, I see opportunity for systematic optimization.
-              </p>
-
-              <p className="leading-relaxed text-lg font-bold text-forest-700 text-xl pt-4">
-                Companies I've founded:
+                Currently, I operate two specialized consulting practices serving different market segments while maintaining active advisory relationships with growth-stage companies.
               </p>
 
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
@@ -109,19 +109,34 @@ const Index = () => {
                      </a>
                    </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                    Strategic transformation for leadership teams demanding measurable results, not theoretical solutions.
+                    Strategic operations consulting for growth-stage companies
                   </p>
                   <p className="leading-relaxed text-lg">
-                    When growth stalls or operational friction threatens competitive position, executive teams turn to Foxton Group for precision-engineered solutions. We diagnose and eliminate the root causes of organizational inefficiency—whether systemic misalignment, fragmented processes, or critical decision bottlenecks—delivering clear, actionable pathways to sustainable performance improvement.
+                    When operational friction threatens your growth trajectory, Foxton Group delivers systematic solutions that scale.
                   </p>
+                  
+                  <p className="leading-relaxed text-lg font-bold text-forest-700">
+                    What We Do:
+                  </p>
+                  <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                    <li>Operational assessments identifying specific bottlenecks limiting growth</li>
+                    <li>Process redesign and automation implementation</li>
+                    <li>Cross-functional team alignment around operational excellence</li>
+                    <li>Performance measurement frameworks driving continuous improvement</li>
+                  </ul>
+
+                  <p className="leading-relaxed text-lg font-bold text-forest-700">
+                    Typical Engagements:
+                  </p>
+                  <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                    <li>Pre-Series B operational readiness (ensuring systems can handle 3-5x growth)</li>
+                    <li>Customer operations optimization (reducing churn while scaling support)</li>
+                    <li>Technology stack consolidation (eliminating redundant tools and processes)</li>
+                    <li>M&A operational integration (maintaining service levels during transitions)</li>
+                  </ul>
+
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold">Our proprietary methodologies transform complexity into competitive advantage, </span>combining strategic intelligence with tactical precision tailored to each organization's unique operational DNA. We don't deliver generic frameworks—we architect bespoke solutions grounded in real-world complexity and organizational context.
-                  </p>
-                  <p className="leading-relaxed text-lg">
-                    <span className="font-bold">Every engagement is designed for lasting impact.</span> Our objective is to embed the capabilities, clarity, and strategic alignment necessary for teams to excel independently. We establish sustainable systems, not dependencies. Our success is measured by your team's continued performance long after our engagement concludes.
-                  </p>
-                  <p className="leading-relaxed text-lg font-bold font-medium text-forest-700 italic">
-                    We're not here to manage your operations. We're here to ensure you never need us to.
+                    <span className="font-semibold">Client Profile:</span> VC-backed SaaS companies, $5M-$50M revenue, preparing for significant scale.
                   </p>
                 </div>
 
@@ -137,18 +152,44 @@ const Index = () => {
                      </a>
                    </p>
                   <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                    Mission-critical technology strategy and implementation for federal agencies and prime contractors operating in high-stakes environments.
+                    Mission-critical technology consulting for federal agencies
                   </p>
                   <p className="leading-relaxed text-lg">
-                    As a certified Woman-Owned Small Disadvantaged Business (WOSDB) strategically positioned in a designated HUBZone, Foxton Solutions Group delivers specialized IT professional services and technology feasibility solutions to the federal marketplace where precision, compliance, and execution excellence are mission-critical.
+                    Certified Woman-Owned Small Disadvantaged Business (WOSDB) delivering specialized IT services to federal agencies and prime contractors.
                   </p>
-                  <p className="leading-relaxed text-lg">
-                    <span className="font-bold">Our expertise centers on modernization initiatives, strategic vendor evaluations, and system improvements</span> where regulatory compliance, operational clarity, and flawless execution determine mission success. We operate in environments where failure is not an option—supporting federal agencies and integrators through complex technology transformations that directly impact national priorities.
+                  
+                  <p className="leading-relaxed text-lg font-bold text-forest-700">
+                    Core Services:
                   </p>
+                  <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                    <li>Technology modernization strategy and implementation</li>
+                    <li>Vendor evaluation and procurement support</li>
+                    <li>System integration and process improvement</li>
+                    <li>Compliance and security framework development</li>
+                  </ul>
+
                   <p className="leading-relaxed text-lg">
-                    <span className="font-bold">We deliver strategic insight with operational precision,</span> ensuring agencies achieve their objectives with complete confidence and institutional credibility. Whether leading comprehensive technology assessments or executing embedded project roles, our approach is methodical, responsive, and engineered for measurable results that meet the highest standards of federal accountability.
+                    <span className="font-semibold">Clearance:</span> Public Trust. Additional clearances available upon engagement requirements.
+                  </p>
+                  
+                  <p className="leading-relaxed text-lg">
+                    <span className="font-semibold">Past Performance:</span> Operational assessments for federal agencies, technology evaluation projects for prime contractors, system modernization support for mission-critical applications.
                   </p>
                 </div>
+              </div>
+
+              <div className="pt-8 space-y-4 border-t border-sage-200">
+                <p className="leading-relaxed text-lg font-bold text-forest-700 text-xl">
+                  Let's discuss your operational challenges.
+                </p>
+                <p className="leading-relaxed text-lg">
+                  <span className="font-semibold">Email:</span> charlie@foxtonsolutionsgroup.com<br/>
+                  <span className="font-semibold">Phone:</span> Available upon request<br/>
+                  <span className="font-semibold">Location:</span> Denver, Colorado (Travel as required)
+                </p>
+                <p className="leading-relaxed text-lg italic">
+                  Initial consultation includes operational assessment and recommended next steps.
+                </p>
               </div>
             </div>
           </div>
