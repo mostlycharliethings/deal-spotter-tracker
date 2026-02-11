@@ -83,7 +83,7 @@ const Index = () => {
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                13+ years building operational systems for SaaS, technology, and regulated industries.
+                15+ years building operational systems for SaaS, technology, and regulated industries.
               </p>
 
               <p className="leading-relaxed text-lg">
