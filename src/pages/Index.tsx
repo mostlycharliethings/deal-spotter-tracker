@@ -27,8 +27,9 @@ const Index = () => {
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="space-y-12">
           <div className="text-center space-y-6 pt-8">
-            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">Strategic Operator | Organizational Systems Design</h2>
+            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">Operations excellence that drives bottom-line results.</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-copper-400 to-copper-600 mx-auto rounded-full"></div>
+            <p className="text-xl font-semibold text-forest-700">Strategic Operator | Organizational Systems Design</p>
           </div>
 
           {/* Bio Section with Profile Image */}
