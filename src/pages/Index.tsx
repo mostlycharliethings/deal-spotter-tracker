@@ -27,7 +27,7 @@ const Index = () => {
       <div className="max-w-5xl mx-auto px-6 pb-12">
         <div className="space-y-12">
           <div className="text-center space-y-6 pt-8">
-            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">Operations excellence that drives bottom-line results.</h2>
+            <h2 className="text-6xl font-bold text-forest-700 tracking-tight">Strategic Operator | Organizational Systems Design</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-copper-400 to-copper-600 mx-auto rounded-full"></div>
           </div>
 
@@ -44,15 +44,31 @@ const Index = () => {
 
             <div className="prose prose-lg max-w-none space-y-8 text-forest-600">
               <p className="text-2xl leading-relaxed text-forest-700 font-bold">
-                Most companies know their operations could be better. Few know exactly where to start—or have the bandwidth to execute while running the business.
+                Most companies know what they want to achieve. The problem is execution—they lack the operational infrastructure to get there.
               </p>
 
               <p className="leading-relaxed text-lg">
-                I solve the operational problems that keep executives awake at night. Revenue teams missing targets due to process bottlenecks. Customer churn from service delivery gaps. Operational costs spiraling without clear ROI. Technology investments that never deliver promised efficiency gains.
+                I design and build the systems that connect strategy to results. Not consulting decks. Not recommendations. Actual operational architecture: the frameworks, processes, and execution systems that turn strategic intent into measurable performance.
               </p>
 
               <p className="leading-relaxed text-lg font-bold text-forest-700">
-                The result: measurable performance improvement within 90 days.
+                The problems I solve:
+              </p>
+
+              <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                <li>Revenue operations breaking down under growth pressure</li>
+                <li>Service delivery gaps bleeding customers and margin</li>
+                <li>Disconnected systems creating manual work and data chaos</li>
+                <li>Teams executing without clear processes or accountability structures</li>
+                <li>Strategic initiatives stalling because nobody owns the "how"</li>
+              </ul>
+
+              <p className="leading-relaxed text-lg">
+                I specialize in untangling complex "people + process + product" problems where fixing one piece without addressing the system makes things worse.
+              </p>
+
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                Result: Operational infrastructure that executes strategy. Performance improvement within 90 days. Systems that scale without you.
               </p>
 
               <div className="flex justify-center pt-2 pb-6">
@@ -66,34 +82,63 @@ const Index = () => {
               </p>
 
               <p className="leading-relaxed text-lg font-medium text-forest-700 italic">
-                13+ years optimizing operations for SaaS, technology, and regulated industries.
+                13+ years building operational systems for SaaS, technology, and regulated industries.
               </p>
 
               <p className="leading-relaxed text-lg">
-                I've led operational transformations at companies scaling from $10M to $100M+ in revenue, consistently delivering cost reductions of 30-40% while improving customer satisfaction and team performance.
+                I've led transformations at companies scaling from $10M to $100M+ revenue—consistently delivering 30-40% cost reductions while improving customer outcomes and team performance.
               </p>
 
               <p className="leading-relaxed text-lg">
-                My approach combines strategic assessment with hands-on implementation. I don't deliver PowerPoints—I fix what's broken and build what's missing.
+                What makes my approach different: I don't diagnose and leave. I design the operational infrastructure, implement it, and transfer it to your team. You get both the strategic roadmap and the execution system to make it real.
               </p>
 
               <p className="leading-relaxed text-lg font-bold text-forest-700">
-                Core Expertise:
+                Core Capabilities:
               </p>
 
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                Systems Design & Integration
+              </p>
               <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
-                <li><span className="font-semibold">Customer Operations:</span> Redesigned support and success processes serving 500K+ users, reducing response times 97% while cutting operational costs $750K annually</li>
-                <li><span className="font-semibold">Process Optimization:</span> Led cross-functional initiatives eliminating manual workflows, improving team productivity 170% in under nine months</li>
-                <li><span className="font-semibold">Technology Integration:</span> Implemented automation solutions saving $2M+ in operational expenses across SaaS platforms</li>
-                <li><span className="font-semibold">Team Leadership:</span> Built and scaled operational teams through M&A integrations and rapid growth phases</li>
+                <li>Designed operational frameworks supporting 500K+ users across customer success, support, and revenue operations</li>
+                <li>Built cross-functional execution systems eliminating workflow bottlenecks and improving productivity 170% in under nine months</li>
+                <li>Architected documentation and knowledge management systems enabling distributed teams to operate consistently</li>
+              </ul>
+
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                Customer Experience & Journey Optimization
+              </p>
+              <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                <li>Redesigned end-to-end service delivery reducing response times 97% while cutting costs $750K annually</li>
+                <li>Mapped and optimized customer journeys identifying friction points driving churn</li>
+                <li>Built measurement frameworks connecting operational metrics to business outcomes</li>
+              </ul>
+
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                Operational Transformation
+              </p>
+              <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                <li>Led process reengineering initiatives saving $2M+ through automation and waste elimination</li>
+                <li>Managed operational consolidation during M&A integrations and rapid scaling phases</li>
+                <li>Developed performance management systems creating accountability without bureaucracy</li>
+              </ul>
+
+              <p className="leading-relaxed text-lg font-bold text-forest-700">
+                Technical & Strategic Fluency
+              </p>
+              <ul className="leading-relaxed text-lg space-y-2 list-disc pl-6">
+                <li>Implemented Salesforce, API integrations, and automation platforms across operational workflows</li>
+                <li>Translated technical capabilities into business value for executive stakeholders</li>
+                <li>Evaluated and selected technology platforms balancing capability, cost, and adoption</li>
               </ul>
 
               <p className="leading-relaxed text-lg">
-                <span className="font-semibold">Industry Experience:</span> SaaS platforms, enterprise software, regulated financial services, federal contracting, transportation technology.
+                <span className="font-semibold">Industries:</span> SaaS platforms, enterprise software, regulated financial services, federal contracting, transportation technology
               </p>
 
               <p className="leading-relaxed text-lg">
-                Currently, I operate two specialized consulting practices serving different market segments while maintaining active advisory relationships with growth-stage companies.
+                <span className="font-semibold">Currently:</span> I operate specialized consulting practices serving growth-stage companies and maintain advisory relationships focused on operational transformation. I also serve as Director of Operations (functional COO) for a 15-year sensory solutions company managing coast-to-coast operational consolidation.
               </p>
 
               <div className="pl-8 space-y-6 border-l-4 border-copper-300">
