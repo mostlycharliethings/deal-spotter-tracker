@@ -37,7 +37,7 @@ const Index = () => {
             {/* Profile Image - Top Left */}
             <div className="float-left mr-8 mb-6">
               <img 
-                src="/lovable-uploads/86ce0932-53b3-412c-af43-ddf4fbfcf6cd.png" 
+                src="/lovable-uploads/charlie-headshot.png" 
                 alt="Charlie Scheid" 
                 className="w-40 h-40 rounded-2xl object-cover opacity-80 shadow-2xl border-4 border-white/50"
               />
