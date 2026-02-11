@@ -34,12 +34,12 @@ const Index = () => {
 
           {/* Bio Section with Profile Image */}
           <div className="relative bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-sage-200/50">
-            {/* Profile Image - Top Left */}
-            <div className="float-left mr-8 mb-6">
+            {/* Profile Image - Full width on mobile, float left on desktop */}
+            <div className="md:float-left md:mr-8 md:mb-6 mb-6 flex justify-center md:block">
               <img 
                 src="/lovable-uploads/charlie-headshot.png" 
                 alt="Charlie Scheid" 
-                className="w-40 h-40 rounded-2xl object-cover opacity-80 shadow-2xl border-4 border-white/50"
+                className="w-full max-w-xs md:w-40 md:h-40 rounded-2xl object-cover opacity-80 shadow-2xl border-4 border-white/50"
               />
             </div>
 
