@@ -25,7 +25,7 @@ const ScrapingPipelineDebugger = () => {
   const fetchLogs = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('scrape_activity_log')
         .select('*')
         .order('created_at', { ascending: false })

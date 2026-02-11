@@ -26,7 +26,7 @@ const ScrapeLogs = () => {
 
   const fetchLogs = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('scrape_activity_log')
         .select('*')
         .order('created_at', { ascending: false })

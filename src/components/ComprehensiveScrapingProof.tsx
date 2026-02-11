@@ -75,7 +75,7 @@ export const ComprehensiveScrapingProof = () => {
       updateStep('search_understanding', 'running');
       
       // Get current search config
-      const { data: searchConfigs, error } = await supabase
+      const { data: searchConfigs, error } = await (supabase as any)
         .from('search_configs')
         .select('*')
         .eq('is_active', true)

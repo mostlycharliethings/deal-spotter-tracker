@@ -9,7 +9,7 @@ export const useSearchConfigs = () => {
     queryKey: ['search-configs'],
     queryFn: async () => {
       console.log('Fetching search configs from Supabase');
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('search_configs')
         .select('*')
         .order('created_at', { ascending: false });
@@ -32,7 +32,7 @@ export const useCreateSearchConfig = () => {
   return useMutation({
     mutationFn: async (searchConfig: Omit<SearchConfig, 'id' | 'created_at'>) => {
       console.log('Creating search config:', searchConfig);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('search_configs')
         .insert([searchConfig])
         .select()
@@ -73,7 +73,7 @@ export const useUpdateSearchConfig = () => {
       const { id, ...updateData } = update;
       console.log('Updating search config:', id, updateData);
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('search_configs')
         .update(updateData)
         .eq('id', id)
@@ -103,7 +103,7 @@ export const useDeleteSearchConfig = () => {
       console.log('Deleting search config and related data:', searchId);
       
       // First, delete related scrape activity logs
-      const { error: logError } = await supabase
+      const { error: logError } = await (supabase as any)
         .from('scrape_activity_log')
         .delete()
         .eq('search_config_id', searchId);
@@ -114,7 +114,7 @@ export const useDeleteSearchConfig = () => {
       }
 
       // Then, delete related listings
-      const { error: listingsError } = await supabase
+      const { error: listingsError } = await (supabase as any)
         .from('listings')
         .delete()
         .eq('search_id', searchId);
@@ -125,7 +125,7 @@ export const useDeleteSearchConfig = () => {
       }
 
       // Finally, delete the search config
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('search_configs')
         .delete()
         .eq('id', searchId);

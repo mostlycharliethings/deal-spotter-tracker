@@ -10,7 +10,7 @@ export const useListings = () => {
     queryKey: ['listings'],
     queryFn: async () => {
       console.log('Fetching listings from Supabase');
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('listings')
         .select('*')
         .order('date_scraped', { ascending: false });
@@ -36,7 +36,7 @@ export const useCreateListings = () => {
   return useMutation({
     mutationFn: async (listings: Omit<Listing, 'id' | 'date_scraped' | 'last_seen_at'>[]) => {
       console.log('Creating listings:', listings);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('listings')
         .insert(listings)
         .select();
@@ -66,7 +66,7 @@ export const useIgnoreListing = () => {
   return useMutation({
     mutationFn: async ({ listingId, reason }: { listingId: string; reason?: string }) => {
       console.log('Ignoring listing:', listingId, reason);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('listings')
         .update({
           is_ignored: true,
@@ -97,7 +97,7 @@ export const useUnignoreListing = () => {
   return useMutation({
     mutationFn: async (listingId: string) => {
       console.log('Unignoring listing:', listingId);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('listings')
         .update({
           is_ignored: false,
