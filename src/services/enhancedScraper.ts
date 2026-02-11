@@ -96,7 +96,7 @@ export class EnhancedScraper {
   private static async getCraigslistCities(): Promise<string[]> {
     try {
       const { supabase } = await import('@/integrations/supabase/client');
-      const { data: areas, error } = await supabase
+      const { data: areas, error } = await (supabase as any)
         .from('craigslist_areas')
         .select('area_code')
         .eq('is_active', true)

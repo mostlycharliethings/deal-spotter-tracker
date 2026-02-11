@@ -38,7 +38,7 @@ export class TertiarySourceLogger {
       }
 
       // Check against Tier 2 sources in database
-      const { data: tier2Sources } = await supabase
+      const { data: tier2Sources } = await (supabase as any)
         .from('tier2_sources')
         .select('url')
         .ilike('url', `%${domain}%`);
@@ -75,7 +75,7 @@ export class TertiarySourceLogger {
       console.log(`Logging tertiary source: ${domain}`);
 
       // Use the database function to log or increment
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .rpc('log_tertiary_source_if_new', {
           url_param: url,
           domain_param: domain,
@@ -99,7 +99,7 @@ export class TertiarySourceLogger {
    */
   static async getTertiarySources(minUsage: number = 1): Promise<TertiarySource[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('tertiary_sources')
         .select('*')
         .gte('times_used', minUsage)
@@ -126,7 +126,7 @@ export class TertiarySourceLogger {
     top_domains: Array<{ domain: string; times_used: number }>;
   }> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('tertiary_sources')
         .select('domain, times_used');
 
@@ -135,17 +135,17 @@ export class TertiarySourceLogger {
       }
 
       const total_sources = data.length;
-      const total_usage = data.reduce((sum, source) => sum + source.times_used, 0);
+      const total_usage = data.reduce((sum: number, source: any) => sum + source.times_used, 0);
       
       // Group by domain and sum usage
-      const domainStats = data.reduce((acc, source) => {
+      const domainStats = data.reduce((acc: Record<string, number>, source: any) => {
         acc[source.domain] = (acc[source.domain] || 0) + source.times_used;
         return acc;
       }, {} as Record<string, number>);
 
       const top_domains = Object.entries(domainStats)
-        .map(([domain, times_used]) => ({ domain, times_used }))
-        .sort((a, b) => b.times_used - a.times_used)
+        .map(([domain, times_used]) => ({ domain, times_used: times_used as number }))
+        .sort((a, b) => (b.times_used as number) - (a.times_used as number))
         .slice(0, 10);
 
       return {

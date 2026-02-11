@@ -49,7 +49,7 @@ export class PriceEstimationService {
    */
   static async getCachedPriceEstimate(request: PriceEstimateRequest): Promise<PriceEstimate | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .rpc('get_cached_price_estimate', {
           manufacturer_param: request.manufacturer,
           item_name_param: request.item_name,
@@ -165,7 +165,7 @@ export class PriceEstimationService {
     samples: number;
   }>> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('price_reference')
         .select('scraped_at, low_price, average_price, high_price, sample_count')
         .eq('manufacturer', request.manufacturer)
