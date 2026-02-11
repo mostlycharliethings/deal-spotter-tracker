@@ -72,10 +72,13 @@ const Index = () => {
                 Result: Operational infrastructure that executes strategy. Performance improvement within 90 days. Systems that scale without you.
               </p>
 
-              <div className="flex justify-center pt-2 pb-6">
-                <Button asChild className="bg-copper-500 hover:bg-copper-600 text-white font-medium px-8 py-3 text-lg max-w-full w-auto whitespace-normal text-center rounded-lg">
-                  <a href="mailto:charlie@foxtonsolutionsgroup.com">Let's discuss your operational challenges.</a>
-                </Button>
+              <div className="flex justify-center pt-2 pb-6 not-prose">
+                <a 
+                  href="mailto:charlie@foxtonsolutionsgroup.com"
+                  className="inline-block bg-copper-500 hover:bg-copper-600 text-white font-medium px-6 py-3 text-base sm:text-lg rounded-lg text-center transition-colors"
+                >
+                  Let's discuss your operational challenges.
+                </a>
               </div>
 
               <p className="leading-relaxed text-lg font-semibold text-forest-700 text-xl">
