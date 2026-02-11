@@ -94,7 +94,7 @@ const Index = () => {
                 What makes my approach different: I don't diagnose and leave. I design the operational infrastructure, implement it, and transfer it to your team. You get both the strategic roadmap and the execution system to make it real.
               </p>
 
-              <p className="leading-relaxed text-xl font-bold text-forest-700">
+              <p className="leading-relaxed text-2xl font-bold text-forest-700">
                 Core Capabilities:
               </p>
 
